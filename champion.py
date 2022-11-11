@@ -19,7 +19,7 @@ class Aatrox(BaseChampion):
 
     def get_level(self, level):
         self.ad
-        
+
     def equip_item(self, item):
         ad = item.ad
 
@@ -27,4 +27,11 @@ class Aatrox(BaseChampion):
         damage = get_damage_q_level(q_level)
         
         
-        
+aatrox = Aatrox(level=17)
+aatrox.equip_item(["doran", ])
+
+
+garen = Garen(level=17)
+garen.equip_item(["doran", "goredrinker"])
+
+total_damage = aatrox.attack(garen)

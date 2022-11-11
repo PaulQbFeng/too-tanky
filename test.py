@@ -1,0 +1,1 @@
+ashe -> cait --> 10 damage
