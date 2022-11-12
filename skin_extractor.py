@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 
 #lists of all json files
 list_of_json = []
-for file in os.listdir("data"):
+for file in os.listdir("data/raw-community-dragon/champions"):
     if file.endswith(".json"):
         list_of_json.append(file)
 
-os.chdir("data")
+os.chdir("data/raw-community-dragon/champions")
 
 #init
 all_skins = []
@@ -38,7 +38,7 @@ for x in list_of_json:
 #sort the list of dict, dict is {champion name : list of skins}
 name_list.sort()
 all_skins=sorted(all_skins, key=lambda d: [k in d for k in name_list], reverse=True)
-
+print(all_skins)
 
 #nombre de skin par champion trié par ordre croissant : dict is {champion name : nb of skins (including base)}
 dict_nb_skin=[]
@@ -48,7 +48,7 @@ for x in all_skins:
     nb_skins = len(x[name])
     dictionnary = {name : nb_skins}
     dict_nb_skin.append(dictionnary)
-print(dict_nb_skin)
+#print(dict_nb_skin)
 
 #sort dict_nb_skin by value
 def first_value(d):
@@ -56,7 +56,7 @@ def first_value(d):
 
 dict_nb_skin = sorted(dict_nb_skin, key=first_value, reverse=True)
 
-print(dict_nb_skin)
+#print(dict_nb_skin)
 
 #plot
 names=[]
