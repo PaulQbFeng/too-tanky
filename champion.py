@@ -48,8 +48,8 @@ ahri_stats = {
 }
 
 ALL_CHAMPION_BASE_STAT = {
-    "annie": annie_stats,
-    "ahri": ahri_stats
+    "Annie": annie_stats,
+    "Ahri": ahri_stats
 }
 
 
@@ -78,11 +78,11 @@ class BaseChampion:
 
 # Each champion has its own class as their spells have different effects.
 class Annie(BaseChampion):
-    champion_name = "annie"
+    champion_name = "Annie"
     def __init__(self):
         super().__init__(champion_name=__class__.champion_name)
 
 class Ahri(BaseChampion):
-    champion_name = "ahri"
+    champion_name = "Ahri"
     def __init__(self):
         super().__init__(champion_name=__class__.champion_name)
