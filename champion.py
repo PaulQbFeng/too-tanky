@@ -68,6 +68,7 @@ class BaseChampion:
         self.initialize_base_stat(champion_name)
 
     def initialize_base_stat(self, champion_name):
+        """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
         self.__dict__.update(ALL_CHAMPION_BASE_STAT[champion_name])
 
     def auto_attack(self, enemy_champion):
