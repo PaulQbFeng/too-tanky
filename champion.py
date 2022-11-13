@@ -7,11 +7,10 @@ from damage import damage_ad_armor
 file = open("data/ddragon/champion.json", encoding="utf8")
 dataset = json.load(file)
 
-# define champion list
-champion_list = list(dataset["data"].keys())
-
 #build dictionnary {champion_name : {stats}}
 def fill_champion_stats(dataset: dict):
+    # define champion list
+    champion_list = list(dataset["data"].keys())
     ALL_CHAMPION_BASE_STAT={}
     for x in champion_list:
         ALL_CHAMPION_BASE_STAT[x]=dataset["data"][x]["stats"]
