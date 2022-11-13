@@ -1,56 +1,16 @@
 from damage import damage_ad_armor
+import json, os
 
+file = open("data/champion.json", encoding="utf8")
+dataset = json.load(file)
 
-annie_stats = {
-    "hp": 594,
-    "hpperlevel": 102,
-    "mp": 418,
-    "mpperlevel": 25,
-    "movespeed": 335,
-    "armor": 19,
-    "armorperlevel": 5.2,
-    "spellblock": 30,
-    "spellblockperlevel": 1.3,
-    "attackrange": 625,
-    "hpregen": 5.5,
-    "hpregenperlevel": 0.55,
-    "mpregen": 8,
-    "mpregenperlevel": 0.8,
-    "crit": 0,
-    "critperlevel": 0,
-    "attackdamage": 50,
-    "attackdamageperlevel": 2.65,
-    "attackspeedperlevel": 1.36,
-    "attackspeed": 0.579
-}
+#define champion list
+champion_list = list(dataset["data"].keys())
 
-ahri_stats = {
-    "hp": 570,
-    "hpperlevel": 96,
-    "mp": 418,
-    "mpperlevel": 25,
-    "movespeed": 330,
-    "armor": 18,
-    "armorperlevel": 4.7,
-    "spellblock": 30,
-    "spellblockperlevel": 1.3,
-    "attackrange": 550,
-    "hpregen": 2.5,
-    "hpregenperlevel": 0.6,
-    "mpregen": 8,
-    "mpregenperlevel": 0.8,
-    "crit": 0,
-    "critperlevel": 0,
-    "attackdamage": 53,
-    "attackdamageperlevel": 3,
-    "attackspeedperlevel": 2,
-    "attackspeed": 0.668
-}
-
-ALL_CHAMPION_BASE_STAT = {
-    "Annie": annie_stats,
-    "Ahri": ahri_stats
-}
+#build dictionnary {champion_name : {stats}}
+ALL_CHAMPION_BASE_STAT={}
+for x in champion_list:
+    ALL_CHAMPION_BASE_STAT[x]=dataset["data"][x]["stats"]
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion
@@ -84,5 +44,15 @@ class Annie(BaseChampion):
 
 class Ahri(BaseChampion):
     champion_name = "Ahri"
+    def __init__(self):
+        super().__init__(champion_name=__class__.champion_name)
+
+class Jax(BaseChampion):
+    champion_name = "Jax"
+    def __init__(self):
+        super().__init__(champion_name=__class__.champion_name)
+
+class Irelia(BaseChampion):
+    champion_name = "Irelia"
     def __init__(self):
         super().__init__(champion_name=__class__.champion_name)
