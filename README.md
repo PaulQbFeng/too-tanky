@@ -21,7 +21,30 @@ It can also be extended to Teamfight Tactics in the future.
 
 - Aller dans le dossier `too-tanky`, et faire `git status`
 
+## Installer les dépendances
+
+```
+pip install -r requirements.txt -r requirements-dev.txt
+```
+
+## Formater
+
+Pour garder un style uniforme, on formate le code avec [`isort`](https://pypi.org/project/isort/) et [`black`](https://pypi.org/project/black/).
+Ceci peut être fait automatiquement avant chaque commit, avec la commande suivante qui crée un pre-commit hook avec le script `pre-commit.sh`:
+
+```
+ln -s ../../pre-commit.sh .git/hooks/pre-commit
+```
+
+On peut aussi simplement appliquer `isort` et `black` manuellement avant chaque `git add`, avec les commandes suivantes:
+
+```
+isort .
+black .
+```
+
 ## Tester
 
-- Installer pytest `pip install -r requirements-dev.txt`
-- Lancer `pytest`
+```
+pytest
+```
