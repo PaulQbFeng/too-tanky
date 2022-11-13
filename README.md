@@ -1,5 +1,11 @@
 # too-tanky
 
+## Introduction
+
+too-tanky is an extensive, highly customizable League of Legends damage simulator. 
+It can simulate the damage output between any combination of characters, level, items, runes etc...
+
+It can also be extended to Teamfight Tactics in the future. 
 
 
 ## comment cloner le projet github dans windows
