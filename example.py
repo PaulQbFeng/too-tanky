@@ -1,4 +1,5 @@
-from champion import Annie, Ahri, Jax, Irelia
+from champion import Ahri, Annie, Irelia, Jax
+
 annie = Annie()
 ahri = Ahri()
 jax = Jax()

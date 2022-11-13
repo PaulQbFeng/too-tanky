@@ -1,4 +1,5 @@
-from champion import Annie, Ahri
+from champion import Ahri, Annie
+
 
 def test_auto_attack_lvl1():
     annie = Annie()
