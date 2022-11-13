@@ -1,5 +1,6 @@
+import json
+import os
 from damage import damage_ad_armor
-import json, os
 
 file = open("data/champion.json", encoding="utf8")
 dataset = json.load(file)
@@ -8,10 +9,13 @@ dataset = json.load(file)
 champion_list = list(dataset["data"].keys())
 
 #build dictionnary {champion_name : {stats}}
-ALL_CHAMPION_BASE_STAT={}
-for x in champion_list:
-    ALL_CHAMPION_BASE_STAT[x]=dataset["data"][x]["stats"]
+def fill_champion_stats(dataset: dict):
+    ALL_CHAMPION_BASE_STAT={}
+    for x in champion_list:
+        ALL_CHAMPION_BASE_STAT[x]=dataset["data"][x]["stats"]
+    return(ALL_CHAMPION_BASE_STAT)
 
+ALL_CHAMPION_BASE_STAT = fill_champion_stats(dataset)
 
 # TODO: Might be a good opportunity to use abstract class for base champion
 class BaseChampion:
@@ -34,6 +38,7 @@ class BaseChampion:
     def auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
         return damage_ad_armor(self.attackdamage, enemy_champion.armor)
+
 
 
 # Each champion has its own class as their spells have different effects.
