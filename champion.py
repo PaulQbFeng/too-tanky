@@ -1,16 +1,18 @@
-from damage import damage_ad_armor
-import json, os
+import json
+import os
 
-file = open("data/champion.json", encoding="utf8")
+from damage import damage_ad_armor
+
+file = open("data/ddragon/champion.json", encoding="utf8")
 dataset = json.load(file)
 
-#define champion list
+# define champion list
 champion_list = list(dataset["data"].keys())
 
-#build dictionnary {champion_name : {stats}}
-ALL_CHAMPION_BASE_STAT={}
+# build dictionnary {champion_name : {stats}}
+ALL_CHAMPION_BASE_STAT = {}
 for x in champion_list:
-    ALL_CHAMPION_BASE_STAT[x]=dataset["data"][x]["stats"]
+    ALL_CHAMPION_BASE_STAT[x] = dataset["data"][x]["stats"]
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion
@@ -24,7 +26,8 @@ class BaseChampion:
         - auto attack
         ...
     """
-    def __init__(self, champion_name: str):  
+
+    def __init__(self, champion_name: str):
         self.initialize_base_stat(champion_name)
 
     def initialize_base_stat(self, champion_name):
@@ -39,20 +42,27 @@ class BaseChampion:
 # Each champion has its own class as their spells have different effects.
 class Annie(BaseChampion):
     champion_name = "Annie"
+
     def __init__(self):
         super().__init__(champion_name=__class__.champion_name)
+
 
 class Ahri(BaseChampion):
     champion_name = "Ahri"
+
     def __init__(self):
         super().__init__(champion_name=__class__.champion_name)
+
 
 class Jax(BaseChampion):
     champion_name = "Jax"
+
     def __init__(self):
         super().__init__(champion_name=__class__.champion_name)
 
+
 class Irelia(BaseChampion):
     champion_name = "Irelia"
+
     def __init__(self):
         super().__init__(champion_name=__class__.champion_name)
