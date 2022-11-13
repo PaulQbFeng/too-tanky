@@ -1,70 +1,79 @@
 import json, os
 import matplotlib.pyplot as plt
 
-#lists of all json files
-list_of_json = []
-for file in os.listdir("data/raw-community-dragon/champions"):
-    if file.endswith(".json"):
-        list_of_json.append(file)
+#gets a list of json files from a directory
+def get_json_files(directory : str):
+    list_of_json = []
+    for file in os.listdir(directory):
+        if file.endswith(".json"):
+            list_of_json.append(file)
+    return(list_of_json)
 
-os.chdir("data/raw-community-dragon/champions")
+#sort a list of dic of type {key: value}, by value from highest to lowest
+def sort_list_of_dict_by_value_high_to_low(list_of_dic : list):
+    list_of_dic = sorted(list_of_dic, key=lambda d : next(iter(d.values())), reverse=True)
+    return list_of_dic
 
-#init
-all_skins = []
-name_list = []
-
-for x in list_of_json:
-    #open the json file
-    file = open(x, encoding="utf8")
-
-    #json to dict
-    champ = json.load(file)
-
-    #name
+#takes a json file and returns a dictionnary {champion name : list_of_skins}
+def skin_parser(file : str):
+    champ = json.load(open(file, encoding="utf8"))
+    #name, check if json file is valid
     if "name" in champ:
         name = champ['name']
-
     #list of skins
     skin_list=[]
-    if "skins" in champ:
+    if "skins" in champ: #check if json file is valid
         for i in range(len(champ['skins'])):
             skin_list.append(champ['skins'][i]['name'])
+    return {name : skin_list}
 
-    if (name != "None") and ("name" in champ):
-        dictionnary = {name : skin_list}
-        all_skins.append(dictionnary)
-        name_list.append(name)
+def sort_list_of_dict_by_key(list_of_dic : list):
+    list_of_dic = sorted(list_of_dic, key = lambda d: next(iter(d)), reverse=True)
+    return list_of_dic
 
-#sort the list of dict, dict is {champion name : list of skins}
-name_list.sort()
-all_skins=sorted(all_skins, key=lambda d: [k in d for k in name_list], reverse=True)
-print(all_skins)
-
-#nombre de skin par champion trié par ordre croissant : dict is {champion name : nb of skins (including base)}
-dict_nb_skin=[]
-for x in all_skins:
-    keys = list(x.keys())
+#takes {champion : list_of_skins} and returns {champion : number_of_skins}
+def get_number_of_skins(dic : dict):
+    keys = list(dic.keys())
     name = keys[0]
     nb_skins = len(x[name])
     dictionnary = {name : nb_skins}
-    dict_nb_skin.append(dictionnary)
-#print(dict_nb_skin)
+    return dictionnary
 
-#sort dict_nb_skin by value
-def first_value(d):
-    return next(iter(d.values()))
+def plot_nb_skins(list_of_dic : list):
+    names=[]
+    values=[]
+    for x in list_of_dic:
+        keys=list(x.keys())
+        names.append(keys[0])
+        values.append(x[keys[0]])
+    plt.bar(range(len(names)), values, tick_label=names)
+    plt.show()
 
-dict_nb_skin = sorted(dict_nb_skin, key=first_value, reverse=True)
 
-#print(dict_nb_skin)
+#init
+all_skins = []
+
+#get the list of all the json files
+list_of_json = get_json_files("data/raw-community-dragon/champions")
+os.chdir("data/raw-community-dragon/champions")
+
+#parse the json file and build a list of all dictionnaries {champion : list_of skins}
+for x in list_of_json:
+        dictionnary = skin_parser(x)
+        all_skins.append(dictionnary)
+
+#sort the list of dict, by alphabetical order of champion name, dict is {champion name : list of skins}
+all_skins=sort_list_of_dict_by_key(all_skins)
+print(all_skins)
+
+#list of dict {champion name : nb of skins (including base)}
+list_dict_nb_skin=[]
+for x in all_skins:
+    list_dict_nb_skin.append(get_number_of_skins(x))
+
+#sort dict_nb_skin by number of skins, highest to lowest
+list_dict_nb_skin = sort_list_of_dict_by_value_high_to_low(list_dict_nb_skin)
 
 #plot
-names=[]
-values=[]
-for x in dict_nb_skin:
-    keys=list(x.keys())
-    names.append(keys[0])
-    values.append(x[keys[0]])
+plot_nb_skins(list_dict_nb_skin)
 
-plt.bar(range(len(names)), values, tick_label=names)
-plt.show()
