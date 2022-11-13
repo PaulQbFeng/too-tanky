@@ -20,3 +20,8 @@ It can also be extended to Teamfight Tactics in the future.
 - Pour cloner le repo, `git clone git@github.com:PaulQbFeng/too-tanky.git`
 
 - Aller dans le dossier `too-tanky`, et faire `git status`
+
+## Tester
+
+- Installer pytest `pip install -r requirements-dev.txt`
+- Lancer `pytest`
