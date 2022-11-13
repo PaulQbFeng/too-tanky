@@ -11,4 +11,6 @@ jobs:
           python-version: '3.9'
           cache: 'pip'
       - run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Check formatting
+        run: isort . -c && black . --check
       - run: pytest
