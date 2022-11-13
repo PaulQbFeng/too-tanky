@@ -49,10 +49,10 @@ class BaseChampion:
     def update_stat_from_level(self):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
 
-        def get_stat_from_level(base_stat, stat_name):
+        def get_stat_from_level(base_stats: dict, stat_name: str):
             """Flat scaling for all stats except for attack speed"""
-            stat = base_stat[stat_name]
-            stat_perlevel = base_stat[stat_name + "perlevel"]
+            stat = base_stats[stat_name]
+            stat_perlevel = base_stats[stat_name + "perlevel"]
             if stat_name == "attackspeed":
                 # attack speed scaling is in % instead of flat.
                 return stat * (1 + stat_perlevel * (self.level - 1) / 100)
