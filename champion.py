@@ -1,5 +1,4 @@
 import json
-import os
 
 import numpy as np
 
@@ -8,15 +7,17 @@ from damage import damage_ad_armor
 file = open("data/ddragon/champion.json", encoding="utf8")
 dataset = json.load(file)
 
-# define champion list
-champion_list = list(dataset["data"].keys())
-
 # build dictionnary {champion_name : {stats}}
-ALL_CHAMPION_BASE_STAT = {}
-for x in champion_list:
-    ALL_CHAMPION_BASE_STAT[x] = dataset["data"][x]["stats"]
+def fill_champion_stats(dataset: dict):
+    # define champion list
+    champion_list = list(dataset["data"].keys())
+    ALL_CHAMPION_BASE_STAT = {}
+    for x in champion_list:
+        ALL_CHAMPION_BASE_STAT[x] = dataset["data"][x]["stats"]
+    return ALL_CHAMPION_BASE_STAT
 
-scaling_stat_names = [
+
+SCALING_STAT_NAMES = [
     "hp",
     "mp",
     "armor",
@@ -27,6 +28,8 @@ scaling_stat_names = [
     "attackdamage",
     "attackspeed",
 ]
+
+ALL_CHAMPION_BASE_STAT = fill_champion_stats(dataset)
 
 # TODO: Might be a good opportunity to use abstract class for base champion
 class BaseChampion:
@@ -58,7 +61,7 @@ class BaseChampion:
                 return stat * (1 + stat_perlevel * (self.level - 1) / 100)
             return stat + stat_perlevel * (self.level - 1)
 
-        for stat_name in scaling_stat_names:
+        for stat_name in SCALING_STAT_NAMES:
             self.__dict__[stat_name] = get_stat_from_level(self.base_stats, stat_name)
 
     def auto_attack(self, enemy_champion):
