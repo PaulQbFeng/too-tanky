@@ -7,6 +7,9 @@ It can simulate the damage output between any combination of characters, level, 
 
 It can also be extended to Teamfight Tactics in the future. 
 
+## Dive in to the maths
+
+- To understand champion base stat evolution per level: https://leagueoflegends.fandom.com/wiki/Champion_statistic
 
 ## comment cloner le projet github dans windows
 
