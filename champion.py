@@ -1,20 +1,33 @@
 import json
-import os
-from damage import damage_ad_armor
+
+import numpy as np
 
 from damage import damage_ad_armor
 
 file = open("data/ddragon/champion.json", encoding="utf8")
 dataset = json.load(file)
 
-#build dictionnary {champion_name : {stats}}
+# build dictionnary {champion_name : {stats}}
 def fill_champion_stats(dataset: dict):
     # define champion list
     champion_list = list(dataset["data"].keys())
-    ALL_CHAMPION_BASE_STAT={}
+    ALL_CHAMPION_BASE_STAT = {}
     for x in champion_list:
-        ALL_CHAMPION_BASE_STAT[x]=dataset["data"][x]["stats"]
-    return(ALL_CHAMPION_BASE_STAT)
+        ALL_CHAMPION_BASE_STAT[x] = dataset["data"][x]["stats"]
+    return ALL_CHAMPION_BASE_STAT
+
+
+SCALING_STAT_NAMES = [
+    "hp",
+    "mp",
+    "armor",
+    "spellblock",
+    "hpregen",
+    "mpregen",
+    "crit",
+    "attackdamage",
+    "attackspeed",
+]
 
 ALL_CHAMPION_BASE_STAT = fill_champion_stats(dataset)
 
@@ -30,43 +43,61 @@ class BaseChampion:
         ...
     """
 
-    def __init__(self, champion_name: str):
-        self.initialize_base_stat(champion_name)
+    def __init__(self, champion_name: str, level: int):
+        assert level in np.arange(1, 19), "Champion level should be in the [1,18] range"
+        self.level = level
+        self.base_stats = ALL_CHAMPION_BASE_STAT[champion_name]
+        self.update_stat_from_level()
 
-    def initialize_base_stat(self, champion_name):
+    def update_stat_from_level(self):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
-        self.__dict__.update(ALL_CHAMPION_BASE_STAT[champion_name])
+
+        def calculate_flat_stat_from_level(base: float, mean_growth_perlevel: float, level: int):
+            # Check Readme for formula detail
+            return base + mean_growth_perlevel * (level - 1) * (0.7025 + 0.0175 * (level - 1))
+
+        def calculate_stat_from_level(base_stats: dict, stat_name: str, level: int):
+            """Flat scaling for all stats except for attack speed"""
+            stat = base_stats[stat_name]
+            mean_growth_perlevel = base_stats[stat_name + "perlevel"]
+            if stat_name == "attackspeed":
+                # attack speed scaling is in % instead of flat. Base increase level 1 is considered to be 0 %.
+                percentage_increase = calculate_flat_stat_from_level(0, mean_growth_perlevel, level)
+                return stat * (1 + percentage_increase / 100)
+            return calculate_flat_stat_from_level(stat, mean_growth_perlevel, level)
+
+        for stat_name in SCALING_STAT_NAMES:
+            self.__dict__[stat_name] = calculate_stat_from_level(self.base_stats, stat_name, self.level)
 
     def auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
         return damage_ad_armor(self.attackdamage, enemy_champion.armor)
 
 
-
 # Each champion has its own class as their spells have different effects.
 class Annie(BaseChampion):
     champion_name = "Annie"
 
-    def __init__(self):
-        super().__init__(champion_name=__class__.champion_name)
+    def __init__(self, level: int = 1):
+        super().__init__(champion_name=__class__.champion_name, level=level)
 
 
 class Ahri(BaseChampion):
     champion_name = "Ahri"
 
-    def __init__(self):
-        super().__init__(champion_name=__class__.champion_name)
+    def __init__(self, level: int = 1):
+        super().__init__(champion_name=__class__.champion_name, level=level)
 
 
 class Jax(BaseChampion):
     champion_name = "Jax"
 
-    def __init__(self):
-        super().__init__(champion_name=__class__.champion_name)
+    def __init__(self, level: int = 1):
+        super().__init__(champion_name=__class__.champion_name, level=level)
 
 
 class Irelia(BaseChampion):
     champion_name = "Irelia"
 
-    def __init__(self):
-        super().__init__(champion_name=__class__.champion_name)
+    def __init__(self, level: int = 1):
+        super().__init__(champion_name=__class__.champion_name, level=level)
