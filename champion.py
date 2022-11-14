@@ -3,33 +3,8 @@ import json
 import numpy as np
 
 from damage import damage_ad_armor
+from data_parser import SCALING_STAT_NAMES, ALL_CHAMPION_BASE_STATS
 
-file = open("data/ddragon/champion.json", encoding="utf8")
-dataset = json.load(file)
-
-# build dictionnary {champion_name : {stats}}
-def fill_champion_stats(dataset: dict):
-    # define champion list
-    champion_list = list(dataset["data"].keys())
-    ALL_CHAMPION_BASE_STAT = {}
-    for x in champion_list:
-        ALL_CHAMPION_BASE_STAT[x] = dataset["data"][x]["stats"]
-    return ALL_CHAMPION_BASE_STAT
-
-
-SCALING_STAT_NAMES = [
-    "hp",
-    "mp",
-    "armor",
-    "spellblock",
-    "hpregen",
-    "mpregen",
-    "crit",
-    "attackdamage",
-    "attackspeed",
-]
-
-ALL_CHAMPION_BASE_STAT = fill_champion_stats(dataset)
 
 # TODO: Might be a good opportunity to use abstract class for base champion
 class BaseChampion:
