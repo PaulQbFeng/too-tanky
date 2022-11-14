@@ -21,7 +21,7 @@ class BaseChampion:
     def __init__(self, champion_name: str, level: int = 1):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
-        self.base_stats = ALL_CHAMPION_BASE_STAT[champion_name]
+        self.base_stats = ALL_CHAMPION_BASE_STATS[champion_name]
         self.update_stat_from_level()
 
     def update_stat_from_level(self):
