@@ -52,17 +52,22 @@ class BaseChampion:
     def update_stat_from_level(self):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
 
-        def get_stat_from_level(base_stats: dict, stat_name: str):
+        def calculate_flat_stat_from_level(base: float, mean_growth_perlevel: float, level: int):
+            # Check Readme for formula detail
+            return base + mean_growth_perlevel * (level - 1) * (0.7025 + 0.0175 * (level - 1))
+
+        def calculate_stat_from_level(base_stats: dict, stat_name: str, level: int):
             """Flat scaling for all stats except for attack speed"""
             stat = base_stats[stat_name]
-            stat_perlevel = base_stats[stat_name + "perlevel"]
+            mean_growth_perlevel = base_stats[stat_name + "perlevel"]
             if stat_name == "attackspeed":
-                # attack speed scaling is in % instead of flat.
-                return stat * (1 + stat_perlevel * (self.level - 1) / 100)
-            return stat + stat_perlevel * (self.level - 1)
+                # attack speed scaling is in % instead of flat. Base increase level 1 is considered to be 0 %.
+                percentage_increase = calculate_flat_stat_from_level(0, mean_growth_perlevel, level)
+                return stat * (1 + percentage_increase / 100)
+            return calculate_flat_stat_from_level(stat, mean_growth_perlevel, level)
 
         for stat_name in SCALING_STAT_NAMES:
-            self.__dict__[stat_name] = get_stat_from_level(self.base_stats, stat_name)
+            self.__dict__[stat_name] = calculate_stat_from_level(self.base_stats, stat_name, self.level)
 
     def auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
