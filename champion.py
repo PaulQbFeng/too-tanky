@@ -53,7 +53,8 @@ class BaseChampion:
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
 
         def calculate_flat_stat_from_level(base: float, mean_growth_perlevel: float, level: int):
-            # Check Readme for formula detail
+            """As described in league wiki: https://leagueoflegends.fandom.com/wiki/Champion_statistic#Growth_statistic_calculations"""
+            
             return base + mean_growth_perlevel * (level - 1) * (0.7025 + 0.0175 * (level - 1))
 
         def calculate_stat_from_level(base_stats: dict, stat_name: str, level: int):
