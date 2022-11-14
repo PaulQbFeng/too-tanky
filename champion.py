@@ -43,8 +43,8 @@ class BaseChampion:
         ...
     """
 
-    def __init__(self, champion_name: str, level: int):
-        assert isisntance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
+    def __init__(self, champion_name: str, level: int = 1):
+        assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
         self.base_stats = ALL_CHAMPION_BASE_STAT[champion_name]
         self.update_stat_from_level()
@@ -79,26 +79,26 @@ class BaseChampion:
 class Annie(BaseChampion):
     champion_name = "Annie"
 
-    def __init__(self, level: int = 1):
-        super().__init__(champion_name=__class__.champion_name, level=level)
+    def __init__(self, **kwargs):
+        super().__init__(champion_name=__class__.champion_name, **kwargs)
 
 
 class Ahri(BaseChampion):
     champion_name = "Ahri"
 
-    def __init__(self, level: int = 1):
-        super().__init__(champion_name=__class__.champion_name, level=level)
+    def __init__(self, **kwargs):
+        super().__init__(champion_name=__class__.champion_name, **kwargs)
 
 
 class Jax(BaseChampion):
     champion_name = "Jax"
 
-    def __init__(self, level: int = 1):
-        super().__init__(champion_name=__class__.champion_name, level=level)
+    def __init__(self, **kwargs):
+        super().__init__(champion_name=__class__.champion_name, **kwargs)
 
 
 class Irelia(BaseChampion):
     champion_name = "Irelia"
 
-    def __init__(self, level: int = 1):
-        super().__init__(champion_name=__class__.champion_name, level=level)
+    def __init__(self, **kwargs):
+        super().__init__(champion_name=__class__.champion_name, **kwargs)
