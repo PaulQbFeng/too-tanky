@@ -1,13 +1,7 @@
 import json, os
 import matplotlib.pyplot as plt
+from data_parser import get_json_files
 
-#gets a list of json files from a directory
-def get_json_files(directory : str):
-    list_of_json = []
-    for file in os.listdir(directory):
-        if file.endswith(".json"):
-            list_of_json.append(file)
-    return(list_of_json)
 
 #sort a list of dic of type {key: value}, by value from highest to lowest
 def sort_list_of_dict_by_value_high_to_low(list_of_dic : list):
