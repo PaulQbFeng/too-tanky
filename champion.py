@@ -44,7 +44,7 @@ class BaseChampion:
     """
 
     def __init__(self, champion_name: str, level: int):
-        assert level in np.arange(1, 19), "Champion level should be in the [1,18] range"
+        assert isisntance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
         self.base_stats = ALL_CHAMPION_BASE_STAT[champion_name]
         self.update_stat_from_level()
