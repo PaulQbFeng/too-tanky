@@ -49,6 +49,9 @@ class BaseChampion:
         """Calculates the damage dealt to an enemy champion with an autoattack"""
         return damage_ad_armor(self.attackdamage, enemy_champion.armor)
 
+    def equip_item():
+        print("equiped")
+
 
 # Each champion has its own class as their spells have different effects.
 class Annie(BaseChampion):
