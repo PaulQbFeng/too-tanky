@@ -1,3 +1,5 @@
+# TODO: it seems that hp are ceiled while damage floored. (however it seems that the ad is rounded in the stat section ingame)
+
 def damage_ad_armor(attack_ad: float, defense_armor: float):
     """
     Calculates the output damage of an auto attack from a champion with X amount of 
