@@ -1,0 +1,2 @@
+from damage import damage_normal_auto_attack, damage_empowered_auto_attack
+
