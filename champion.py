@@ -56,6 +56,7 @@ class BaseChampion:
             stats[stat_name] = (self.__dict__[stat_name])
         return stats
 
+
 # Each champion has its own class as their spells have different effects.
 class Annie(BaseChampion):
     champion_name = "Annie"
