@@ -68,7 +68,7 @@ def test_ahri_stat_perlevel():
 def test_get_stats():
     annie=Annie(level = 18)
     stats_annie = annie.get_stats()
-    stats_annie = {key : round(stats_annie[key], 2) for key in stats_annie}
+    stats_annie = {stat_name: round(stat, 2) for stat_name, stat in stats_annie.items()}
 
     assert stats_annie == {
         'hp': 2328.0, 
