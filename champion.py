@@ -2,7 +2,9 @@ import json
 
 import numpy as np
 
-from damage import damage_ad_armor
+from damage import physical_damage_after_positive_armor
+from damage import damage_normal_auto_attack_no_crit
+from damage import damage_normal_auto_attack_with_crit
 from data_parser import SCALING_STAT_NAMES, ALL_CHAMPION_BASE_STATS
 
 
@@ -29,7 +31,7 @@ class BaseChampion:
 
         def calculate_flat_stat_from_level(base: float, mean_growth_perlevel: float, level: int):
             """As described in league wiki: https://leagueoflegends.fandom.com/wiki/Champion_statistic#Growth_statistic_calculations"""
-            
+
             return base + mean_growth_perlevel * (level - 1) * (0.7025 + 0.0175 * (level - 1))
 
         def calculate_stat_from_level(base_stats: dict, stat_name: str, level: int):
@@ -47,7 +49,7 @@ class BaseChampion:
 
     def auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
-        return damage_ad_armor(self.attackdamage, enemy_champion.armor)
+        return physical_damage_after_positive_armor(self.attackdamage, enemy_champion.armor)
 
     def get_stats(self):
         """Get the dictionnary of stats"""
@@ -55,6 +57,21 @@ class BaseChampion:
         for stat_name in SCALING_STAT_NAMES:
             stats[stat_name] = (self.__dict__[stat_name])
         return stats
+
+
+# Dummy class for tests in practice tool.
+class Dummy:
+
+    def __init__(self, health: float, bonus_armor: float, bonus_magicresist: float):
+        assert bonus_armor == bonus_magicresist
+        assert bonus_armor % 10 == 0
+        assert health % 100 == 0
+        assert health <= 10000
+        self.health = health
+        self.armor = 0
+        self.magicresist = 0
+        self.bonus_armor = bonus_armor
+        self.bonus_magicresist = bonus_magicresist
 
 
 # Each champion has its own class as their spells have different effects.
@@ -67,6 +84,13 @@ class Annie(BaseChampion):
 
 class Ahri(BaseChampion):
     champion_name = "Ahri"
+
+    def __init__(self, **kwargs):
+        super().__init__(champion_name=__class__.champion_name, **kwargs)
+
+
+class Caitlyn(BaseChampion):
+    champion_name = "Caitlyn"
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)

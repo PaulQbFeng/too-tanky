@@ -9,7 +9,6 @@ def test_auto_attack_lvl1():
     assert round(annie.auto_attack(ahri), 2) == 42.37
     assert round(ahri.auto_attack(annie), 2) == 44.54
 
-
 def test_ahri_stat_perlevel():
     """Stats per level are checked in game"""
     attack_speed = []
