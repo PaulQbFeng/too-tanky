@@ -62,7 +62,6 @@ class Dummy:
         assert bonus_armor == bonus_magicresist
         assert bonus_armor % 10 == 0
         assert health % 100 == 0
-        assert health >= 1000
         assert health <= 10000
         self.health = health
         self.armor = 0
