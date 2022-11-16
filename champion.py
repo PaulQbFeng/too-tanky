@@ -65,6 +65,8 @@ class Dummy:
         assert health >= 1000
         assert health <= 10000
         self.health = health
+        self.armor = 0
+        self.magicresist = 0
         self.bonus_armor = bonus_armor
         self.bonus_magicresist = bonus_magicresist
 
