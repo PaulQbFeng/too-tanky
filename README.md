@@ -10,6 +10,8 @@ It can also be extended to Teamfight Tactics in the future.
 ## Dive in to the maths
 
 - To understand champion base stat evolution per level: https://leagueoflegends.fandom.com/wiki/Champion_statistic
+- To understand all the basics regarding damage calculation: https://docs.google.com/document/d/1wPY_ct0J45I3wxpHZgoLFAQKTSU2UfqF/edit?usp=sharing&ouid=100966089533647159501&rtpof=true&sd=true
+- Details about runes (including adaptive runes): https://leagueoflegends.fandom.com/wiki/Rune_(League_of_Legends)
 
 ## comment cloner le projet github dans windows
 

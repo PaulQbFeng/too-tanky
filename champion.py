@@ -25,7 +25,7 @@ class BaseChampion:
         self.level = level
         self.base_stats = ALL_CHAMPION_BASE_STATS[champion_name]
         self.update_stat_from_level()
-
+        
     def update_stat_from_level(self):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
 
@@ -51,8 +51,12 @@ class BaseChampion:
         """Calculates the damage dealt to an enemy champion with an autoattack"""
         return physical_damage_after_positive_armor(self.attackdamage, enemy_champion.armor)
 
-    def equip_item():
-        print("equiped")
+    def get_stats(self):
+        """Get the dictionnary of stats"""
+        stats={}
+        for stat_name in SCALING_STAT_NAMES:
+            stats[stat_name] = (self.__dict__[stat_name])
+        return stats
 
 
 # Dummy class for tests in practice tool.
