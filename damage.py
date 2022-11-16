@@ -33,8 +33,7 @@ def damage_normal_auto_attack_no_crit(attack_base_ad: float, attack_bonus_ad: fl
         armor_eq = defense_base_armor * (1 - attack_armor_pen) + defense_bonus_armor * (1 - attack_armor_pen) * (
                 1 - attack_bonus_armor_pen)
         armor_eq = armor_eq - attack_flat_armor_pen
-        if armor_eq < 0:
-            armor_eq = 0
+        armor_eq = max(armor_eq, 0)
         return physical_damage_after_positive_armor(pre_mitigation_damage, armor_eq)
 
 
@@ -56,8 +55,7 @@ def damage_normal_auto_attack_with_crit(attack_base_ad: float, attack_bonus_ad: 
         armor_eq = defense_base_armor * (1 - attack_armor_pen) + defense_bonus_armor * (1 - attack_armor_pen) * (
                 1 - attack_bonus_armor_pen)
         armor_eq = armor_eq - attack_flat_armor_pen
-        if armor_eq < 0:
-            armor_eq = 0
+        armor_eq = max(armor_eq, 0)
         return physical_damage_after_positive_armor(pre_mitigation_damage, armor_eq)
 
 
@@ -80,8 +78,7 @@ def avg_damage_normal_auto_attack(attack_base_ad: float, attack_bonus_ad: float,
         armor_eq = defense_base_armor * (1 - attack_armor_pen) + defense_bonus_armor * (1 - attack_armor_pen) * (
                 1 - attack_bonus_armor_pen)
         armor_eq = armor_eq - attack_flat_armor_pen
-        if armor_eq < 0:
-            armor_eq = 0
+        armor_eq = max(armor_eq, 0)
         return physical_damage_after_positive_armor(pre_mitigation_damage, armor_eq)
 
 
@@ -104,8 +101,7 @@ def damage_empowered_auto_attack_no_crit(attack_base_ad: float, attack_bonus_ad:
         armor_eq = defense_base_armor * (1 - attack_armor_pen) + defense_bonus_armor * (1 - attack_armor_pen) * (
                 1 - attack_bonus_armor_pen)
         armor_eq = armor_eq - attack_flat_armor_pen
-        if armor_eq < 0:
-            armor_eq = 0
+        armor_eq = max(armor_eq, 0)
         return physical_damage_after_positive_armor(pre_mitigation_damage, armor_eq)
 
 
@@ -129,8 +125,7 @@ def damage_empowered_auto_attack_with_crit(attack_base_ad: float, attack_bonus_a
         armor_eq = defense_base_armor * (1 - attack_armor_pen) + defense_bonus_armor * (1 - attack_armor_pen) * (
                 1 - attack_bonus_armor_pen)
         armor_eq = armor_eq - attack_flat_armor_pen
-        if armor_eq < 0:
-            armor_eq = 0
+        armor_eq = max(armor_eq, 0)
         return physical_damage_after_positive_armor(pre_mitigation_damage, armor_eq)
 
 
@@ -153,6 +148,5 @@ def avg_damage_empowered_auto_attack(attack_base_ad: float, attack_bonus_ad: flo
         armor_eq = defense_base_armor * (1 - attack_armor_pen) + defense_bonus_armor * (1 - attack_armor_pen) * (
                 1 - attack_bonus_armor_pen)
         armor_eq = armor_eq - attack_flat_armor_pen
-        if armor_eq < 0:
-            armor_eq = 0
+        armor_eq = max(armor_eq, 0)
         return physical_damage_after_positive_armor(pre_mitigation_damage, armor_eq)
