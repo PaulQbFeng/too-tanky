@@ -1,7 +1,5 @@
 from champion import Annie, Ahri, Jax, Irelia
 from data_parser import SCALING_STAT_NAMES
-
-
 annie = Annie()
 ahri = Ahri()
 jax = Jax()
