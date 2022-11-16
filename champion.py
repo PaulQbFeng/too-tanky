@@ -3,6 +3,8 @@ import json
 import numpy as np
 
 from damage import damage_ad_armor
+from damage import damage_normal_auto_attack_no_crit
+from damage import damage_normal_auto_attack_with_crit
 from data_parser import SCALING_STAT_NAMES, ALL_CHAMPION_BASE_STATS
 
 
@@ -29,7 +31,7 @@ class BaseChampion:
 
         def calculate_flat_stat_from_level(base: float, mean_growth_perlevel: float, level: int):
             """As described in league wiki: https://leagueoflegends.fandom.com/wiki/Champion_statistic#Growth_statistic_calculations"""
-            
+
             return base + mean_growth_perlevel * (level - 1) * (0.7025 + 0.0175 * (level - 1))
 
         def calculate_stat_from_level(base_stats: dict, stat_name: str, level: int):
@@ -51,6 +53,20 @@ class BaseChampion:
 
     def equip_item():
         print("equiped")
+
+
+# Dummy class for tests in practice tool.
+class Dummy:
+
+    def __init__(self, health: float, bonus_armor: float, bonus_magicresist: float):
+        assert bonus_armor == bonus_magicresist
+        assert bonus_armor % 10 == 0
+        assert health % 100 == 0
+        assert health >= 1000
+        assert health <= 10000
+        self.health = health
+        self.bonus_armor = bonus_armor
+        self.bonus_magicresist = bonus_magicresist
 
 
 # Each champion has its own class as their spells have different effects.
