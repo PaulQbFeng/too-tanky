@@ -63,3 +63,21 @@ def test_ahri_stat_perlevel():
     ]
 
     assert attack_damage == [53, 55, 57, 60, 62, 65, 68, 70, 73, 76, 79, 83, 86, 89, 93, 96, 100, 104]
+
+def test_get_stats():
+    annie=Annie(level = 18)
+    stats_annie = annie.get_stats()
+    stats_annie = {stat_name: round(stat, 2) for stat_name, stat in stats_annie.items()}
+
+    assert stats_annie == {
+        'hp': 2328.0, 
+        'mp': 843.0, 
+        'armor': 107.4, 
+        'spellblock': 52.1, 
+        'hpregen': 14.85, 
+        'mpregen': 21.6, 
+        'crit': 0.0, 
+        'attackdamage': 95.05, 
+        'attackspeed': 0.71
+        }
+

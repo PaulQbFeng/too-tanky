@@ -1,0 +1,13 @@
+health
+mana
+attack_damage
+attack_speed
+ability_power
+armor_pen
+magic_pen
+gold
+attack_range
+crit
+crit_damage
+move_speed
+lethality

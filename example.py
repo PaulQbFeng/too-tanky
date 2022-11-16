@@ -1,5 +1,6 @@
 from champion import Annie, Ahri, Jax, Irelia
 from data_parser import SCALING_STAT_NAMES
+
 annie = Annie()
 ahri = Ahri()
 jax = Jax()
@@ -14,3 +15,6 @@ print(f"Ahri lvl 1 auto Annie level 1, damage dealt: {round(damage1, 2)}")
 print(f"Annie lvl 1 auto Ahri level 1, damage dealt: {round(damage2, 2)}")
 print(f"Jax lvl 1 auto Irelia level 1, damage dealt: {round(damage3, 2)}")
 print(f"Irelia lvl 1 auto Jax level 1, damage dealt: {round(damage4, 2)}")
+
+annie=Annie(level = 18)
+print(annie.get_stats())
