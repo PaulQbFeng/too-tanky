@@ -2,7 +2,7 @@ import json
 
 import numpy as np
 
-from damage import damage_ad_armor
+from damage import physical_damage_after_positive_armor
 from damage import damage_normal_auto_attack_no_crit
 from damage import damage_normal_auto_attack_with_crit
 from data_parser import SCALING_STAT_NAMES, ALL_CHAMPION_BASE_STATS
@@ -49,7 +49,7 @@ class BaseChampion:
 
     def auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
-        return damage_ad_armor(self.attackdamage, enemy_champion.armor)
+        return physical_damage_after_positive_armor(self.attackdamage, enemy_champion.armor)
 
     def equip_item():
         print("equiped")
