@@ -5,11 +5,45 @@ from damage import damage_empowered_auto_attack_no_crit
 from damage import damage_empowered_auto_attack_with_crit
 
 
-def test_auto_attack_cait_lvl11_ie():
-    assert math.floor(damage_normal_auto_attack_no_crit(attack_base_ad=75, attack_bonus_ad=95, attack_lethality=0,
-                                                        attack_level=11, attack_armor_pen=0, attack_bonus_armor_pen=0,
-                                                        defense_base_armor=60, defense_bonus_armor=0)) == 107
-    assert math.floor(damage_normal_auto_attack_with_crit(attack_base_ad=75, attack_bonus_ad=95,
-                                                          attack_bonus_crit_damage=0, attack_lethality=0,
-                                                          attack_level=11, attack_armor_pen=0, attack_bonus_armor_pen=0,
-                                                          defense_base_armor=60, defense_bonus_armor=0)) == 187
+def tests_normal_auto_attack_cait_dummy_60():
+    """
+    Tests of caitlyn autoattacks (non-crits and crits) without her passive (Headshot) at different levels and with
+    different items against a dummy with 60 bonus armor and 60 bonus mr
+    Caitlyn has one adaptive force rune which gives 5.4 attack damage
+    """
+    # Caitlyn level 1 with a doran's blade
+    assert round(damage_normal_auto_attack_no_crit(attack_base_ad=62, attack_bonus_ad=13.4, attack_lethality=0,
+                                                   attack_level=11, attack_armor_pen=0, attack_bonus_armor_pen=0,
+                                                   defense_base_armor=60, defense_bonus_armor=0)) == 47
+    # Caitlyn level 11 with an infinity edge
+    assert round(damage_normal_auto_attack_no_crit(attack_base_ad=95.345, attack_bonus_ad=75.4, attack_lethality=0,
+                                                   attack_level=11, attack_armor_pen=0, attack_bonus_armor_pen=0,
+                                                   defense_base_armor=60, defense_bonus_armor=0)) == 107
+    assert round(damage_normal_auto_attack_with_crit(attack_base_ad=95.345, attack_bonus_ad=75.4,
+                                                     attack_bonus_crit_damage=0, attack_lethality=0,
+                                                     attack_level=11, attack_armor_pen=0, attack_bonus_armor_pen=0,
+                                                     defense_base_armor=60, defense_bonus_armor=0)) == 187
+    # Caitlyn level 11 with an infinity edge and a lord dominik's regards
+    assert round(damage_normal_auto_attack_no_crit(attack_base_ad=95.345, attack_bonus_ad=105.4, attack_lethality=0,
+                                                   attack_level=11, attack_armor_pen=0.3, attack_bonus_armor_pen=0,
+                                                   defense_base_armor=60, defense_bonus_armor=0)) == 141
+    assert round(damage_normal_auto_attack_with_crit(attack_base_ad=95.345, attack_bonus_ad=105.4,
+                                                     attack_bonus_crit_damage=0, attack_lethality=0,
+                                                     attack_level=11, attack_armor_pen=0.3, attack_bonus_armor_pen=0,
+                                                     defense_base_armor=60, defense_bonus_armor=0)) == 247
+    # Caitlyn level 11 with a duskblade of draktharr (and cloak of agility for crits)
+    assert round(damage_normal_auto_attack_no_crit(attack_base_ad=95.345, attack_bonus_ad=65.4, attack_lethality=18,
+                                                   attack_level=11, attack_armor_pen=0, attack_bonus_armor_pen=0,
+                                                   defense_base_armor=60, defense_bonus_armor=0)) == 111
+    assert round(damage_normal_auto_attack_with_crit(attack_base_ad=95.345, attack_bonus_ad=65.4,
+                                                     attack_bonus_crit_damage=0, attack_lethality=18, attack_level=11,
+                                                     attack_armor_pen=0, attack_bonus_armor_pen=0,
+                                                     defense_base_armor=60, defense_bonus_armor=0)) == 194
+    # Caitlyn level 11 with a duskblade of draktharr and lord dominik's regards
+    assert round(damage_normal_auto_attack_no_crit(attack_base_ad=95.345, attack_bonus_ad=95.4, attack_lethality=18,
+                                                   attack_level=11, attack_armor_pen=0.3, attack_bonus_armor_pen=0,
+                                                   defense_base_armor=60, defense_bonus_armor=0)) == 150
+    assert round(damage_normal_auto_attack_with_crit(attack_base_ad=95.345, attack_bonus_ad=95.4,
+                                                     attack_bonus_crit_damage=0, attack_lethality=18, attack_level=11,
+                                                     attack_armor_pen=0.3, attack_bonus_armor_pen=0,
+                                                     defense_base_armor=60, defense_bonus_armor=0)) == 263

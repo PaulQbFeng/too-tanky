@@ -1,7 +1,8 @@
 from champion import Annie, Ahri, Caitlyn, Jax, Irelia
 annie = Annie()
 ahri = Ahri()
-caitlyn = Caitlyn(level=11)
+caitlyn_level_1 = Caitlyn(level=1)
+caitlyn_level_11 = Caitlyn(level=11)
 jax = Jax()
 irelia = Irelia()
 
@@ -14,4 +15,5 @@ print(f"Ahri lvl 1 auto Annie level 1, damage dealt: {round(damage1, 2)}")
 print(f"Annie lvl 1 auto Ahri level 1, damage dealt: {round(damage2, 2)}")
 print(f"Jax lvl 1 auto Irelia level 1, damage dealt: {round(damage3, 2)}")
 print(f"Irelia lvl 1 auto Jax level 1, damage dealt: {round(damage4, 2)}")
-print(caitlyn.__dict__)
+print(caitlyn_level_1.__dict__)
+print(caitlyn_level_11.__dict__)
