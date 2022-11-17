@@ -17,10 +17,9 @@ class BaseChampion:
     def __init__(self, champion_name: str, level: int = 1):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
-        self.base_stats = ALL_CHAMPION_BASE_STATS[champion_name]
-        self.update_stat_from_level()
+        self.update_stat_from_level(ALL_CHAMPION_BASE_STATS[champion_name])
 
-    def update_stat_from_level(self):
+    def update_stat_from_level(self, champion_stats):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
 
         def calculate_flat_stat_from_level(base: float, mean_growth_perlevel: float, level: int):
@@ -39,23 +38,15 @@ class BaseChampion:
             return calculate_flat_stat_from_level(stat, mean_growth_perlevel, level)
 
         for stat_name in SCALING_STAT_NAMES:
-            self.__dict__[stat_name] = calculate_stat_from_level(self.base_stats, stat_name, self.level)
+            self.__dict__[stat_name] = calculate_stat_from_level(champion_stats, stat_name, self.level)
 
     def auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
         return damage_after_positive_resistance(self.attack_damage, enemy_champion.armor)
 
-    def get_stats(self):
-        """Get the dictionnary of stats"""
-        stats = {}
-        for stat_name in SCALING_STAT_NAMES:
-            stats[stat_name] = (self.__dict__[stat_name])
-        return stats
-
 
 # Dummy class for tests in practice tool.
 class Dummy:
-
     def __init__(self, health: float, bonus_armor: float, bonus_magic_resist: float):
         assert bonus_armor == bonus_magic_resist
         assert bonus_armor % 10 == 0
@@ -74,7 +65,7 @@ class Annie(BaseChampion):
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
-        
+
 
 class Ahri(BaseChampion):
     champion_name = "Ahri"
@@ -102,4 +93,3 @@ class Irelia(BaseChampion):
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
-

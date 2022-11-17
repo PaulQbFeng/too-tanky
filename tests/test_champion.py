@@ -68,7 +68,7 @@ def test_ahri_stat_perlevel():
 
 def test_get_stats():
     annie = Annie(level=18)
-    stats_annie = annie.get_stats()
+    stats_annie = annie.__dict__
     stats_annie = {stat_name: round(stat, 2) for stat_name, stat in stats_annie.items()}
 
     assert stats_annie == {
@@ -81,6 +81,5 @@ def test_get_stats():
         "crit_chance": 0.0,
         "attack_damage": 95.05,
         "attack_speed": 0.71,
+        "level": 18,
     }
-
-
