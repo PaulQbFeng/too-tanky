@@ -78,9 +78,6 @@ class Annie(BaseChampion):
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
-
-    def spell_q(self, level: int):
-        assert isinstance(level, int) and 1 <= level <= 5  # spell level must be between 1 and 5
         
 
 class Ahri(BaseChampion):
