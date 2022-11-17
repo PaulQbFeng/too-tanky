@@ -24,15 +24,15 @@ def physical_damage_after_positive_armor(pre_mitigation_damage: float, defense_a
     Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with Y amount of
     armor (positive)
     """
-    return pre_mitigation_damage * 100 / (100 + defense_armor)
+    return pre_mitigation_damage * 100 / (100 + resistance)
 
 
-def physical_damage_after_negative_armor(pre_mitigation_damage: float, defense_armor: float):
+def damage_after_negative_resistance(pre_mitigation_damage: float, resistance: float):
     """
     Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with negative
     armor.
     """
-    return pre_mitigation_damage * (2 - 100 / (100 - defense_armor))
+    return pre_mitigation_damage * (2 - 100 / (100 - resistance))
 
 
 def physical_damage_after_armor(pre_mitigation_damage: float, lethality: float, attacker_level: int,
@@ -43,13 +43,13 @@ def physical_damage_after_armor(pre_mitigation_damage: float, lethality: float, 
     """
     defense_armor = base_armor + bonus_armor
     if defense_armor < 0:
-        return physical_damage_after_negative_armor(pre_mitigation_damage, defense_armor)
+        return damage_after_negative_resistance(pre_mitigation_damage, defense_armor)
     else:
         attack_flat_armor_pen = lethality * (0.6 + 0.4 * attacker_level / 18)
         armor_eq = base_armor * armor_pen_mult_factor + bonus_armor * armor_pen_mult_factor * bonus_armor_pen_mult_factor
-        armor_eq = armor_eq - attack_flat_armor_pen
+        armor_eq -= attack_flat_armor_pen
         armor_eq = max(armor_eq, 0)
-        return physical_damage_after_positive_armor(pre_mitigation_damage, armor_eq)
+        return damage_after_positive_resistance(pre_mitigation_damage, armor_eq)
 
 
 def damage_auto_attack(base_attack_damage: float, bonus_attack_damage: float, lethality: float, attacker_level: int,
