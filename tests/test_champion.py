@@ -82,3 +82,5 @@ def test_get_stats():
         "attack_damage": 95.05,
         "attack_speed": 0.71,
     }
+
+

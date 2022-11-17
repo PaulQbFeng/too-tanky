@@ -60,3 +60,4 @@ def tests_normal_auto_attack_cait_dummy_60():
                                     armor_pen_mult_factor=0.7, bonus_armor_pen_mult_factor=1, base_armor=dummy_60.armor,
                                     bonus_armor=dummy_60.bonus_armor, damage_modifier_flat=0,
                                     damage_modifier_percent_mult_factor=1, crit=True, crit_damage=0)) == 263
+

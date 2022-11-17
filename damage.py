@@ -91,3 +91,4 @@ def avg_damage_auto_attack(base_attack_damage: float, bonus_attack_damage: float
     return physical_damage_after_armor(pre_mitigation_damage, lethality, attacker_level,
                                        armor_pen_mult_factor, bonus_armor_pen_mult_factor,
                                        base_armor, bonus_armor)
+

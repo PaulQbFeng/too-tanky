@@ -38,3 +38,4 @@ for x in urls:
 for i in range(len(curated_urls)):
     curated_urls[i] = base_url + curated_urls[i]
     download(curated_urls[i], "data/raw-community-dragon/champions")
+

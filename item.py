@@ -11,3 +11,4 @@ class DoranBlade(BaseItem):
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, **kwargs)
+
