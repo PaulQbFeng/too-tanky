@@ -1,5 +1,6 @@
 health
 mana
+energy
 
 attack_damage
 bonus_attack_damage
