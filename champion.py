@@ -5,13 +5,10 @@ from data_parser import ALL_CHAMPION_BASE_STATS, SCALING_STAT_NAMES
 # TODO: Might be a good opportunity to use abstract class for base champion
 class BaseChampion:
     """
-    Base class to represent a champion. It is initialized with level 1 stats and have traits shared
-    accross all champions:
-        - Base State
-        - Level up mechanism
-        - Equip item
+    Base class to represent a champion. It is initialized with the stats of a champion at a given level.
+    Some mechanisms are shared accross all champions:
+        - equip_item
         - auto attack
-        ...
     """
 
     def __init__(self, champion_name: str, level: int = 1):
