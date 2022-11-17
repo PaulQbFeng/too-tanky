@@ -45,9 +45,9 @@ def physical_damage_after_armor(pre_mitigation_damage: float, lethality: float, 
     if defense_armor < 0:
         return damage_after_negative_resistance(pre_mitigation_damage, defense_armor)
     else:
-        attack_flat_armor_pen = lethality * (0.6 + 0.4 * attacker_level / 18)
+        flat_armor_pen = lethality * (0.6 + 0.4 * attacker_level / 18)
         armor_eq = base_armor * armor_pen_mult_factor + bonus_armor * armor_pen_mult_factor * bonus_armor_pen_mult_factor
-        armor_eq -= attack_flat_armor_pen
+        armor_eq -= flat_armor_pen
         armor_eq = max(armor_eq, 0)
         return damage_after_positive_resistance(pre_mitigation_damage, armor_eq)
 
