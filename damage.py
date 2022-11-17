@@ -16,6 +16,12 @@ def pre_mitigation_physical_damage(base_attack_damage: float, bonus_attack_damag
 def avg_pre_mitigation_physical_damage(base_attack_damage: float, bonus_attack_damage: float,
                                        damage_modifier_flat: float, damage_modifier_percent_mult_factor: float,
                                        crit_chance: float, crit_damage: float):
+    """
+    Calculates the pre-mitigation physical damage AVERAGE (based on crit chance) of a spell or an autoattack.
+    This is only relevant for damage sources that can crit.
+    All values regarding damage modifiers should include the buffs/debuffs coming from spells, summoner spells, or items
+    from both the attacker AND the defender
+    """
     return (base_attack_damage + bonus_attack_damage) * damage_modifier_percent_mult_factor * (
                 1 + crit_chance * (0.75 + crit_damage)) + damage_modifier_flat
 
