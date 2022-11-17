@@ -3,8 +3,6 @@ import json
 import numpy as np
 
 from damage import physical_damage_after_positive_armor
-from damage import damage_normal_auto_attack_no_crit
-from damage import damage_normal_auto_attack_with_crit
 from data_parser import SCALING_STAT_NAMES, ALL_CHAMPION_BASE_STATS
 
 
