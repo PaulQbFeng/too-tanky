@@ -19,7 +19,7 @@ class BaseChampion:
         self.level = level
         self.base_stats = ALL_CHAMPION_BASE_STATS[champion_name]
         self.update_stat_from_level()
-        
+
     def update_stat_from_level(self):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
 
@@ -47,7 +47,7 @@ class BaseChampion:
 
     def get_stats(self):
         """Get the dictionnary of stats"""
-        stats={}
+        stats = {}
         for stat_name in SCALING_STAT_NAMES:
             stats[stat_name] = (self.__dict__[stat_name])
         return stats
@@ -74,7 +74,7 @@ class Annie(BaseChampion):
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
-
+        
 
 class Ahri(BaseChampion):
     champion_name = "Ahri"
@@ -102,3 +102,4 @@ class Irelia(BaseChampion):
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
+
