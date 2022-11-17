@@ -1,5 +1,9 @@
 health
+current_health
 mana
+current_mana
+energy
+current_energy
 attack_damage
 bonus_attack_damage
 attack_speed
