@@ -1,4 +1,4 @@
-from damage import physical_damage_after_positive_resistance
+from damage import damage_after_positive_resistance
 from data_parser import ALL_CHAMPION_BASE_STATS, SCALING_STAT_NAMES
 
 

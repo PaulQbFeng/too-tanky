@@ -19,7 +19,7 @@ def avg_pre_mitigation_physical_damage(base_attack_damage: float, bonus_attack_d
     return (base_attack_damage + bonus_attack_damage) * damage_modifier_percent_mult_factor * (1 + crit_chance * (0.75 + crit_damage)) + damage_modifier_flat
 
 
-def physical_damage_after_positive_armor(pre_mitigation_damage: float, defense_armor: float):
+def damage_after_positive_resistance(pre_mitigation_damage: float, resistance: float):
     """
     Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with Y amount of
     armor (positive)
