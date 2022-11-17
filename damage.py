@@ -8,15 +8,16 @@ def pre_mitigation_physical_damage(base_attack_damage: float, bonus_attack_damag
     from both the attacker AND the defender
     """
     if crit:
-        return (base_attack_damage + bonus_attack_damage) * damage_modifier_percent_mult_factor * (1.75 + crit_damage) + damage_modifier_flat
-    else:
-        return (base_attack_damage + bonus_attack_damage) * damage_modifier_percent_mult_factor + damage_modifier_flat
+        return (base_attack_damage + bonus_attack_damage) * damage_modifier_percent_mult_factor * (
+                    1.75 + crit_damage) + damage_modifier_flat
+    return (base_attack_damage + bonus_attack_damage) * damage_modifier_percent_mult_factor + damage_modifier_flat
 
 
 def avg_pre_mitigation_physical_damage(base_attack_damage: float, bonus_attack_damage: float,
                                        damage_modifier_flat: float, damage_modifier_percent_mult_factor: float,
                                        crit_chance: float, crit_damage: float):
-    return (base_attack_damage + bonus_attack_damage) * damage_modifier_percent_mult_factor * (1 + crit_chance * (0.75 + crit_damage)) + damage_modifier_flat
+    return (base_attack_damage + bonus_attack_damage) * damage_modifier_percent_mult_factor * (
+                1 + crit_chance * (0.75 + crit_damage)) + damage_modifier_flat
 
 
 def damage_after_positive_resistance(pre_mitigation_damage: float, resistance: float):
@@ -61,7 +62,9 @@ def damage_auto_attack(base_attack_damage: float, bonus_attack_damage: float, le
     The base armor and bonus armor of the champion being attacked should already take into account the flat or
     percentage armor reduction resulting from spells like Garen E, Trundle R, Olaf Q, Corki E, or items like Black Cleaver
     """
-    pre_mitigation_damage = pre_mitigation_physical_damage(base_attack_damage, bonus_attack_damage, damage_modifier_flat, damage_modifier_percent_mult_factor, crit, crit_damage)
+    pre_mitigation_damage = pre_mitigation_physical_damage(base_attack_damage, bonus_attack_damage,
+                                                           damage_modifier_flat, damage_modifier_percent_mult_factor,
+                                                           crit, crit_damage)
     return physical_damage_after_armor(pre_mitigation_damage, lethality, attacker_level,
                                        armor_pen_mult_factor, bonus_armor_pen_mult_factor,
                                        base_armor, bonus_armor)
