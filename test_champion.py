@@ -16,9 +16,9 @@ def test_ahri_stat_perlevel():
     attack_damage = []
     for i in range(1, 19):
         ahri = Ahri(level=i)
-        attack_damage.append(round(ahri.attackdamage))
-        health_point.append(math.ceil(ahri.hp))
-        attack_speed.append(round(ahri.attackspeed, 3))
+        attack_damage.append(round(ahri.attack_damage))
+        health_point.append(math.ceil(ahri.health))
+        attack_speed.append(round(ahri.attack_speed, 3))
 
     assert attack_speed == [
         0.668,
@@ -70,14 +70,14 @@ def test_get_stats():
     stats_annie = {stat_name: round(stat, 2) for stat_name, stat in stats_annie.items()}
 
     assert stats_annie == {
-        'hp': 2328.0, 
-        'mp': 843.0, 
+        'health': 2328.0, 
+        'mana': 843.0, 
         'armor': 107.4, 
-        'spellblock': 52.1, 
-        'hpregen': 14.85, 
-        'mpregen': 21.6, 
-        'crit': 0.0, 
-        'attackdamage': 95.05, 
-        'attackspeed': 0.71
+        'magic_resist': 52.1, 
+        'health_regen': 14.85, 
+        'mana_regen': 21.6, 
+        'crit_chance': 0.0, 
+        'attack_damage': 95.05, 
+        'attack_speed': 0.71
         }
 
