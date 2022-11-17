@@ -1,11 +1,5 @@
-import json
-
-import numpy as np
-
-from damage import physical_damage_after_positive_armor
-from damage import damage_normal_auto_attack_no_crit
-from damage import damage_normal_auto_attack_with_crit
-from data_parser import SCALING_STAT_NAMES, ALL_CHAMPION_BASE_STATS
+from damage import damage_after_positive_resistance
+from data_parser import ALL_CHAMPION_BASE_STATS, SCALING_STAT_NAMES
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion
@@ -37,8 +31,8 @@ class BaseChampion:
         def calculate_stat_from_level(base_stats: dict, stat_name: str, level: int):
             """Flat scaling for all stats except for attack speed"""
             stat = base_stats[stat_name]
-            mean_growth_perlevel = base_stats[stat_name + "perlevel"]
-            if stat_name == "attackspeed":
+            mean_growth_perlevel = base_stats[stat_name + "_perlevel"]
+            if stat_name == "attack_speed":
                 # attack speed scaling is in % instead of flat. Base increase level 1 is considered to be 0 %.
                 percentage_increase = calculate_flat_stat_from_level(0, mean_growth_perlevel, level)
                 return stat * (1 + percentage_increase / 100)
@@ -49,7 +43,7 @@ class BaseChampion:
 
     def auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
-        return physical_damage_after_positive_armor(self.attackdamage, enemy_champion.armor)
+        return damage_after_positive_resistance(self.attack_damage, enemy_champion.armor)
 
     def get_stats(self):
         """Get the dictionnary of stats"""
@@ -62,16 +56,16 @@ class BaseChampion:
 # Dummy class for tests in practice tool.
 class Dummy:
 
-    def __init__(self, health: float, bonus_armor: float, bonus_magicresist: float):
-        assert bonus_armor == bonus_magicresist
+    def __init__(self, health: float, bonus_armor: float, bonus_magic_resist: float):
+        assert bonus_armor == bonus_magic_resist
         assert bonus_armor % 10 == 0
         assert health % 100 == 0
         assert health <= 10000
         self.health = health
         self.armor = 0
-        self.magicresist = 0
+        self.magic_resist = 0
         self.bonus_armor = bonus_armor
-        self.bonus_magicresist = bonus_magicresist
+        self.bonus_magic_resist = bonus_magic_resist
 
 
 # Each champion has its own class as their spells have different effects.
