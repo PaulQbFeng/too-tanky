@@ -1,4 +1,4 @@
-from damage import physical_damage_after_positive_armor
+from damage import damage_after_positive_resistance
 from data_parser import ALL_CHAMPION_BASE_STATS, SCALING_STAT_NAMES
 
 
@@ -43,7 +43,7 @@ class BaseChampion:
 
     def auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
-        return physical_damage_after_positive_armor(self.attack_damage, enemy_champion.armor)
+        return damage_after_positive_resistance(self.attack_damage, enemy_champion.armor)
 
     def get_stats(self):
         """Get the dictionnary of stats"""
