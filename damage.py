@@ -1,19 +1,19 @@
 # TODO: it seems that hp are ceiled while damage floored. (however it seems that the ad is rounded in the stat section ingame)
 
-def physical_damage_after_positive_armor(pre_mitigation_damage: float, defense_armor: float):
+def damage_after_positive_resistance(pre_mitigation_damage: float, resistance: float):
     """
     Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with Y amount of
     armor (positive)
     """
-    return pre_mitigation_damage * 100 / (100 + defense_armor)
+    return pre_mitigation_damage * 100 / (100 + resistance)
 
 
-def physical_damage_after_negative_armor(pre_mitigation_damage: float, defense_armor: float):
+def damage_after_negative_resistance(pre_mitigation_damage: float, resistance: float):
     """
     Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with negative
     armor.
     """
-    return pre_mitigation_damage * (2 - 100 / (100 - defense_armor))
+    return pre_mitigation_damage * (2 - 100 / (100 - resistance))
 
 
 def damage_normal_auto_attack_no_crit(attack_base_ad: float, attack_bonus_ad: float, attack_lethality: float,
@@ -28,13 +28,13 @@ def damage_normal_auto_attack_no_crit(attack_base_ad: float, attack_bonus_ad: fl
     pre_mitigation_damage = attack_base_ad + attack_bonus_ad
     defense_armor = defense_base_armor + defense_bonus_armor
     if defense_armor < 0:
-        return physical_damage_after_negative_armor(pre_mitigation_damage, defense_armor)
+        return damage_after_negative_resistance(pre_mitigation_damage, defense_armor)
     else:
         attack_flat_armor_pen = attack_lethality * (0.6 + 0.4 * attack_level / 18)
         armor_eq = defense_base_armor * attack_armor_pen_mult_factor + defense_bonus_armor * attack_armor_pen_mult_factor * attack_bonus_armor_pen_mult_factor
-        armor_eq = armor_eq - attack_flat_armor_pen
+        armor_eq -= attack_flat_armor_pen
         armor_eq = max(armor_eq, 0)
-        return physical_damage_after_positive_armor(pre_mitigation_damage, armor_eq)
+        return damage_after_positive_resistance(pre_mitigation_damage, armor_eq)
 
 
 def damage_normal_auto_attack_with_crit(attack_base_ad: float, attack_bonus_ad: float, attack_bonus_crit_damage: float,
@@ -49,13 +49,13 @@ def damage_normal_auto_attack_with_crit(attack_base_ad: float, attack_bonus_ad: 
     pre_mitigation_damage = (attack_base_ad + attack_bonus_ad) * (1.75 + attack_bonus_crit_damage)
     defense_armor = defense_base_armor + defense_bonus_armor
     if defense_armor < 0:
-        return physical_damage_after_negative_armor(pre_mitigation_damage, defense_armor)
+        return damage_after_negative_resistance(pre_mitigation_damage, defense_armor)
     else:
         attack_flat_armor_pen = attack_lethality * (0.6 + 0.4 * attack_level / 18)
         armor_eq = defense_base_armor * attack_armor_pen_mult_factor + defense_bonus_armor * attack_armor_pen_mult_factor * attack_bonus_armor_pen_mult_factor
-        armor_eq = armor_eq - attack_flat_armor_pen
+        armor_eq -= attack_flat_armor_pen
         armor_eq = max(armor_eq, 0)
-        return physical_damage_after_positive_armor(pre_mitigation_damage, armor_eq)
+        return damage_after_positive_resistance(pre_mitigation_damage, armor_eq)
 
 
 def avg_damage_normal_auto_attack(attack_base_ad: float, attack_bonus_ad: float, attack_crit_chance: float,
@@ -71,13 +71,13 @@ def avg_damage_normal_auto_attack(attack_base_ad: float, attack_bonus_ad: float,
             1 + attack_crit_chance * (0.75 + attack_bonus_crit_damage))
     defense_armor = defense_base_armor + defense_bonus_armor
     if defense_armor < 0:
-        return physical_damage_after_negative_armor(pre_mitigation_damage, defense_armor)
+        return damage_after_negative_resistance(pre_mitigation_damage, defense_armor)
     else:
         attack_flat_armor_pen = attack_lethality * (0.6 + 0.4 * attack_level / 18)
         armor_eq = defense_base_armor * attack_armor_pen_mult_factor + defense_bonus_armor * attack_armor_pen_mult_factor * attack_bonus_armor_pen_mult_factor
-        armor_eq = armor_eq - attack_flat_armor_pen
+        armor_eq -= attack_flat_armor_pen
         armor_eq = max(armor_eq, 0)
-        return physical_damage_after_positive_armor(pre_mitigation_damage, armor_eq)
+        return damage_after_positive_resistance(pre_mitigation_damage, armor_eq)
 
 
 def damage_empowered_auto_attack_no_crit(attack_base_ad: float, attack_bonus_ad: float, attack_lethality: float,
@@ -94,13 +94,13 @@ def damage_empowered_auto_attack_no_crit(attack_base_ad: float, attack_bonus_ad:
     pre_mitigation_damage = attack_base_ad * (1 + percentage_AD_increase) + attack_bonus_ad * (1 + percentage_AD_increase) * (1 + percentage_bonus_AD_increase) + flat_AD_increase
     defense_armor = defense_base_armor + defense_bonus_armor
     if defense_armor < 0:
-        return physical_damage_after_negative_armor(pre_mitigation_damage, defense_armor)
+        return damage_after_negative_resistance(pre_mitigation_damage, defense_armor)
     else:
         attack_flat_armor_pen = attack_lethality * (0.6 + 0.4 * attack_level / 18)
         armor_eq = defense_base_armor * attack_armor_pen_mult_factor + defense_bonus_armor * attack_armor_pen_mult_factor * attack_bonus_armor_pen_mult_factor
-        armor_eq = armor_eq - attack_flat_armor_pen
+        armor_eq -= attack_flat_armor_pen
         armor_eq = max(armor_eq, 0)
-        return physical_damage_after_positive_armor(pre_mitigation_damage, armor_eq)
+        return damage_after_positive_resistance(pre_mitigation_damage, armor_eq)
 
 
 def damage_empowered_auto_attack_with_crit(attack_base_ad: float, attack_bonus_ad: float,
@@ -117,13 +117,13 @@ def damage_empowered_auto_attack_with_crit(attack_base_ad: float, attack_bonus_a
     pre_mitigation_damage = attack_base_ad * (1.75 + attack_bonus_crit_damage) * (1 + percentage_AD_increase) + attack_bonus_ad * (1.75 + attack_bonus_crit_damage) * (1 + percentage_AD_increase) * (1 + percentage_bonus_AD_increase) + flat_AD_increase
     defense_armor = defense_base_armor + defense_bonus_armor
     if defense_armor < 0:
-        return physical_damage_after_negative_armor(pre_mitigation_damage, defense_armor)
+        return damage_after_negative_resistance(pre_mitigation_damage, defense_armor)
     else:
         attack_flat_armor_pen = attack_lethality * (0.6 + 0.4 * attack_level / 18)
         armor_eq = defense_base_armor * attack_armor_pen_mult_factor + defense_bonus_armor * attack_armor_pen_mult_factor * attack_bonus_armor_pen_mult_factor
-        armor_eq = armor_eq - attack_flat_armor_pen
+        armor_eq -= attack_flat_armor_pen
         armor_eq = max(armor_eq, 0)
-        return physical_damage_after_positive_armor(pre_mitigation_damage, armor_eq)
+        return damage_after_positive_resistance(pre_mitigation_damage, armor_eq)
 
 
 def avg_damage_empowered_auto_attack(attack_base_ad: float, attack_bonus_ad: float, attack_crit_chance: float,
@@ -140,10 +140,10 @@ def avg_damage_empowered_auto_attack(attack_base_ad: float, attack_bonus_ad: flo
     pre_mitigation_damage = attack_base_ad * (1 + attack_crit_chance * (0.75 + attack_bonus_crit_damage)) * (1 + percentage_AD_increase) + attack_bonus_ad * (1 + attack_crit_chance * (0.75 + attack_bonus_crit_damage)) * (1 + percentage_AD_increase) * (1 + percentage_bonus_AD_increase) + flat_AD_increase
     defense_armor = defense_base_armor + defense_bonus_armor
     if defense_armor < 0:
-        return physical_damage_after_negative_armor(pre_mitigation_damage, defense_armor)
+        return damage_after_negative_resistance(pre_mitigation_damage, defense_armor)
     else:
         attack_flat_armor_pen = attack_lethality * (0.6 + 0.4 * attack_level / 18)
         armor_eq = defense_base_armor * attack_armor_pen_mult_factor + defense_bonus_armor * attack_armor_pen_mult_factor * attack_bonus_armor_pen_mult_factor
-        armor_eq = armor_eq - attack_flat_armor_pen
+        armor_eq -= attack_flat_armor_pen
         armor_eq = max(armor_eq, 0)
-        return physical_damage_after_positive_armor(pre_mitigation_damage, armor_eq)
+        return damage_after_positive_resistance(pre_mitigation_damage, armor_eq)
