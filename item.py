@@ -4,7 +4,8 @@ from champion import Dummy
 
 class BaseItem:
     def __init__(self, item_name: str):
-        self.stats = ALL_ITEM_STATS[item_name]
+        for stat_name, stat_value in ALL_ITEM_STATS[item_name].items():
+            setattr(self, stat_name, stat_value)
 
 
 class DoranBlade(BaseItem):
@@ -12,6 +13,7 @@ class DoranBlade(BaseItem):
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, **kwargs)
+
 
 class Sheen(BaseItem):
     item_name = "Sheen"
