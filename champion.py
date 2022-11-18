@@ -38,7 +38,7 @@ class BaseChampion:
             return calculate_flat_stat_from_level(stat, mean_growth_perlevel, level)
 
         for stat_name in SCALING_STAT_NAMES:
-            self.__dict__[stat_name] = calculate_stat_from_level(champion_stats, stat_name, self.level)
+            setattr(self, stat_name, calculate_stat_from_level(champion_stats, stat_name, self.level))
 
     def auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
