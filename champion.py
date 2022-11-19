@@ -1,5 +1,8 @@
-from damage import damage_after_positive_resistance
-from data_parser import ALL_CHAMPION_BASE_STATS, SCALING_STAT_NAMES
+from typing import List
+
+import stats
+from damage import damage_after_positive_resistance, damage_auto_attack
+from data_parser import ALL_CHAMPION_BASE_STATS, SCALING_STAT_NAMES, ALL_ITEM_STATS
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion
@@ -11,36 +14,61 @@ class BaseChampion:
         - auto attack
     """
 
-    def __init__(self, champion_name: str, level: int = 1):
+    def __init__(self, champion_name: str, level: int = 1, items: List[str] = None):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
-        self.update_stat_from_level(ALL_CHAMPION_BASE_STATS[champion_name])
+        self.items = items
+        self.orig_base_stats = self.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name])
+        self.item_stats = self.get_items_total_stats(items)
+        self.bonus_stats = self.get_bonus_stats()
 
-    def update_stat_from_level(self, champion_stats):
+    def get_champion_base_stats(self, champion_stats):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
+        
+        return {stat_name: stats.calculate_stat_from_level(champion_stats, stat_name, self.level) for stat_name in SCALING_STAT_NAMES}
 
-        def calculate_flat_stat_from_level(base: float, mean_growth_perlevel: float, level: int):
-            """As described in league wiki: https://leagueoflegends.fandom.com/wiki/Champion_statistic#Growth_statistic_calculations"""
+    def get_items_total_stats(self, items):
+        """Sum the base stats of each item"""
+        if items is None:
+            return dict()
 
-            return base + mean_growth_perlevel * (level - 1) * (0.7025 + 0.0175 * (level - 1))
+        total_item_stats = dict()
+        for item_name in items:
+            item_stats =  ALL_ITEM_STATS[item_name]
+            self.update_bonus_stat_with_item(total_item_stats, item_stats)
 
-        def calculate_stat_from_level(base_stats: dict, stat_name: str, level: int):
-            """Flat scaling for all stats except for attack speed"""
-            stat = base_stats[stat_name]
-            mean_growth_perlevel = base_stats[stat_name + "_perlevel"]
-            if stat_name == "attack_speed":
-                # attack speed scaling is in % instead of flat. Base increase level 1 is considered to be 0 %.
-                percentage_increase = calculate_flat_stat_from_level(0, mean_growth_perlevel, level)
-                return stat * (1 + percentage_increase / 100)
-            return calculate_flat_stat_from_level(stat, mean_growth_perlevel, level)
+        return total_item_stats
 
-        for stat_name in SCALING_STAT_NAMES:
-            self.__dict__[stat_name] = calculate_stat_from_level(champion_stats, stat_name, self.level)
+    def update_bonus_stat_with_item(self, total_item_stats, item_stats):
+        """Update the base stats in the item stats dict with a new item."""
+        for stat_name, stat_value in item_stats.items():
+            if stat_name not in total_item_stats:
+                total_item_stats[stat_name] = stat_value
+            else:
+                total_item_stats[stat_name] += stat_value
+
+    def get_bonus_stats(self): # TODO: add runes
+        """Get bonus stats from all sources of bonus stats (items, runes)"""
+        if self.items is None:
+            return dict()
+        return self.item_stats.copy()
+
+    def equip_item(self, item_name):
+        self.update_bonus_stat_with_item(self.item_stats, ALL_ITEM_STATS[item_name])
+        self.bonus_stats = self.get_bonus_stats()
 
     def auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
-        return damage_after_positive_resistance(self.attack_damage, enemy_champion.armor)
+        bonus_attack_damage = self.bonus_stats["attack_damage"] if "attack_damage" in self.bonus_stats else 0
+        bonus_armor = enemy_champion.bonus_stats["armor"] if "armor" in enemy_champion.bonus_stats else 0
 
+        damage = damage_auto_attack(
+            base_attack_damage=self.orig_base_stats["attack_damage"], 
+            bonus_attack_damage=bonus_attack_damage,
+            base_armor=enemy_champion.orig_base_stats["armor"],
+            bonus_armor=bonus_armor
+            )
+        return damage
 
 # Dummy class for tests in practice tool.
 class Dummy:
