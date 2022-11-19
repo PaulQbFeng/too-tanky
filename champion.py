@@ -24,6 +24,7 @@ class BaseChampion:
 
     def get_champion_base_stats(self, champion_stats):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
+<<<<<<< HEAD
         
         return {stat_name: stats.calculate_stat_from_level(champion_stats, stat_name, self.level) for stat_name in SCALING_STAT_NAMES}
 
@@ -56,6 +57,26 @@ class BaseChampion:
     def equip_item(self, item_name):
         self.update_bonus_stat_with_item(self.item_stats, ALL_ITEM_STATS[item_name])
         self.bonus_stats = self.get_bonus_stats()
+=======
+
+        def calculate_flat_stat_from_level(base: float, mean_growth_perlevel: float, level: int):
+            """As described in league wiki: https://leagueoflegends.fandom.com/wiki/Champion_statistic#Growth_statistic_calculations"""
+
+            return base + mean_growth_perlevel * (level - 1) * (0.7025 + 0.0175 * (level - 1))
+
+        def calculate_stat_from_level(base_stats: dict, stat_name: str, level: int):
+            """Flat scaling for all stats except for attack speed"""
+            stat = base_stats[stat_name]
+            mean_growth_perlevel = base_stats[stat_name + "_perlevel"]
+            if stat_name == "attack_speed":
+                # attack speed scaling is in % instead of flat. Base increase level 1 is considered to be 0 %.
+                percentage_increase = calculate_flat_stat_from_level(0, mean_growth_perlevel, level)
+                return stat * (1 + percentage_increase / 100)
+            return calculate_flat_stat_from_level(stat, mean_growth_perlevel, level)
+
+        for stat_name in SCALING_STAT_NAMES:
+            setattr(self, stat_name, calculate_stat_from_level(champion_stats, stat_name, self.level))
+>>>>>>> ba491692af7df647717c41983905dd6070e70b3b
 
     def auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
