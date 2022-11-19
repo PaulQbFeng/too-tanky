@@ -69,6 +69,11 @@ def test_ahri_stat_perlevel():
 def test_get_stats():
     annie = Annie(level=18)
     stats_annie = annie.__dict__
+    del stats_annie["passive"]
+    del stats_annie["q"]
+    del stats_annie["w"]
+    del stats_annie["e"]
+    del stats_annie["r"]
     stats_annie = {stat_name: round(stat, 2) for stat_name, stat in stats_annie.items()}
 
     assert stats_annie == {
@@ -83,3 +88,9 @@ def test_get_stats():
         "attack_speed": 0.71,
         "level": 18,
     }
+
+def test_annie_q():
+    annie = Annie(level=1)
+    q = annie.Q(level = 3)
+
+    assert q.pre_mitig_damage() == 150

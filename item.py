@@ -26,3 +26,10 @@ class Sheen(BaseItem):
         if isinstance(enemy_champion, Dummy):
             return damage_after_positive_resistance(owner_champion.attack_damage, enemy_champion.bonus_armor)
         return damage_after_positive_resistance(owner_champion.attack_damage, enemy_champion.armor)
+
+
+class RubyCrystal(BaseItem):
+    item_name = "Ruby Crystal"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, **kwargs)

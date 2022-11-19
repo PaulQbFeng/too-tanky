@@ -18,6 +18,11 @@ class BaseChampion:
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
         self.update_stat_from_level(ALL_CHAMPION_BASE_STATS[champion_name])
+        self.passive = self.Passive()
+        self.q = self.Q()
+        self.w = self.W()
+        self.e = self.E()
+        self.r = self.R()
 
     def update_stat_from_level(self, champion_stats):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
@@ -44,6 +49,35 @@ class BaseChampion:
         """Calculates the damage dealt to an enemy champion with an autoattack"""
         return damage_after_positive_resistance(self.attack_damage, enemy_champion.armor)
 
+    class Passive:
+        def __init__(self, type :str = "not leveled", level : int = 0):
+            self.nature = "passive" # passive, basic, ulti
+            self.type = type #physical_damage, magical_damage, true_damage, shield, heal, buff ??
+            self.level = level # sometimes depends on level
+
+    class Q:
+        def __init__(self, type :str = "not leveled", level : int = 0):
+            self.nature = "basic" # passive, basic, ulti
+            self.type = type #physical_damage, magical_damage, true_damage, shield, heal, buff ??
+            self.level = level # level 0 to 5, with exeptions ?
+
+    class W:
+        def __init__(self, type :str = "not leveled", level : int = 0 ):
+            self.nature = "basic" # passive, basic, ulti
+            self.type = type #physical_damage, magical_damage, true_damage, shield, heal, buff ??
+            self.level = level # level 0 to 5, with exeptions ?
+
+    class E:
+        def __init__(self, type :str = "not leveled", level : int = 0 ):
+            self.nature = "basic" # passive, basic, ulti
+            self.type = type #physical_damage, magical_damage, true_damage, shield, heal, buff ??
+            self.level = level # level 0 to 5, with exeptions ?
+
+    class R:
+        def __init__(self, type :str = "not leveled", level : int = 0 ):
+            self.nature = "ulti" # passive, basic, ulti
+            self.type = type #physical_damage, magical_damage, true_damage, shield, heal, buff ??
+            self.level = level # level 0 to 3, with exeptions ?
 
 # Dummy class for tests in practice tool.
 class Dummy:
@@ -66,12 +100,54 @@ class Annie(BaseChampion):
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
 
+    class Q(BaseChampion.Q):
+        damage = 0
+        def __init__(self, level: int = 0, **kwargs):
+            super().__init__("magic_damage", level)
+            self.update_spell_from_level(level)
+
+        def update_spell_from_level(self, level : int):
+            if level == 1:
+                self.damage = 80
+            if level == 2:
+                self.damage = 115
+            if level == 3:
+                self.damage = 150
+            if level == 4:
+                self.damage = 185
+            if level == 5:
+                self.damage = 220
+        
+        def pre_mitig_damage(self): #pre-mitigation damage
+            return self.damage
+
 
 class Ahri(BaseChampion):
     champion_name = "Ahri"
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
+
+    class Q(BaseChampion.Q):
+        damage = 0
+        def __init__(self, level: int = 0, **kwargs):
+            super().__init__("magic_damage", level)
+            self.update_spell_from_level(level)
+
+        def update_spell_from_level(self, level : int):
+            if level == 1:
+                self.damage = 2*40
+            if level == 2:
+                self.damage = 2*65
+            if level == 3:
+                self.damage = 2*90
+            if level == 4:
+                self.damage = 2*115
+            if level == 5:
+                self.damage = 2*140
+        
+        def pre_mitig_damage(self): #pre-mitigation damage
+            return self.damage
 
 
 class Caitlyn(BaseChampion):
@@ -93,3 +169,5 @@ class Irelia(BaseChampion):
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
+
+
