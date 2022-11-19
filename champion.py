@@ -20,7 +20,7 @@ class BaseChampion:
         self.items = items
         self.orig_base_stats = self.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name])
         self.item_stats = self.get_items_total_stats(items)
-        self.bonus_stats = self.get_bonus_stats()
+        self.orig_bonus_stats = self.get_bonus_stats()
 
     def get_champion_base_stats(self, champion_stats):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
@@ -56,12 +56,12 @@ class BaseChampion:
     def equip_item(self, item_name):
         self.items.append(item_name)
         self.update_bonus_stat_with_item(self.item_stats, ALL_ITEM_STATS[item_name])
-        self.bonus_stats = self.get_bonus_stats()
+        self.orig_bonus_stats = self.get_bonus_stats()
 
     def auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
-        bonus_attack_damage = self.bonus_stats["attack_damage"] if "attack_damage" in self.bonus_stats else 0
-        bonus_armor = enemy_champion.bonus_stats["armor"] if "armor" in enemy_champion.bonus_stats else 0
+        bonus_attack_damage = self.orig_bonus_stats["attack_damage"] if "attack_damage" in self.orig_bonus_stats else 0
+        bonus_armor = enemy_champion.orig_bonus_stats["armor"] if "armor" in enemy_champion.orig_bonus_stats else 0
 
         damage = damage_auto_attack(
             base_attack_damage=self.orig_base_stats["attack_damage"], 
@@ -79,8 +79,15 @@ class Dummy:
         assert health % 100 == 0
         assert health <= 10000
 
-        self.orig_base_stats = {"armor": 0, "magic_resist": 0}
-        self.bonus_stats = {"health":health, "armor": bonus_armor, "magic_resist": bonus_magic_resist}
+        self.orig_base_stats = {
+            "armor": 0, 
+            "magic_resist": 0
+        }
+        self.orig_bonus_stats = {
+            "health": health, 
+            "armor": bonus_armor, 
+            "magic_resist": bonus_magic_resist
+        }
 
 
 # Each champion has its own class as their spells have different effects.

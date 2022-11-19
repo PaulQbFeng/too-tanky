@@ -15,4 +15,4 @@ def test_Sheen():
     sheen = Sheen()
     annie = Annie()
     dummy=Dummy(1000,50,50)
-    assert sheen.spellblade(annie, dummy) ==  damage_after_positive_resistance(annie.orig_base_stats["attack_damage"], dummy.bonus_stats["armor"])
+    assert sheen.spellblade(annie, dummy) ==  damage_after_positive_resistance(annie.orig_base_stats["attack_damage"], dummy.orig_bonus_stats["armor"])

@@ -31,5 +31,5 @@ class Sheen(BaseItem):
     def spellblade(self, owner_champion, enemy_champion):
         """Calculates the bonus damage dealt with an autoattack : 100% of base AD """
         if isinstance(enemy_champion, Dummy):
-            return damage_after_positive_resistance(owner_champion.orig_base_stats["attack_damage"], enemy_champion.bonus_stats["armor"])
-        return damage_after_positive_resistance(owner_champion.orig_base_stats["attack_damage"], enemy_champion.bonus_stats["armor"])
+            return damage_after_positive_resistance(owner_champion.orig_base_stats["attack_damage"], enemy_champion.orig_bonus_stats["armor"])
+        return damage_after_positive_resistance(owner_champion.orig_base_stats["attack_damage"], enemy_champion.orig_bonus_stats["armor"])
