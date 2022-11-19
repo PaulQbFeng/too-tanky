@@ -108,19 +108,20 @@ class BaseChampion:
 
         for stat_name in SCALING_STAT_NAMES:
             setattr(self.orig_base_stats, stat_name, calculate_stat_from_level(champion_stats, stat_name, self.level))
+            setattr(self.base_stats, stat_name, calculate_stat_from_level(champion_stats, stat_name, self.level))
 
     def normal_auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
-        return damage_auto_attack(self.orig_base_stats.attack_damage, self.orig_bonus_stats.attack_damage,
-                                  self.orig_total_stats.lethality, self.level, self.orig_total_stats.armor_pen_percent,
-                                  self.orig_total_stats.bonus_armor_pen_percent, enemy_champion.orig_base_stats.armor,
-                                  enemy_champion.orig_bonus_stats.armor, 0, 1, False, 0)
+        return damage_auto_attack(self.base_stats.attack_damage, self.bonus_stats.attack_damage,
+                                  self.total_stats.lethality, self.level, self.total_stats.armor_pen_percent,
+                                  self.total_stats.bonus_armor_pen_percent, enemy_champion.base_stats.armor,
+                                  enemy_champion.bonus_stats.armor, 0, 1, False, 0)
 
     def crit_auto_attack(self, enemy_champion):
-        return damage_auto_attack(self.orig_base_stats.attack_damage, self.orig_bonus_stats.attack_damage,
-                                  self.orig_total_stats.lethality, self.level, self.orig_total_stats.armor_pen_percent,
-                                  self.orig_total_stats.bonus_armor_pen_percent, enemy_champion.orig_base_stats.armor,
-                                  enemy_champion.orig_bonus_stats.armor, 0, 1, True, 0)
+        return damage_auto_attack(self.base_stats.attack_damage, self.bonus_stats.attack_damage,
+                                  self.total_stats.lethality, self.level, self.total_stats.armor_pen_percent,
+                                  self.total_stats.bonus_armor_pen_percent, enemy_champion.base_stats.armor,
+                                  enemy_champion.bonus_stats.armor, 0, 1, True, 0)
 
 
 # Dummy class for tests in practice tool.
@@ -137,6 +138,9 @@ class Dummy:
         self.orig_base_stats.health = health
         self.orig_bonus_stats.armor = bonus_armor
         self.orig_bonus_stats.magic_resist = bonus_magic_resist
+        self.base_stats.health = health
+        self.bonus_stats.armor = bonus_armor
+        self.bonus_stats.magic_resist = bonus_magic_resist
 
 
 # Each champion has its own class as their spells have different effects.
