@@ -54,6 +54,7 @@ class BaseChampion:
         return self.item_stats.copy()
 
     def equip_item(self, item_name):
+        self.items.append(item_name)
         self.update_bonus_stat_with_item(self.item_stats, ALL_ITEM_STATS[item_name])
         self.bonus_stats = self.get_bonus_stats()
 
