@@ -49,11 +49,9 @@ class Dummy:
         assert bonus_armor % 10 == 0
         assert health % 100 == 0
         assert health <= 10000
-        self.health = health
-        self.armor = 0
-        self.magic_resist = 0
-        self.bonus_armor = bonus_armor
-        self.bonus_magic_resist = bonus_magic_resist
+
+        self.orig_base_stats = {"armor": 0, "magic_resist": 0}
+        self.bonus_stats = {"health":health, "armor": bonus_armor, "magic_resist": bonus_magic_resist}
 
 
 # Each champion has its own class as their spells have different effects.
