@@ -61,9 +61,9 @@ def physical_damage_after_armor(pre_mitigation_damage: float, lethality: float, 
 
 def damage_auto_attack(
     base_attack_damage: float, 
-    bonus_attack_damage: float, 
     base_armor: float, 
-    bonus_armor: float, 
+    bonus_attack_damage: float = 0, 
+    bonus_armor: float = 0, 
     attacker_level: int = 1, 
     lethality: float = 0, 
     armor_pen_mult_factor: float = 1, 

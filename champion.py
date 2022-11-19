@@ -65,8 +65,8 @@ class BaseChampion:
 
         damage = damage_auto_attack(
             base_attack_damage=self.orig_base_stats["attack_damage"], 
-            bonus_attack_damage=bonus_attack_damage,
             base_armor=enemy_champion.orig_base_stats["armor"],
+            bonus_attack_damage=bonus_attack_damage,
             bonus_armor=bonus_armor
             )
         return damage
