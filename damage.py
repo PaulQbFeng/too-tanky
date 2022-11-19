@@ -59,10 +59,20 @@ def physical_damage_after_armor(pre_mitigation_damage: float, lethality: float, 
         return damage_after_positive_resistance(pre_mitigation_damage, armor_eq)
 
 
-def damage_auto_attack(base_attack_damage: float, bonus_attack_damage: float, lethality: float, attacker_level: int,
-                       armor_pen_mult_factor: float, bonus_armor_pen_mult_factor: float, base_armor: float,
-                       bonus_armor: float, damage_modifier_flat: float, damage_modifier_percent_mult_factor: float,
-                       crit: 'bool', crit_damage: float):
+def damage_auto_attack(
+    base_attack_damage: float, 
+    base_armor: float, 
+    bonus_attack_damage: float = 0, 
+    bonus_armor: float = 0, 
+    attacker_level: int = 1, 
+    lethality: float = 0, 
+    armor_pen_mult_factor: float = 1, 
+    bonus_armor_pen_mult_factor: float = 1, 
+    damage_modifier_flat: float = 0, 
+    damage_modifier_percent_mult_factor: float = 1,
+    crit: bool = False, 
+    crit_damage: float = 0
+    ):
     """
     Calculates the output damage of crit/non-crit, empowered/modified/normal auto attacks
     The base armor and bonus armor of the champion being attacked should already take into account the flat or

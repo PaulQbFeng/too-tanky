@@ -1,6 +1,6 @@
 import math
 
-from champion import Ahri, Annie
+from champion import Ahri, Annie, Dummy
 
 
 def test_auto_attack_lvl1():
@@ -17,9 +17,9 @@ def test_ahri_stat_perlevel():
     attack_damage = []
     for i in range(1, 19):
         ahri = Ahri(level=i)
-        attack_damage.append(round(ahri.attack_damage))
-        health_point.append(math.ceil(ahri.health))
-        attack_speed.append(round(ahri.attack_speed, 3))
+        attack_damage.append(round(ahri.orig_base_stats["attack_damage"]))
+        health_point.append(math.ceil(ahri.orig_base_stats["health"]))
+        attack_speed.append(round(ahri.orig_base_stats["attack_speed"], 3))
 
     assert attack_speed == [
         0.668,
@@ -68,7 +68,7 @@ def test_ahri_stat_perlevel():
 
 def test_get_stats():
     annie = Annie(level=18)
-    stats_annie = annie.__dict__
+    stats_annie = annie.orig_base_stats
     stats_annie = {stat_name: round(stat, 2) for stat_name, stat in stats_annie.items()}
 
     assert stats_annie == {
@@ -81,5 +81,12 @@ def test_get_stats():
         "crit_chance": 0.0,
         "attack_damage": 95.05,
         "attack_speed": 0.71,
-        "level": 18,
     }
+
+def test_auto_attack_with_item_component():
+    items = ['Cloth Armor', 'Long Sword', 'Pickaxe', 'B. F. Sword'] 
+    ahri = Ahri(level=4, items=items)
+    dummy = Dummy(health=1000, bonus_resistance=100)
+
+    assert ahri.orig_bonus_stats ==  {'armor': 15, 'gold': 2825, 'attack_damage': 75}
+    assert round(ahri.auto_attack(dummy)) == 67
