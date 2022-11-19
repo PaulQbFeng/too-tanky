@@ -73,9 +73,9 @@ class BaseChampion:
 
 # Dummy class for tests in practice tool.
 class Dummy:
-    def __init__(self, health: float, bonus_armor: float, bonus_magic_resist: float):
-        assert bonus_armor == bonus_magic_resist
-        assert bonus_armor % 10 == 0
+    def __init__(self, health: float, bonus_resistance: int):
+        """Dummy champion have the same armor and mr"""
+        assert bonus_resistance % 10 == 0
         assert health % 100 == 0
         assert health <= 10000
 
@@ -85,8 +85,8 @@ class Dummy:
         }
         self.orig_bonus_stats = {
             "health": health, 
-            "armor": bonus_armor, 
-            "magic_resist": bonus_magic_resist
+            "armor": bonus_resistance, 
+            "magic_resist": bonus_resistance
         }
 
 

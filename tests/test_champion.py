@@ -86,7 +86,7 @@ def test_get_stats():
 def test_auto_attack_with_item_component():
     items = ['Cloth Armor', 'Long Sword', 'Pickaxe', 'B. F. Sword'] 
     ahri = Ahri(level=4, items=items)
-    dummy = Dummy(health=1000, bonus_armor=100, bonus_magic_resist=100)
+    dummy = Dummy(health=1000, bonus_resistance=100)
 
     assert ahri.orig_bonus_stats ==  {'armor': 15, 'gold': 2825, 'attack_damage': 75}
     assert round(ahri.auto_attack(dummy)) == 67

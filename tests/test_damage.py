@@ -9,7 +9,7 @@ def tests_normal_auto_attack_cait_dummy_60():
     different items against a dummy with 60 bonus armor and 60 bonus mr
     Caitlyn has one adaptive force rune which gives 5.4 attack damage
     """
-    dummy_60 = Dummy(1000, 60, 60)
+    dummy_60 = Dummy(health=1000, bonus_resistance=60)
     # Caitlyn level 1 with a doran's blade
     # No headshot no crit
     assert round(damage_auto_attack(base_attack_damage=62, bonus_attack_damage=13.4, lethality=0, attacker_level=1,
