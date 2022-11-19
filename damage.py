@@ -43,7 +43,7 @@ def damage_after_negative_resistance(pre_mitigation_damage: float, resistance: f
 
 
 def physical_damage_after_armor(pre_mitigation_damage: float, lethality: float, attacker_level: int,
-                                armor_pen_mult_factor: float, bonus_armor_pen_mult_factor: float,
+                                armor_pen_percent: float, bonus_armor_pen_percent: float,
                                 base_armor: float, bonus_armor: float):
     """
     Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with Y amount of armor
@@ -53,14 +53,14 @@ def physical_damage_after_armor(pre_mitigation_damage: float, lethality: float, 
         return damage_after_negative_resistance(pre_mitigation_damage, defense_armor)
     else:
         flat_armor_pen = lethality * (0.6 + 0.4 * attacker_level / 18)
-        armor_eq = base_armor * armor_pen_mult_factor + bonus_armor * armor_pen_mult_factor * bonus_armor_pen_mult_factor
+        armor_eq = base_armor * (1 - armor_pen_percent) + bonus_armor * (1 - armor_pen_percent) * (1 - bonus_armor_pen_percent)
         armor_eq -= flat_armor_pen
         armor_eq = max(armor_eq, 0)
         return damage_after_positive_resistance(pre_mitigation_damage, armor_eq)
 
 
 def damage_auto_attack(base_attack_damage: float, bonus_attack_damage: float, lethality: float, attacker_level: int,
-                       armor_pen_mult_factor: float, bonus_armor_pen_mult_factor: float, base_armor: float,
+                       armor_pen_percent: float, bonus_armor_pen_percent: float, base_armor: float,
                        bonus_armor: float, damage_modifier_flat: float, damage_modifier_percent_mult_factor: float,
                        crit: 'bool', crit_damage: float):
     """
@@ -72,12 +72,12 @@ def damage_auto_attack(base_attack_damage: float, bonus_attack_damage: float, le
                                                            damage_modifier_flat, damage_modifier_percent_mult_factor,
                                                            crit, crit_damage)
     return physical_damage_after_armor(pre_mitigation_damage, lethality, attacker_level,
-                                       armor_pen_mult_factor, bonus_armor_pen_mult_factor,
+                                       armor_pen_percent, bonus_armor_pen_percent,
                                        base_armor, bonus_armor)
 
 
 def avg_damage_auto_attack(base_attack_damage: float, bonus_attack_damage: float, lethality: float,
-                           attacker_level: int, armor_pen_mult_factor: float, bonus_armor_pen_mult_factor: float,
+                           attacker_level: int, armor_pen_percent: float, bonus_armor_pen_percent: float,
                            base_armor: float, bonus_armor: float, damage_modifier_flat: float,
                            damage_modifier_percent_mult_factor: float, crit_chance: float, crit_damage: float):
     """
@@ -89,6 +89,6 @@ def avg_damage_auto_attack(base_attack_damage: float, bonus_attack_damage: float
                                                                damage_modifier_flat, damage_modifier_percent_mult_factor
                                                                , crit_chance, crit_damage)
     return physical_damage_after_armor(pre_mitigation_damage, lethality, attacker_level,
-                                       armor_pen_mult_factor, bonus_armor_pen_mult_factor,
+                                       armor_pen_percent, bonus_armor_pen_percent,
                                        base_armor, bonus_armor)
 
