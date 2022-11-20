@@ -2,7 +2,7 @@ from damage import damage_after_positive_resistance
 from data_parser import ALL_ITEM_STATS
 
 
-class Passive:
+class ItemPassive:
     """Class to define item (or more?) passive"""
 
     def __init__(self, name: str, stats: dict, unique: bool = False):
@@ -61,7 +61,7 @@ class SerratedDirk(BaseItem):
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, **kwargs)
-        self.passive = Passive(name="Gouge", unique=True, stats={"lethality": 10})
+        self.passive = ItemPassive(name="Gouge", unique=True, stats={"lethality": 10})
 
     def apply_passive(self):
         for stat_name, stat_value in self.passive.stats.items():
