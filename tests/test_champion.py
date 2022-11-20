@@ -83,10 +83,25 @@ def test_get_stats():
         "attack_speed": 0.71,
     }
 
+
 def test_auto_attack_with_item_component():
-    items = ['Cloth Armor', 'Long Sword', 'Pickaxe', 'B. F. Sword'] 
-    ahri = Ahri(level=4, items=items)
+    item_names = ["Cloth Armor", "Long Sword", "Pickaxe", "B. F. Sword"]
+    ahri = Ahri(level=4, item_names=item_names)
     dummy = Dummy(health=1000, bonus_resistance=100)
 
-    assert ahri.orig_bonus_stats ==  {'armor': 15, 'gold': 2825, 'attack_damage': 75}
+    assert ahri.orig_bonus_stats == {"armor": 15, "gold": 2825, "attack_damage": 75}
     assert round(ahri.auto_attack(dummy)) == 67
+
+
+def test_auto_attack_with_item_component_2():
+    """Test auto attack damage with letha, armor pen percent, crit"""
+    item_names = ["Serrated Dirk", "Last Whisper", "Serrated Dirk"]
+    ahri = Ahri(level=7, item_names=item_names)
+    dummy = Dummy(health=1000, bonus_resistance=60)
+
+    assert ahri.orig_bonus_stats["attack_damage"] == 80
+    assert ahri.orig_bonus_stats["lethality"] == 10
+    assert ahri.orig_bonus_stats["armor_pen_percent"] == 18
+
+    assert round(ahri.auto_attack(dummy)) == 104
+    assert round(ahri.auto_attack(dummy, is_crit=True)) == 182
