@@ -1,9 +1,10 @@
 from typing import List
 
 import stats
-from item import Inventory, ALL_ITEM_CLASSES
 from damage import damage_auto_attack
 from data_parser import ALL_CHAMPION_BASE_STATS, SCALING_STAT_NAMES
+from inventory import Inventory
+from item import ALL_ITEM_CLASSES
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion
@@ -25,10 +26,13 @@ class BaseChampion:
 
     def get_champion_base_stats(self, champion_stats):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
-        
-        return {stat_name: stats.calculate_stat_from_level(champion_stats, stat_name, self.level) for stat_name in SCALING_STAT_NAMES}
 
-    def get_bonus_stats(self): # TODO: add runes
+        return {
+            stat_name: stats.calculate_stat_from_level(champion_stats, stat_name, self.level)
+            for stat_name in SCALING_STAT_NAMES
+        }
+
+    def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
         if len(self.inventory.items) == 0:
             return dict()
@@ -46,12 +50,13 @@ class BaseChampion:
         bonus_armor = enemy_champion.orig_bonus_stats["armor"] if "armor" in enemy_champion.orig_bonus_stats else 0
 
         damage = damage_auto_attack(
-            base_attack_damage=self.orig_base_stats["attack_damage"], 
+            base_attack_damage=self.orig_base_stats["attack_damage"],
             base_armor=enemy_champion.orig_base_stats["armor"],
             bonus_attack_damage=bonus_attack_damage,
-            bonus_armor=bonus_armor
-            )
+            bonus_armor=bonus_armor,
+        )
         return damage
+
 
 # Dummy class for tests in practice tool.
 class Dummy:
@@ -61,15 +66,8 @@ class Dummy:
         assert health % 100 == 0
         assert health <= 10000
 
-        self.orig_base_stats = {
-            "armor": 0, 
-            "magic_resist": 0
-        }
-        self.orig_bonus_stats = {
-            "health": health, 
-            "armor": bonus_resistance, 
-            "magic_resist": bonus_resistance
-        }
+        self.orig_base_stats = {"armor": 0, "magic_resist": 0}
+        self.orig_bonus_stats = {"health": health, "armor": bonus_resistance, "magic_resist": bonus_resistance}
 
 
 # Each champion has its own class as their spells have different effects.
