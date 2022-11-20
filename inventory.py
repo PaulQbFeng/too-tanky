@@ -13,20 +13,28 @@ class Passive:
 
 
 class Inventory:
-    """Inventory class that stores the 6 items"""
+    """
+    Inventory class that stores the 6 items.
+    - From a list of Item names, create and store all items in side the attribute items.
+    - Add item passives to items stats if available. Handle unique passives.
+    """
 
-    def __init__(self, item_names: Optional[List[str]]):
+    def __init__(self, item_names: Optional[List[str]] = None):
         self.item_names = item_names
         self.items = self.initialize_items()
         self.unique_passives = []
         self.initialize_item_passives()
 
     def initialize_items(self):
+        """Create a list with the items instantiated"""
         if self.item_names is None:
             return []
         return [ALL_ITEM_CLASSES[item_name]() for item_name in self.item_names]
 
     def initialize_item_passives(self):
+        """
+        Add each item's passive stats to the item. For unique passive, the bonus stats are added once.
+        """
         for item in self.items:
             if hasattr(item, "passive"):
                 if item.passive.name not in self.unique_passives:
@@ -44,9 +52,7 @@ class Inventory:
                 total_item_stats[stat_name] += stat_value
 
     def get_items_total_stats(self, items):
-        """Sum the base stats of each item"""
-        if len(items) == 0:
-            return dict()
+        """Return the sum of the base stats + potential passives of each item"""
 
         total_item_stats = dict()
         for item in items:
