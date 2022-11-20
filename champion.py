@@ -1,57 +1,9 @@
 from damage import damage_auto_attack
 from data_parser import ALL_CHAMPION_BASE_STATS, SCALING_STAT_NAMES
+from stats import Stats
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion
-class Stats:
-    """
-    Champions, items, and rune shards can all be considered to have stats.
-    Stats in league all have a fixed way of being stacked, hence why it makes sense to define a class.
-    """
-    def __init__(self):
-        self.health = 0
-        self.mana = 0
-        self.health_regen = 0
-        self.mana_regen = 0
-        self.attack_damage = 0
-        self.ability_power = 0
-        self.attack_speed = 0
-        self.armor = 0
-        self.magic_resist = 0
-        self.lethality = 0
-        self.armor_pen_percent = 0
-        self.bonus_armor_pen_percent = 0
-        self.magic_pen_flat = 0
-        self.magic_pen_percent = 0
-        self.crit_chance = 0
-        self.crit_damage = 0
-        self.life_steal = 0
-        self.omni_vamp = 0
-        self.spell_vamp = 0
-
-    def __str__(self):
-        return str(self.__class__) + ": " + str(self.__dict__)
-
-    def add_stats(self, stats):
-        self.health += stats.health
-        self.mana += stats.mana
-        self.health_regen += stats.health_regen
-        self.mana_regen += stats.mana_regen
-        self.attack_damage += stats.attack_damage
-        self.ability_power += stats.ability_power
-        self.attack_speed += stats.attack_speed
-        self.armor += stats.armor
-        self.magic_resist += stats.magic_resist
-        self.lethality += stats.lethality
-        self.armor_pen_percent = 1 - (1 - self.armor_pen_percent) * (1 - stats.armor_pen_percent)
-        self.bonus_armor_pen_percent = 1 - (1 - self.bonus_armor_pen_percent) * (1 - stats.bonus_armor_pen_percent)
-        self.magic_pen_flat += stats.magic_pen_flat
-        self.magic_pen_percent = 1 - (1 - self.magic_pen_percent) * (1 - stats.magic_pen_percent)
-        self.crit_chance += stats.crit_chance
-        self.crit_damage += stats.crit_damage
-        self.life_steal += stats.life_steal
-        self.omni_vamp += stats.omni_vamp
-        self.spell_vamp += stats.spell_vamp
 
 
 class BaseChampion:
@@ -73,6 +25,8 @@ class BaseChampion:
         self.base_stats = Stats()
         self.bonus_stats = Stats()
         self.update_stat_from_level(ALL_CHAMPION_BASE_STATS[champion_name])
+        self.items = []
+        self.debuff_list = []
 
     @property
     def orig_total_stats(self):
@@ -112,10 +66,11 @@ class BaseChampion:
 
     def normal_auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
-        return damage_auto_attack(self.base_stats.attack_damage, self.bonus_stats.attack_damage,
-                                  self.total_stats.lethality, self.level, self.total_stats.armor_pen_percent,
-                                  self.total_stats.bonus_armor_pen_percent, enemy_champion.base_stats.armor,
-                                  enemy_champion.bonus_stats.armor, 0, 1, False, 0)
+        damage = damage_auto_attack(self.base_stats.attack_damage, self.bonus_stats.attack_damage,
+                                    self.total_stats.lethality, self.level, self.total_stats.armor_pen_percent,
+                                    self.total_stats.bonus_armor_pen_percent, enemy_champion.base_stats.armor,
+                                    enemy_champion.bonus_stats.armor, 0, 1, False, 0)
+        return damage
 
     def crit_auto_attack(self, enemy_champion):
         return damage_auto_attack(self.base_stats.attack_damage, self.bonus_stats.attack_damage,
@@ -124,8 +79,10 @@ class BaseChampion:
                                   enemy_champion.bonus_stats.armor, 0, 1, True, 0)
 
     def equip_item(self, item):
+        self.items.append(item)
         self.orig_bonus_stats.add_stats(item.stats)
         self.bonus_stats.add_stats(item.stats)
+
 
 
 # Dummy class for tests in practice tool.
