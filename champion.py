@@ -1,8 +1,9 @@
 from typing import List
 
 import stats
-from damage import damage_after_positive_resistance, damage_auto_attack
-from data_parser import ALL_CHAMPION_BASE_STATS, SCALING_STAT_NAMES, ALL_ITEM_STATS
+from item import Inventory, ALL_ITEM_CLASSES
+from damage import damage_auto_attack
+from data_parser import ALL_CHAMPION_BASE_STATS, SCALING_STAT_NAMES
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion
@@ -14,30 +15,18 @@ class BaseChampion:
         - auto attack
     """
 
-    def __init__(self, champion_name: str, level: int = 1, items: List[str] = None):
+    def __init__(self, champion_name: str, level: int = 1, item_names: List[str] = None):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
-        self.items = items
+        self.inventory = Inventory(item_names=item_names)
         self.orig_base_stats = self.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name])
-        self.item_stats = self.get_items_total_stats(items)
+        self.item_stats = self.inventory.get_items_total_stats(self.inventory.items)
         self.orig_bonus_stats = self.get_bonus_stats()
 
     def get_champion_base_stats(self, champion_stats):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
         
         return {stat_name: stats.calculate_stat_from_level(champion_stats, stat_name, self.level) for stat_name in SCALING_STAT_NAMES}
-
-    def get_items_total_stats(self, items):
-        """Sum the base stats of each item"""
-        if items is None:
-            return dict()
-
-        total_item_stats = dict()
-        for item_name in items:
-            item_stats =  ALL_ITEM_STATS[item_name]
-            self.update_bonus_stat_with_item(total_item_stats, item_stats)
-
-        return total_item_stats
 
     def update_bonus_stat_with_item(self, total_item_stats, item_stats):
         """Update the base stats in the item stats dict with a new item."""
@@ -49,13 +38,14 @@ class BaseChampion:
 
     def get_bonus_stats(self): # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
-        if self.items is None:
+        if len(self.inventory.items) == 0:
             return dict()
         return self.item_stats.copy()
 
     def equip_item(self, item_name):
-        self.items.append(item_name)
-        self.update_bonus_stat_with_item(self.item_stats, ALL_ITEM_STATS[item_name])
+        self.inventory.items.append(ALL_ITEM_CLASSES[item_name]())
+        self.inventory.initialize_item_passives()
+        self.item_stats = self.inventory.get_items_total_stats(self.inventory.items)
         self.orig_bonus_stats = self.get_bonus_stats()
 
     def auto_attack(self, enemy_champion):

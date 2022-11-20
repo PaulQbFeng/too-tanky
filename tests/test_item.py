@@ -9,7 +9,7 @@ from damage import damage_after_positive_resistance
 
 def test_DoranBlade():
     doranblade = DoranBlade()
-    assert doranblade.__dict__ == {'attack_damage': 8, 'health': 80, "gold": 450}
+    assert doranblade.stats == {'attack_damage': 8, 'health': 80, "gold": 450}
 
 def test_Sheen():
     sheen = Sheen()
