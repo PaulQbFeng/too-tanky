@@ -28,14 +28,6 @@ class BaseChampion:
         
         return {stat_name: stats.calculate_stat_from_level(champion_stats, stat_name, self.level) for stat_name in SCALING_STAT_NAMES}
 
-    def update_bonus_stat_with_item(self, total_item_stats, item_stats):
-        """Update the base stats in the item stats dict with a new item."""
-        for stat_name, stat_value in item_stats.items():
-            if stat_name not in total_item_stats:
-                total_item_stats[stat_name] = stat_value
-            else:
-                total_item_stats[stat_name] += stat_value
-
     def get_bonus_stats(self): # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
         if len(self.inventory.items) == 0:
