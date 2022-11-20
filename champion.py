@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import stats
 from damage import damage_auto_attack
@@ -16,7 +16,7 @@ class BaseChampion:
         - auto attack
     """
 
-    def __init__(self, champion_name: str, level: int = 1, item_names: List[str] = None):
+    def __init__(self, champion_name: str, item_names: Optional[List[str]] = None, level: int = 1):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
         self.inventory = Inventory(item_names=item_names)
@@ -36,7 +36,7 @@ class BaseChampion:
         """Get bonus stats from all sources of bonus stats (items, runes)"""
         if len(self.inventory.items) == 0:
             return dict()
-        return self.item_stats.copy()
+        return self.item_stats
 
     def equip_item(self, item_name):
         self.inventory.items.append(ALL_ITEM_CLASSES[item_name]())

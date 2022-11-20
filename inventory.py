@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from item import ALL_ITEM_CLASSES
 
@@ -15,7 +15,7 @@ class Passive:
 class Inventory:
     """Inventory class that stores the 6 items"""
 
-    def __init__(self, item_names: List[str] = None):
+    def __init__(self, item_names: Optional[List[str]]):
         self.item_names = item_names
         self.items = self.initialize_items()
         self.unique_passives = []
