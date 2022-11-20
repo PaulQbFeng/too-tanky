@@ -123,6 +123,10 @@ class BaseChampion:
                                   self.total_stats.bonus_armor_pen_percent, enemy_champion.base_stats.armor,
                                   enemy_champion.bonus_stats.armor, 0, 1, True, 0)
 
+    def equip_item(self, item):
+        self.orig_bonus_stats.add_stats(item.stats)
+        self.bonus_stats.add_stats(item.stats)
+
 
 # Dummy class for tests in practice tool.
 class Dummy:
