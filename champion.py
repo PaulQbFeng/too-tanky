@@ -44,16 +44,20 @@ class BaseChampion:
         self.item_stats = self.inventory.get_items_total_stats(self.inventory.items)
         self.orig_bonus_stats = self.get_bonus_stats()
 
-    def auto_attack(self, enemy_champion):
+    def auto_attack(self, enemy_champion, is_crit: bool = False):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
-        bonus_attack_damage = self.orig_bonus_stats["attack_damage"] if "attack_damage" in self.orig_bonus_stats else 0
-        bonus_armor = enemy_champion.orig_bonus_stats["armor"] if "armor" in enemy_champion.orig_bonus_stats else 0
 
         damage = damage_auto_attack(
             base_attack_damage=self.orig_base_stats["attack_damage"],
             base_armor=enemy_champion.orig_base_stats["armor"],
-            bonus_attack_damage=bonus_attack_damage,
-            bonus_armor=bonus_armor,
+            bonus_attack_damage=self.orig_bonus_stats.get("attack_damage", 0),
+            bonus_armor=enemy_champion.orig_bonus_stats.get("armor", 0),
+            attacker_level=self.level,
+            lethality=self.orig_bonus_stats.get("lethality", 0),
+            armor_pen_mult_factor=1 - self.orig_bonus_stats.get("armor_pen_percent", 0) / 100,
+            bonus_armor_pen_mult_factor=1 - self.orig_bonus_stats.get("bonus_armor_pen_percent", 0) / 100,
+            crit=is_crit,
+            crit_damage=self.orig_bonus_stats.get("crit_damage", 0),
         )
         return damage
 
