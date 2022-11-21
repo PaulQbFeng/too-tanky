@@ -19,7 +19,6 @@ class BaseChampion:
     def __init__(self, champion_name: str, item_names: Optional[List[str]] = None, level: int = 1):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
-        self.update_stat_from_level(ALL_CHAMPION_BASE_STATS[champion_name])
         
         self.passive = Spell( "passive", type, level)
         self.q = Spell( "basic", "not leveled", 0)
