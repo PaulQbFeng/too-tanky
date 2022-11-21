@@ -68,26 +68,18 @@ def test_ahri_stat_perlevel():
 
 def test_get_stats():
     annie = Annie(level=18)
-    stats_annie = annie.__dict__
-    del stats_annie["passive"]
-    del stats_annie["q"]
-    del stats_annie["w"]
-    del stats_annie["e"]
-    del stats_annie["r"]
-    stats_annie = {stat_name: round(stat, 2) for stat_name, stat in stats_annie.items()}
 
-    assert stats_annie == {
-        "health": 2328.0,
-        "mana": 843.0,
-        "armor": 107.4,
-        "magic_resist": 52.1,
-        "health_regen": 14.85,
-        "mana_regen": 21.6,
-        "crit_chance": 0.0,
-        "attack_damage": 95.05,
-        "attack_speed": 0.71,
-        "level": 18,
-    }
+    assert round(annie.health, 2) == 2328.0
+    assert round(annie.mana, 2) == 843.0
+    assert round(annie.armor, 2) == 107.4
+    assert round(annie.magic_resist, 2) == 52.1
+    assert round(annie.health_regen, 2) == 14.85
+    assert round(annie.mana_regen, 2) == 21.6
+    assert round(annie.crit_chance, 2) == 0.0
+    assert round(annie.attack_damage, 2) == 95.05
+    assert round(annie.attack_speed, 2) == 0.71
+    assert annie.level == 18
+
 
 def test_annie_q():
     annie = Annie(level=1)
