@@ -1,6 +1,6 @@
 import math
 
-from champion import Ahri, Annie
+from champion import Ahri, Annie, Dummy
 
 
 def test_auto_attack_lvl1():
@@ -17,9 +17,9 @@ def test_ahri_stat_perlevel():
     attack_damage = []
     for i in range(1, 19):
         ahri = Ahri(level=i)
-        attack_damage.append(round(ahri.attack_damage))
-        health_point.append(math.ceil(ahri.health))
-        attack_speed.append(round(ahri.attack_speed, 3))
+        attack_damage.append(round(ahri.orig_base_stats["attack_damage"]))
+        health_point.append(math.ceil(ahri.orig_base_stats["health"]))
+        attack_speed.append(round(ahri.orig_base_stats["attack_speed"], 3))
 
     assert attack_speed == [
         0.668,
@@ -86,3 +86,26 @@ def test_annie_q():
     q = annie.Q(level = 3)
 
     assert q.pre_mitig_damage() == 150
+
+
+def test_auto_attack_with_item_component():
+    item_names = ["Cloth Armor", "Long Sword", "Pickaxe", "B. F. Sword"]
+    ahri = Ahri(level=4, item_names=item_names)
+    dummy = Dummy(health=1000, bonus_resistance=100)
+
+    assert ahri.orig_bonus_stats == {"armor": 15, "gold": 2825, "attack_damage": 75}
+    assert round(ahri.auto_attack(dummy)) == 67
+
+
+def test_auto_attack_with_item_component_2():
+    """Test auto attack damage with letha, armor pen percent, crit"""
+    item_names = ["Serrated Dirk", "Last Whisper", "Serrated Dirk"]
+    ahri = Ahri(level=7, item_names=item_names)
+    dummy = Dummy(health=1000, bonus_resistance=60)
+
+    assert ahri.orig_bonus_stats["attack_damage"] == 80
+    assert ahri.orig_bonus_stats["lethality"] == 10
+    assert ahri.orig_bonus_stats["armor_pen_percent"] == 18
+
+    assert round(ahri.auto_attack(dummy)) == 104
+    assert round(ahri.auto_attack(dummy, is_crit=True)) == 182
