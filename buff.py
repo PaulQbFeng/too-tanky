@@ -21,27 +21,29 @@ class Buff:
     despite it being percent armor reduction which stacks multipliticavely in other instances)
     """
 
-    def __init__(self):
-        self.base_stats = Stats()
-        self.bonus_stats = Stats
-
-    def add_buff(self, buff):
-        self.base_stats.add_stats(buff.base_stats)
-        self.bonus_stats.add_stats(buff.bonus_stats)
-
-    def apply_buff(self, champion):
-        champion.base_stats.add_stats(self.base_stats)
-        champion
+    def __init__(self, transfer_type, duration_type, compatible_damage_type, compatible_spell_type):
+        self.transfer_type = transfer_type  # 'to_spell' if it buffs/debuffs the spell, 'to owner', 'to enemy'
+        self.duration_type = duration_type  # 'indefinite', 'conditional', 'temporary'
+        self.compatible_damage_type = compatible_damage_type  # 'physical', 'magical', 'true'
+        self.compatible_spell_type = compatible_spell_type  # 'immobilize', 'slow', 'toggle', 'on-hit', 'shield, 'heal'
 
 
 class ResistanceReduction(Buff):
-    def ___init__(self, flat_reduction, percent_reduction, target_champion):
-        super().__init__()
+    def ___init__(self, flat_reduction, percent_reduction, duration_type, compatible_damage_type, compatible_spell_type):
+        super().__init__('to enemy', duration_type, compatible_damage_type, compatible_spell_type)
+        self.transfer_type = 'to enemy'
         self.flat_reduction = flat_reduction
         self.percent_reduction = percent_reduction
-        self.base_stats.armor = - (target_champion.base_stats.armor * self.percent_reduction + self.flat_reduction * (1 - self.percent_reduction) * target_champion.base_stats.armor / target_champion.total_stats.armor)
-        self.bonus_stats.armor = - (target_champion.bonus_stats.armor * self.percent_reduction + self.flat_reduction * (1 - self.percent_reduction) * target_champion.bonus_stats.armor / target_champion.total_stats.armor)
 
-    def add_buff(self, buff):
-        # needs to be overwritten
-        a = 0
+    def add_buff_to(self, champion):
+        if any(isinstance(x, type(self)) for x in champion.buff_list):
+            buff = champion.buff_list[next(i for i, x in enumerate(champion.buff_list) if isinstance(x, type(self)))]
+            buff.flat_reduction += self.flat_reduction
+            buff.percent_reduction = 1 - (1 - buff.percent_reduction) * (1 - self.percent_reduction)
+        else:
+            champion.buff_list.append(self)
+        champion.apply_buffs()
+
+    def apply_buff_to(self, champion):
+        champion.base_stats.armor -= self.flat_reduction * champion.orig_base_stats.armor / champion.orig_total_stats.armor
+        champion.bonus_stats.armor -= self.flat_reduction * champion.orig_base_stats.armor / champion.orig_total_stats.armor

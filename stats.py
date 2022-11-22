@@ -23,7 +23,6 @@ class Stats:
         self.life_steal = 0
         self.omni_vamp = 0
         self.spell_vamp = 0
-        self.debuff_list = []
 
     def __str__(self):
         return str(self.__class__) + ": " + str(self.__dict__)
