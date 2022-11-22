@@ -105,3 +105,9 @@ def test_auto_attack_with_item_component_2():
 
     assert round(ahri.auto_attack_damage(dummy)) == 104
     assert round(ahri.auto_attack_damage(dummy, is_crit=True)) == 182
+
+
+def test_darius_auto_attack():
+    darius = Darius(level=18)
+    dummy = Dummy(health=1000, bonus_resistance=100)
+    assert round(darius.auto_attack_damage(dummy)) == 74
