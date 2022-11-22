@@ -7,8 +7,8 @@ from item import BlackCleaver
 def test_auto_attack_lvl1():
     annie = Annie()
     ahri = Ahri()
-    assert round(annie.normal_auto_attack(ahri), 2) == 42.37
-    assert round(ahri.normal_auto_attack(annie), 2) == 44.54
+    assert round(annie.auto_attack(ahri), 2) == 42.37
+    assert round(ahri.auto_attack(annie), 2) == 44.54
 
 
 def test_ahri_stat_perlevel():

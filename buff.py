@@ -22,28 +22,31 @@ class Buff:
     """
 
     def __init__(self, transfer_type, duration_type, compatible_damage_type, compatible_spell_type):
-        self.transfer_type = transfer_type  # 'to_spell' if it buffs/debuffs the spell, 'to owner', 'to enemy'
+        self.transfer_type = transfer_type  # 'to spell' if it buffs/debuffs the spell, 'to owner', 'to enemy'
         self.duration_type = duration_type  # 'indefinite', 'conditional', 'temporary'
-        self.compatible_damage_type = compatible_damage_type  # 'physical', 'magical', 'true'
-        self.compatible_spell_type = compatible_spell_type  # 'immobilize', 'slow', 'toggle', 'on-hit', 'shield, 'heal'
+        self.compatible_damage_type = compatible_damage_type  # 'physical', 'magical', 'true', 'all'
+        self.compatible_spell_type = compatible_spell_type  # 'immobilize', 'slow', 'toggle', 'on-hit', 'shield, 'heal', 'all'
 
 
 class ResistanceReduction(Buff):
     def ___init__(self, flat_reduction, percent_reduction, duration_type, compatible_damage_type, compatible_spell_type):
         super().__init__('to enemy', duration_type, compatible_damage_type, compatible_spell_type)
-        self.transfer_type = 'to enemy'
         self.flat_reduction = flat_reduction
         self.percent_reduction = percent_reduction
 
     def add_buff_to(self, champion):
         if any(isinstance(x, type(self)) for x in champion.buff_list):
             buff = champion.buff_list[next(i for i, x in enumerate(champion.buff_list) if isinstance(x, type(self)))]
-            buff.flat_reduction += self.flat_reduction
-            buff.percent_reduction = 1 - (1 - buff.percent_reduction) * (1 - self.percent_reduction)
+            if self.transfer_type == 'to owner' or self.transfer_type == 'to spell':
+                buff.flat_reduction += self.flat_reduction
+                buff.percent_reduction = 1 - (1 - buff.percent_reduction) * (1 - self.percent_reduction)
+            elif self.transfer_type == 'to enemy':
+                champion.buff_list.remove(buff)
+                champion.buff_list.append(self)
         else:
             champion.buff_list.append(self)
         champion.apply_buffs()
 
     def apply_buff_to(self, champion):
-        champion.base_stats.armor -= self.flat_reduction * champion.orig_base_stats.armor / champion.orig_total_stats.armor
-        champion.bonus_stats.armor -= self.flat_reduction * champion.orig_base_stats.armor / champion.orig_total_stats.armor
+        champion.base_stats.armor = (champion.orig_base_stats.armor - self.flat_reduction * champion.orig_base_stats.armor / champion.orig_total_stats.armor) * self.percent_reduction
+        champion.bonus_stats.armor = (champion.orig_bonus_stats.armor - self.flat_reduction * champion.orig_bonus_stats.armor / champion.orig_total_stats.armor) * self.percent_reduction

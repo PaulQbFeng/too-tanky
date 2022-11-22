@@ -26,7 +26,7 @@ class BaseChampion:
         self.bonus_stats = Stats()
         self.update_stat_from_level(ALL_CHAMPION_BASE_STATS[champion_name])
         self.items = []
-        self.debuff_list = []
+        self.buff_list = []
 
     @property
     def orig_total_stats(self):
@@ -64,7 +64,7 @@ class BaseChampion:
             setattr(self.orig_base_stats, stat_name, calculate_stat_from_level(champion_stats, stat_name, self.level))
             setattr(self.base_stats, stat_name, calculate_stat_from_level(champion_stats, stat_name, self.level))
 
-    def normal_auto_attack(self, enemy_champion):
+    def auto_attack(self, enemy_champion):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
         damage = damage_auto_attack(self.base_stats.attack_damage, self.bonus_stats.attack_damage,
                                     self.total_stats.lethality, self.level, self.total_stats.armor_pen_percent,
@@ -72,14 +72,9 @@ class BaseChampion:
                                     enemy_champion.bonus_stats.armor, 0, 1, False, 0)
         return damage
 
-    def crit_auto_attack(self, enemy_champion):
-        return damage_auto_attack(self.base_stats.attack_damage, self.bonus_stats.attack_damage,
-                                  self.total_stats.lethality, self.level, self.total_stats.armor_pen_percent,
-                                  self.total_stats.bonus_armor_pen_percent, enemy_champion.base_stats.armor,
-                                  enemy_champion.bonus_stats.armor, 0, 1, True, 0)
-
     def equip_item(self, item):
         self.items.append(item)
+        item.item_holder = self
         self.orig_bonus_stats.add_stats(item.stats)
         self.bonus_stats.add_stats(item.stats)
 

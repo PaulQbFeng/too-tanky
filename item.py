@@ -1,6 +1,6 @@
 from data_parser import ALL_ITEM_STATS
 from champion import Stats
-from buff import Buff
+from buff import Buff, ResistanceReduction
 
 
 print(ALL_ITEM_STATS["Black Cleaver"])
@@ -10,6 +10,7 @@ class BaseItem:
     def __init__(self, item_name: str):
         self.stats = Stats()
         self.gold = ALL_ITEM_STATS[item_name]['gold']
+        self.item_holder = None
         for stat_name in list(ALL_ITEM_STATS[item_name]):
             if stat_name != 'gold':
                 setattr(self.stats, stat_name, ALL_ITEM_STATS[item_name][stat_name])
@@ -27,16 +28,14 @@ class BlackCleaver(BaseItem):
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, **kwargs)
-        self.debuff = Buff()
-        self.debuff_count = 0
-        self.debuff.percent_armor_reduction = 0.05
-        self.compatible_damage_type = 'physical'
+        self.percent_armor_reduction_stacks = [0.05, 0.05/0.95, 0.05/0.9, 0.05/0.85, 0.05/0.8, 0.05/0.75]
+        self.stack_count = 0
 
-    def apply_effect_to(self, champion):
+    def apply_effect(self):
         """
         There are atleast 2 different cases: the effect gives
         """
-        if self.debuff_count < 6:
-            champion.debuff_list.append(self.debuff)
-            self.debuff_count += 1
+        buff = ResistanceReduction(0, self.percent_armor_reduction_stacks[self.stack_count], 'indefinite', 'physical', 'all')
+        buff.add_buff_to(self.item_holder)
+        self.stack_count += 1
 

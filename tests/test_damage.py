@@ -12,7 +12,7 @@ def tests_normal_auto_attack_cait_dummy_60():
     dummy_60 = Dummy(1000, 60, 60)
     # Caitlyn level 1 with no items no damage runes
     caitlyn = Caitlyn()
-    assert round(caitlyn.normal_auto_attack(dummy_60)) == 39
+    assert round(caitlyn.auto_attack(dummy_60)) == 39
     # Caitlyn level 1 with a doran's blade
     # No headshot no crit
     assert round(damage_auto_attack(base_attack_damage=62, bonus_attack_damage=13.4, lethality=0, attacker_level=1,
