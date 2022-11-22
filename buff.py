@@ -37,12 +37,8 @@ class ResistanceReduction(Buff):
     def add_buff_to(self, champion):
         if any(isinstance(x, type(self)) for x in champion.buff_list):
             buff = champion.buff_list[next(i for i, x in enumerate(champion.buff_list) if isinstance(x, type(self)))]
-            if self.transfer_type == 'to owner' or self.transfer_type == 'to spell':
-                buff.flat_reduction += self.flat_reduction
-                buff.percent_reduction = 1 - (1 - buff.percent_reduction) * (1 - self.percent_reduction)
-            elif self.transfer_type == 'to enemy':
-                champion.buff_list.remove(buff)
-                champion.buff_list.append(self)
+            buff.flat_reduction += self.flat_reduction
+            buff.percent_reduction = 1 - (1 - buff.percent_reduction) * (1 - self.percent_reduction)
         else:
             champion.buff_list.append(self)
         champion.apply_buffs()
