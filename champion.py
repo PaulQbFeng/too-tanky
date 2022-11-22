@@ -23,6 +23,7 @@ class BaseChampion:
         self.orig_base_stats = self.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name])
         self.item_stats = self.inventory.get_items_total_stats(self.inventory.items)
         self.orig_bonus_stats = self.get_bonus_stats()
+        self.current_health = self.orig_base_stats["health"]
 
     def get_champion_base_stats(self, champion_stats):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
@@ -61,6 +62,17 @@ class BaseChampion:
         )
         return damage
 
+    def take_damage(self, damage):
+        """Takes damage from an enemy champion"""
+
+        self.current_health -= damage
+
+    def do_auto_attack(self, enemy_champion, is_crit: bool = False):
+        """Deals damage to an enemy champion with an autoattack"""
+
+        damage = self.auto_attack_damage(enemy_champion, is_crit)
+        enemy_champion.take_damage(damage)
+
 
 # Dummy class for tests in practice tool.
 class Dummy:
@@ -71,7 +83,17 @@ class Dummy:
         assert health <= 10000
 
         self.orig_base_stats = {"armor": 0, "magic_resist": 0}
-        self.orig_bonus_stats = {"health": health, "armor": bonus_resistance, "magic_resist": bonus_resistance}
+        self.orig_bonus_stats = {
+            "health": health,
+            "armor": bonus_resistance,
+            "magic_resist": bonus_resistance,
+        }
+        self.current_health = health
+
+    def take_damage(self, damage):
+        """Takes damage from an enemy champion"""
+
+        self.current_health -= damage
 
 
 # Each champion has its own class as their spells have different effects.

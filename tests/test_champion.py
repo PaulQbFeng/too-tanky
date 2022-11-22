@@ -109,5 +109,7 @@ def test_auto_attack_with_item_component_2():
 
 def test_darius_auto_attack():
     darius = Darius(level=18)
+    assert round(darius.current_health) == 2590
+
     dummy = Dummy(health=1000, bonus_resistance=100)
     assert round(darius.auto_attack_damage(dummy)) == 74
