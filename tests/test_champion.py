@@ -112,4 +112,5 @@ def test_darius_auto_attack():
     assert round(darius.current_health) == 2590
 
     dummy = Dummy(health=1000, bonus_resistance=100)
-    assert round(darius.auto_attack_damage(dummy)) == 74
+    darius.do_auto_attack(dummy)
+    assert round(dummy.current_health) == 926
