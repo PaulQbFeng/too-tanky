@@ -6,10 +6,10 @@ ahri = Ahri()
 jax = Jax()
 irelia = Irelia()
 
-damage1 = ahri.auto_attack(annie)
-damage2 = annie.auto_attack(ahri)
-damage3 = jax.auto_attack(irelia)
-damage4 = irelia.auto_attack(jax)
+damage1 = ahri.auto_attack_damage(annie)
+damage2 = annie.auto_attack_damage(ahri)
+damage3 = jax.auto_attack_damage(irelia)
+damage4 = irelia.auto_attack_damage(jax)
 
 print(f"Ahri lvl 1 auto Annie level 1, damage dealt: {round(damage1, 2)}")
 print(f"Annie lvl 1 auto Ahri level 1, damage dealt: {round(damage2, 2)}")
@@ -18,5 +18,3 @@ print(f"Irelia lvl 1 auto Jax level 1, damage dealt: {round(damage4, 2)}")
 
 annie=Annie(level = 18)
 print(annie.get_stats())
-
-

@@ -1,13 +1,13 @@
 import math
 
-from champion import Ahri, Annie, Dummy
+from champion import Ahri, Annie, Darius, Dummy
 
 
 def test_auto_attack_lvl1():
     annie = Annie()
     ahri = Ahri()
-    assert round(annie.auto_attack(ahri), 2) == 42.37
-    assert round(ahri.auto_attack(annie), 2) == 44.54
+    assert round(annie.auto_attack_damage(ahri), 2) == 42.37
+    assert round(ahri.auto_attack_damage(annie), 2) == 44.54
 
 
 def test_ahri_stat_perlevel():
@@ -90,7 +90,7 @@ def test_auto_attack_with_item_component():
     dummy = Dummy(health=1000, bonus_resistance=100)
 
     assert ahri.orig_bonus_stats == {"armor": 15, "gold": 2825, "attack_damage": 75}
-    assert round(ahri.auto_attack(dummy)) == 67
+    assert round(ahri.auto_attack_damage(dummy)) == 67
 
 
 def test_auto_attack_with_item_component_2():
@@ -103,5 +103,5 @@ def test_auto_attack_with_item_component_2():
     assert ahri.orig_bonus_stats["lethality"] == 10
     assert ahri.orig_bonus_stats["armor_pen_percent"] == 18
 
-    assert round(ahri.auto_attack(dummy)) == 104
-    assert round(ahri.auto_attack(dummy, is_crit=True)) == 182
+    assert round(ahri.auto_attack_damage(dummy)) == 104
+    assert round(ahri.auto_attack_damage(dummy, is_crit=True)) == 182

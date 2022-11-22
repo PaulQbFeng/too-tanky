@@ -44,7 +44,7 @@ class BaseChampion:
         self.item_stats = self.inventory.get_items_total_stats(self.inventory.items)
         self.orig_bonus_stats = self.get_bonus_stats()
 
-    def auto_attack(self, enemy_champion, is_crit: bool = False):
+    def auto_attack_damage(self, enemy_champion, is_crit: bool = False):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
 
         damage = damage_auto_attack(
@@ -91,6 +91,13 @@ class Ahri(BaseChampion):
 
 class Caitlyn(BaseChampion):
     champion_name = "Caitlyn"
+
+    def __init__(self, **kwargs):
+        super().__init__(champion_name=__class__.champion_name, **kwargs)
+
+
+class Darius(BaseChampion):
+    champion_name = "Darius"
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
