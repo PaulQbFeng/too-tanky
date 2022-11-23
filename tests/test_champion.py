@@ -69,20 +69,24 @@ def test_ahri_stat_perlevel():
 
 def test_get_stats():
     annie = Annie(level=18)
-    stats_annie = annie.orig_base_stats
-    stats_annie = {stat_name: round(stat, 2) for stat_name, stat in stats_annie.items()}
 
-    assert stats_annie == {
-        "health": 2328.0,
-        "mana": 843.0,
-        "armor": 107.4,
-        "magic_resist": 52.1,
-        "health_regen": 14.85,
-        "mana_regen": 21.6,
-        "crit_chance": 0.0,
-        "attack_damage": 95.05,
-        "attack_speed": 0.71,
-    }
+    assert round(annie.orig_base_stats["health"], 2) == 2328.0
+    assert round(annie.orig_base_stats["mana"], 2) == 843.0
+    assert round(annie.orig_base_stats["armor"], 2) == 107.4
+    assert round(annie.orig_base_stats["magic_resist"], 2) == 52.1
+    assert round(annie.orig_base_stats["health_regen"], 2) == 14.85
+    assert round(annie.orig_base_stats["mana_regen"], 2) == 21.6
+    assert round(annie.orig_base_stats["crit_chance"], 2) == 0.0
+    assert round(annie.orig_base_stats["attack_damage"], 2) == 95.05
+    assert round(annie.orig_base_stats["attack_speed"], 2) == 0.71
+    assert annie.level == 18
+
+
+def test_annie_q():
+    annie = Annie(level=1)
+    q = annie.Q(level = 3)
+
+    assert q.pre_mitig_damage() == 150
 
 
 def test_auto_attack_with_item_component():

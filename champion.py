@@ -27,9 +27,15 @@ class BaseChampion:
         for item in self.inventory:
             self.apply_unique_item_passive(item)
 
-        self.item_stats = sc.get_items_total_stats(self.inventory)
+        self.item_stats = sc.get_items_total_stats(self.inventory)              
         self.orig_bonus_stats = self.get_bonus_stats()
         self.current_health = self.orig_base_stats["health"]
+        
+        self.passive = Spell( "passive", type, level)
+        self.q = Spell( "basic", "not leveled", 0)
+        self.w = Spell( "basic", "not leveled", 0)
+        self.e = Spell( "basic", "not leveled", 0)
+        self.r = Spell( "ulti", "not leveled", 0)
 
     def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
@@ -100,6 +106,11 @@ class Dummy:
 
         self.current_health -= damage
 
+class Spell:
+    def __init__(self, nature: str = "not leveled", spell_type : str = "not leveled", level : int = 0):
+        self.nature = nature
+        self.spell_type = spell_type
+        self.level = level
 
 # Each champion has its own class as their spells have different effects.
 class Annie(BaseChampion):
@@ -108,12 +119,47 @@ class Annie(BaseChampion):
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
 
+    class Q(Spell):
+        damage = 0
+        ap_ratio = 0.8
+        def __init__(self, level: int = 0, **kwargs):
+            super().__init__("magic_damage", level)
+            self.update_spell_from_level(level)
+
+        def update_spell_from_level(self, level : int):
+            damage_list = [80,115,150,185,220]
+            self.damage=damage_list[level -1]
+        
+        def pre_mitig_damage(self): #pre-mitigation damage , need to add ap ratio
+            return self.damage # + ap_ratio * 
+
 
 class Ahri(BaseChampion):
     champion_name = "Ahri"
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
+
+    def Q(Spell):
+        damage = 0
+        def __init__(self, level: int = 0, **kwargs):
+            super().__init__("magic_damage", level)
+            self.update_spell_from_level(level)
+
+        def update_spell_from_level(self, level : int):
+            if level == 1:
+                self.damage = 2*40
+            if level == 2:
+                self.damage = 2*65
+            if level == 3:
+                self.damage = 2*90
+            if level == 4:
+                self.damage = 2*115
+            if level == 5:
+                self.damage = 2*140
+        
+        def pre_mitig_damage(self): #pre-mitigation damage
+            return self.damage
 
 
 class Caitlyn(BaseChampion):
