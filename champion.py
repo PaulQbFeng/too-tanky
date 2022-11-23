@@ -4,6 +4,7 @@ import stats_calculator as sc
 from damage import damage_auto_attack
 from data_parser import ALL_CHAMPION_BASE_STATS
 from item import BaseItem
+from stats import Stats
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion
@@ -29,7 +30,7 @@ class BaseChampion:
 
         self.item_stats = sc.get_items_total_stats(self.inventory)              
         self.orig_bonus_stats = self.get_bonus_stats()
-        self.current_health = self.orig_base_stats["health"]
+        self.current_health = self.orig_base_stats.health
         
         self.passive = Spell( "passive", type, level)
         self.q = Spell( "basic", "not leveled", 0)
@@ -40,7 +41,7 @@ class BaseChampion:
     def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
         if len(self.inventory) == 0:
-            return dict()
+            return Stats()
         return self.item_stats
 
     def apply_unique_item_passive(self, item):
@@ -60,8 +61,8 @@ class BaseChampion:
         """Calculates the damage dealt to an enemy champion with an autoattack"""
 
         damage = damage_auto_attack(
-            base_attack_damage=self.orig_base_stats["attack_damage"],
-            base_armor=enemy_champion.orig_base_stats["armor"],
+            base_attack_damage=self.orig_base_stats.attack_damage,
+            base_armor=enemy_champion.orig_base_stats.armor,
             bonus_attack_damage=self.orig_bonus_stats.get("attack_damage", 0),
             bonus_armor=enemy_champion.orig_bonus_stats.get("armor", 0),
             attacker_level=self.level,
@@ -93,12 +94,12 @@ class Dummy:
         assert health % 100 == 0
         assert health <= 10000
 
-        self.orig_base_stats = {"armor": 0, "magic_resist": 0}
-        self.orig_bonus_stats = {
+        self.orig_base_stats = Stats({"armor": 0, "magic_resist": 0})
+        self.orig_bonus_stats = Stats({
             "health": health,
             "armor": bonus_resistance,
             "magic_resist": bonus_resistance,
-        }
+        })
         self.current_health = health
 
     def take_damage(self, damage):
