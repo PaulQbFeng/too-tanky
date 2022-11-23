@@ -1,6 +1,5 @@
 import math
-
-from champion import Ahri, Annie, Caitlyn
+from champion import Ahri, Annie, Caitlyn, Dummy
 from item import BlackCleaver
 
 
@@ -84,10 +83,16 @@ def test_get_stats():
 def test_equip_black_cleaver():
     caitlyn = Caitlyn(level=4)
     blackcleaver = BlackCleaver()
-    print(blackcleaver.gold)
     assert blackcleaver.stats.health == 350
     caitlyn.equip_item(blackcleaver)
     assert round(caitlyn.total_stats.attack_damage) == 116
     assert round(caitlyn.orig_total_stats.attack_damage) == 116
     assert math.ceil(caitlyn.total_stats.health) == 1173
     assert math.ceil(caitlyn.orig_total_stats.health) == 1173
+
+
+def test_auto_attack_black_cleaver():
+    caitlyn = Caitlyn(level=11)
+    dummy_60 = Dummy(1000, 60, 60)
+    blackcleaver = BlackCleaver()
+    caitlyn.equip_item(blackcleaver)

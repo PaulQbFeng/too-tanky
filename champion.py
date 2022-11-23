@@ -1,6 +1,7 @@
 from damage import damage_auto_attack
 from data_parser import ALL_CHAMPION_BASE_STATS, SCALING_STAT_NAMES
 from stats import Stats
+from copy import deepcopy
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion
@@ -86,9 +87,15 @@ class BaseChampion:
                                                     self.total_stats.bonus_armor_pen_percent, enemy_champion.base_stats.armor,
                                                     enemy_champion.bonus_stats.armor, 0, 1, False, 0)
                 elif buff.transfer_type == 'to enemy':
-                    buff.add_buff_to(enemy_champion)
+                    damage = damage_auto_attack(self.base_stats.attack_damage, self.bonus_stats.attack_damage,
+                                                self.total_stats.lethality, self.level, self.total_stats.armor_pen_percent,
+                                                self.total_stats.bonus_armor_pen_percent, enemy_champion.base_stats.armor,
+                                                enemy_champion.bonus_stats.armor, 0, 1, False, 0)
+                    buff_copy = deepcopy(buff)
+                    buff_copy.transfer_type = 'to owner'
+                    buff_copy.add_buff_to(enemy_champion)
                 else:
-                    print("this transfer type does not exist")
+                    print("the transfer type: '{}' does not exist".format(buff.transfer_type))
         return damage
 
     def equip_item(self, item):
@@ -96,12 +103,12 @@ class BaseChampion:
         item.item_holder = self
         self.orig_bonus_stats.add_stats(item.stats)
         self.bonus_stats.add_stats(item.stats)
+        item.apply_effect()
 
     def apply_buffs(self):
         for buff in self.buff_list:
             if buff.transfer_type == 'to owner':
                 buff.apply_buff_to(self)
-
 
 
 # Dummy class for tests in practice tool.
@@ -121,6 +128,8 @@ class Dummy:
         self.base_stats.health = health
         self.bonus_stats.armor = bonus_armor
         self.bonus_stats.magic_resist = bonus_magic_resist
+        self.buff_list=[]
+
 
 
 # Each champion has its own class as their spells have different effects.

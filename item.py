@@ -32,10 +32,10 @@ class BlackCleaver(BaseItem):
         self.stack_count = 0
 
     def apply_effect(self):
-        """
-        There are atleast 2 different cases: the effect gives
-        """
-        buff = ResistanceReduction(0, self.percent_armor_reduction_stacks[self.stack_count], 'indefinite', 'physical', 'all')
+        buff = ResistanceReduction(flat_reduction=0,
+                                   percent_reduction=self.percent_armor_reduction_stacks[self.stack_count],
+                                   duration_type='indefinite', compatible_damage_type='physical',
+                                   compatible_spell_type='all')
         buff.add_buff_to(self.item_holder)
         self.stack_count += 1
 

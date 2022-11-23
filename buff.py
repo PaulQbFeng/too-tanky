@@ -1,6 +1,3 @@
-from stats import Stats
-
-
 class Buff:
     """
     Buffs/debuffs are status effect that can affect all the damage dealt or taken by a unit, or other stats. They can be
@@ -29,10 +26,13 @@ class Buff:
 
 
 class ResistanceReduction(Buff):
-    def ___init__(self, flat_reduction, percent_reduction, duration_type, compatible_damage_type, compatible_spell_type):
-        super().__init__('to enemy', duration_type, compatible_damage_type, compatible_spell_type)
+    def __init__(self, flat_reduction, percent_reduction, duration_type, compatible_damage_type, compatible_spell_type):
+        super(ResistanceReduction, self).__init__('to enemy', duration_type, compatible_damage_type, compatible_spell_type)
         self.flat_reduction = flat_reduction
         self.percent_reduction = percent_reduction
+
+    def __str__(self):
+        return str(self.__class__) + ": " + str(self.__dict__)
 
     def add_buff_to(self, champion):
         if any(isinstance(x, type(self)) for x in champion.buff_list):
@@ -44,5 +44,5 @@ class ResistanceReduction(Buff):
         champion.apply_buffs()
 
     def apply_buff_to(self, champion):
-        champion.base_stats.armor = (champion.orig_base_stats.armor - self.flat_reduction * champion.orig_base_stats.armor / champion.orig_total_stats.armor) * self.percent_reduction
-        champion.bonus_stats.armor = (champion.orig_bonus_stats.armor - self.flat_reduction * champion.orig_bonus_stats.armor / champion.orig_total_stats.armor) * self.percent_reduction
+        champion.base_stats.armor = (champion.orig_base_stats.armor - self.flat_reduction * champion.orig_base_stats.armor / champion.orig_total_stats.armor) * (1 - self.percent_reduction)
+        champion.bonus_stats.armor = (champion.orig_bonus_stats.armor - self.flat_reduction * champion.orig_bonus_stats.armor / champion.orig_total_stats.armor) * (1 - self.percent_reduction)
