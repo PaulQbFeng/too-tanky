@@ -1,6 +1,7 @@
 import math
 
 from champion import Ahri, Annie, Darius, Dummy
+from item import ALL_ITEM_CLASSES
 
 
 def test_auto_attack_lvl1():
@@ -90,7 +91,8 @@ def test_annie_q():
 
 def test_auto_attack_with_item_component():
     item_names = ["Cloth Armor", "Long Sword", "Pickaxe", "B. F. Sword"]
-    ahri = Ahri(level=4, item_names=item_names)
+    inventory = [ALL_ITEM_CLASSES[item_name]() for item_name in item_names]
+    ahri = Ahri(level=4, inventory=inventory)
     dummy = Dummy(health=1000, bonus_resistance=100)
 
     assert ahri.orig_bonus_stats == {"armor": 15, "gold": 2825, "attack_damage": 75}
@@ -100,7 +102,8 @@ def test_auto_attack_with_item_component():
 def test_auto_attack_with_item_component_2():
     """Test auto attack damage with letha, armor pen percent, crit"""
     item_names = ["Serrated Dirk", "Last Whisper", "Serrated Dirk"]
-    ahri = Ahri(level=7, item_names=item_names)
+    inventory = [ALL_ITEM_CLASSES[item_name]() for item_name in item_names]
+    ahri = Ahri(level=7, inventory=inventory)
     dummy = Dummy(health=1000, bonus_resistance=60)
 
     assert ahri.orig_bonus_stats["attack_damage"] == 80

@@ -1,14 +1,25 @@
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+
 from damage import damage_after_positive_resistance
 from data_parser import ALL_ITEM_STATS
 
 
+@dataclass
 class ItemPassive:
     """Class to define item (or more?) passive"""
 
-    def __init__(self, name: str, stats: dict, unique: bool = False):
-        self.name = name
-        self.unique = unique
-        self.stats = stats
+    name: str = ""
+    unique: bool = False
+    stats: dict = None
+
+
+class AbstractItem(ABC):
+    """Abstract BaseItem class"""
+
+    @abstractmethod
+    def apply_passive(self):
+        pass
 
 
 class BaseItem:
@@ -19,6 +30,10 @@ class BaseItem:
 
     def __init__(self, item_name: str):
         self.stats = ALL_ITEM_STATS[item_name].copy()
+        self.passive = ItemPassive()
+
+    def apply_passive(self):
+        pass
 
 
 class DoranBlade(BaseItem):
