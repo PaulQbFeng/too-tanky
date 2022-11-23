@@ -15,8 +15,8 @@ class Stats:
         for name, value  in stat_dict.items():
             setattr(self, name, value)
 
-    def __str__(self):
-        return "\n".join([f"{k}: {v}" for k, v in self.__dict__.items()])
+    def print_stats(self):
+        return print("\n".join([f"{k}: {v}" for k, v in self.__dict__.items()]))
 
 
     def __add__(self, stats: StatsAnnot):
