@@ -1,8 +1,6 @@
-import math
-
 from champion import Ahri, Annie, Dummy
 from damage import damage_after_positive_resistance
-from item import DoranBlade, Sheen
+from item import ALL_ITEM_CLASSES, DoranBlade, Sheen
 
 
 def test_DoranBlade():
@@ -20,14 +18,15 @@ def test_Sheen():
 
 
 def test_serrated_unique_passive():
-    items = ["Serrated Dirk", "Last Whisper"]
-    ahri = Ahri(level=7, item_names=items)
+    item_names = ["Serrated Dirk", "Last Whisper"]
+    inventory = [ALL_ITEM_CLASSES[item_name]() for item_name in item_names]
+    ahri = Ahri(level=7, inventory=inventory)
 
     assert ahri.orig_bonus_stats["attack_damage"] == 50
     assert ahri.orig_bonus_stats["lethality"] == 10
     assert ahri.orig_bonus_stats["armor_pen_percent"] == 18
 
-    ahri.equip_item("Serrated Dirk")
+    ahri.equip_item(ALL_ITEM_CLASSES["Serrated Dirk"]())
 
     assert ahri.orig_bonus_stats["attack_damage"] == 80
     assert ahri.orig_bonus_stats["lethality"] == 10

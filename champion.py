@@ -1,10 +1,9 @@
 from typing import List, Optional
 
-import stats
+import stats_calculator as sc
 from damage import damage_auto_attack
-from data_parser import ALL_CHAMPION_BASE_STATS, SCALING_STAT_NAMES
-from inventory import Inventory
-from item import ALL_ITEM_CLASSES
+from data_parser import ALL_CHAMPION_BASE_STATS
+from item import BaseItem
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion
@@ -16,32 +15,40 @@ class BaseChampion:
         - auto attack
     """
 
-    def __init__(self, champion_name: str, item_names: Optional[List[str]] = None, level: int = 1):
+    def __init__(self, champion_name: str, inventory: Optional[List[BaseItem]] = None, level: int = 1):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
-        self.inventory = Inventory(item_names=item_names)
-        self.orig_base_stats = self.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name])
-        self.item_stats = self.inventory.get_items_total_stats(self.inventory.items)
+        self.orig_base_stats = sc.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level)
+        if inventory is None:
+            self.inventory = []
+        else:
+            self.inventory = inventory
+        self.unique_item_passives = set()
+        for item in self.inventory:
+            if hasattr(item, "passive"):
+                self.apply_unique_item_passive(item)
+
+        self.item_stats = sc.get_items_total_stats(self.inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
-
-    def get_champion_base_stats(self, champion_stats):
-        """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
-
-        return {
-            stat_name: stats.calculate_stat_from_level(champion_stats, stat_name, self.level)
-            for stat_name in SCALING_STAT_NAMES
-        }
 
     def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
-        if len(self.inventory.items) == 0:
+        if len(self.inventory) == 0:
             return dict()
         return self.item_stats
 
-    def equip_item(self, item_name):
-        self.inventory.items.append(ALL_ITEM_CLASSES[item_name]())
-        self.inventory.initialize_item_passives()
-        self.item_stats = self.inventory.get_items_total_stats(self.inventory.items)
+    def apply_unique_item_passive(self, item):
+        if item.passive.name not in self.unique_item_passives:
+            item.apply_passive()
+            if item.passive.unique is True:
+                self.unique_item_passives |= {item.passive.name}
+
+    def equip_item(self, item: BaseItem):
+        assert len(self.inventory) <= 5, "inventory can't contain more than 6 items"
+        self.inventory.append(item)
+        if hasattr(item, "passive"):
+            self.apply_unique_item_passive(self.inventory[-1])
+        self.item_stats = sc.get_items_total_stats(self.inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
 
     def auto_attack(self, enemy_champion, is_crit: bool = False):

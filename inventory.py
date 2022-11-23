@@ -43,7 +43,7 @@ class Inventory:
                         self.unique_passives.append(item.passive.name)
 
     @staticmethod
-    def update_bonus_stat_with_item(total_item_stats, item_stats):
+    def get_bonus_stat_from_item(total_item_stats, item_stats):
         """Update the base stats in the item stats dict with a new item."""
         for stat_name, stat_value in item_stats.items():
             if stat_name not in total_item_stats:
