@@ -28,6 +28,8 @@ class BlackCleaver(BaseItem):
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, **kwargs)
+        # stacks are calculated so that they stack multiplicatively and correspond to 5% percent armor reduction
+        # stacked additively
         self.percent_armor_reduction_stacks = [0.05, 0.05/0.95, 0.05/0.9, 0.05/0.85, 0.05/0.8, 0.05/0.75]
         self.stack_count = 0
 

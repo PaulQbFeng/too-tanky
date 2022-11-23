@@ -36,12 +36,14 @@ class ResistanceReduction(Buff):
 
     def add_buff_to(self, champion):
         if any(isinstance(x, type(self)) for x in champion.buff_list):
+            # If there is another buff of the same class, adds itself to it
             buff = champion.buff_list[next(i for i, x in enumerate(champion.buff_list) if isinstance(x, type(self)))]
             buff.flat_reduction += self.flat_reduction
             buff.percent_reduction = 1 - (1 - buff.percent_reduction) * (1 - self.percent_reduction)
         else:
+            # If there isn't, simply add the buff
             champion.buff_list.append(self)
-        champion.apply_buffs()
+        champion.apply_buffs()  # Any time a buff is added to a champion, reapply every buff on that champion
 
     def apply_buff_to(self, champion):
         champion.base_stats.armor = (champion.orig_base_stats.armor - self.flat_reduction * champion.orig_base_stats.armor / champion.orig_total_stats.armor) * (1 - self.percent_reduction)
