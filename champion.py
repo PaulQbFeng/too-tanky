@@ -30,6 +30,7 @@ class BaseChampion:
 
         self.item_stats = sc.get_items_total_stats(self.inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
+        self.current_health = self.orig_base_stats["health"]
 
     def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
@@ -51,7 +52,7 @@ class BaseChampion:
         self.item_stats = sc.get_items_total_stats(self.inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
 
-    def auto_attack(self, enemy_champion, is_crit: bool = False):
+    def auto_attack_damage(self, enemy_champion, is_crit: bool = False):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
 
         damage = damage_auto_attack(
@@ -68,6 +69,17 @@ class BaseChampion:
         )
         return damage
 
+    def take_damage(self, damage):
+        """Takes damage from an enemy champion"""
+
+        self.current_health -= damage
+
+    def do_auto_attack(self, enemy_champion, is_crit: bool = False):
+        """Deals damage to an enemy champion with an autoattack"""
+
+        damage = self.auto_attack_damage(enemy_champion, is_crit)
+        enemy_champion.take_damage(damage)
+
 
 # Dummy class for tests in practice tool.
 class Dummy:
@@ -78,7 +90,17 @@ class Dummy:
         assert health <= 10000
 
         self.orig_base_stats = {"armor": 0, "magic_resist": 0}
-        self.orig_bonus_stats = {"health": health, "armor": bonus_resistance, "magic_resist": bonus_resistance}
+        self.orig_bonus_stats = {
+            "health": health,
+            "armor": bonus_resistance,
+            "magic_resist": bonus_resistance,
+        }
+        self.current_health = health
+
+    def take_damage(self, damage):
+        """Takes damage from an enemy champion"""
+
+        self.current_health -= damage
 
 
 # Each champion has its own class as their spells have different effects.
@@ -103,6 +125,13 @@ class Caitlyn(BaseChampion):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
 
 
+class Darius(BaseChampion):
+    champion_name = "Darius"
+
+    def __init__(self, **kwargs):
+        super().__init__(champion_name=__class__.champion_name, **kwargs)
+
+
 class Jax(BaseChampion):
     champion_name = "Jax"
 
@@ -112,6 +141,12 @@ class Jax(BaseChampion):
 
 class Irelia(BaseChampion):
     champion_name = "Irelia"
+
+    def __init__(self, **kwargs):
+        super().__init__(champion_name=__class__.champion_name, **kwargs)
+
+class Zed(BaseChampion):
+    champion_name = "Zed"
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
