@@ -25,8 +25,7 @@ class BaseChampion:
             self.inventory = inventory
         self.unique_item_passives = set()
         for item in self.inventory:
-            if hasattr(item, "passive"):
-                self.apply_unique_item_passive(item)
+            self.apply_unique_item_passive(item)
 
         self.item_stats = sc.get_items_total_stats(self.inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
@@ -46,9 +45,8 @@ class BaseChampion:
 
     def equip_item(self, item: BaseItem):
         assert len(self.inventory) <= 5, "inventory can't contain more than 6 items"
+        self.apply_unique_item_passive(item)
         self.inventory.append(item)
-        if hasattr(item, "passive"):
-            self.apply_unique_item_passive(self.inventory[-1])
         self.item_stats = sc.get_items_total_stats(self.inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
 
@@ -144,6 +142,7 @@ class Irelia(BaseChampion):
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
+
 
 class Zed(BaseChampion):
     champion_name = "Zed"
