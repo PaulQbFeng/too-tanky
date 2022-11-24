@@ -25,7 +25,7 @@ class Stats:
             - s2.attribute stacks multiplicatively (armor_pen_percent etc..), computes the result in percent
             - s2.attribute in s1, sum the 2 flat attributes
         """
-        addition = dict()
+        addition = self._dict.copy()
         for name, value in stats._dict.items():
             if name not in self._dict:
                 addition[name] = value
@@ -44,7 +44,7 @@ class Stats:
             - s2.attribute stacks multiplicatively (armor_pen_percent etc..), computes the result in percent
             - s2.attribute in s1, subtract the 2 flat attributes
         """
-        subtraction = dict()
+        subtraction = self._dict.copy()
         for name, value in stats._dict.items():
             if name not in self._dict:
                 subtraction[name] = -value
