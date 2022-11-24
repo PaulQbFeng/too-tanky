@@ -1,6 +1,7 @@
 from data_parser import SCALING_STAT_NAMES
-from stats import Stats, StatsAnnot
 from item import BaseItem
+from stats import Stats
+
 
 # champions
 def calculate_flat_stat_from_level(base: float, mean_growth_perlevel: float, level: int) -> float:
@@ -20,7 +21,7 @@ def calculate_stat_from_level(base_stats: dict, stat_name: str, level: int) -> f
     return calculate_flat_stat_from_level(stat, mean_growth_perlevel, level)
 
 
-def get_champion_base_stats(champion_stats, level) -> StatsAnnot:
+def get_champion_base_stats(champion_stats, level):
     """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
 
     return Stats(
@@ -38,7 +39,7 @@ def update_bonus_stat_with_item(total_item_stats: dict, item_stats: dict) -> Non
             total_item_stats[stat_name] += stat_value
 
 
-def get_items_total_stats(items: BaseItem) -> StatsAnnot:
+def get_items_total_stats(items: BaseItem):
     """Return the sum of the base stats + potential passives of each item"""
 
     total_item_stats = dict()

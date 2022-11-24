@@ -85,7 +85,7 @@ def test_get_stats():
 
 def test_annie_q():
     annie = Annie(level=1)
-    q = annie.Q(level = 3)
+    q = annie.Q(level=3)
 
     assert q.pre_mitig_damage() == 150
 
@@ -96,7 +96,7 @@ def test_auto_attack_with_item_component():
     ahri = Ahri(level=4, inventory=inventory)
     dummy = Dummy(health=1000, bonus_resistance=100)
 
-    assert ahri.orig_bonus_stats.__dict__ == {"armor": 15, "gold": 2825, "attack_damage": 75}
+    assert ahri.orig_bonus_stats._dict == {"armor": 15, "gold": 2825, "attack_damage": 75}
     assert round(ahri.auto_attack_damage(dummy)) == 67
 
 
