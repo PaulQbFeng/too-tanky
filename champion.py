@@ -106,11 +106,13 @@ class Dummy:
 
         self.current_health -= damage
 
+
 class Spell:
     def __init__(self, nature: str = "not leveled", spell_type : str = "not leveled", level : int = 0):
         self.nature = nature
         self.spell_type = spell_type
         self.level = level
+
 
 # Each champion has its own class as their spells have different effects.
 class Annie(BaseChampion):
@@ -122,6 +124,7 @@ class Annie(BaseChampion):
     class Q(Spell):
         damage = 0
         ap_ratio = 0.8
+
         def __init__(self, level: int = 0, **kwargs):
             super().__init__("magic_damage", level)
             self.update_spell_from_level(level)
@@ -142,6 +145,7 @@ class Ahri(BaseChampion):
 
     def Q(Spell):
         damage = 0
+
         def __init__(self, level: int = 0, **kwargs):
             super().__init__("magic_damage", level)
             self.update_spell_from_level(level)
