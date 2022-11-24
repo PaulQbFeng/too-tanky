@@ -18,9 +18,11 @@ class Stats:
 
     def __add__(self, stats):
         addition = dict()
-        for name, value in stats.__dict__.items():
-            if not hasattr(self, name):
+        for name, value in stats._dict.items():
+            if name not in self._dict:
                 addition[name] = value
+            elif name.endswith("_pen_percent"):
+                addition[name] = 100 * (1 - (1 - self._dict.get(name) / 100) * (1 - value / 100))
             else:
                 addition[name] = self._dict.get(name) + value
 
@@ -28,9 +30,11 @@ class Stats:
 
     def __sub__(self, stats):
         subtraction = dict()
-        for name, value in stats.__dict__.items():
-            if not hasattr(self, name):
+        for name, value in stats._dict.items():
+            if name not in self._dict:
                 subtraction[name] = -value
+            elif name.endswith("_pen_percent"):
+                subtraction[name] = 100 * (1 - (1 - self._dict.get(name) / 100) * (1 + value / 100))
             else:
                 subtraction[name] = self._dict.get(name) - value
 
