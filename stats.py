@@ -14,9 +14,17 @@ class Stats:
         self._dict = stat_dict
 
     def __getattr__(self, attribute):
+        """Use underlying dict"""
         return self._dict.get(attribute)
 
     def __add__(self, stats):
+        """
+        Magic method to add to Stats object s1 + s2
+        There are 3 cases to separate:
+            - s2.attribute not in s1, set the value in s1
+            - s2.attribute stacks multiplicatively (armor_pen_percent etc..), computes the result in percent
+            - s2.attribute in s1, sum the 2 flat attributes
+        """
         addition = dict()
         for name, value in stats._dict.items():
             if name not in self._dict:
@@ -29,6 +37,13 @@ class Stats:
         return Stats(addition)
 
     def __sub__(self, stats):
+        """
+        Magic method to add to Stats object s1 - s2
+        There are 3 cases to separate:
+            - s2.attribute not in s1, set -value in s1
+            - s2.attribute stacks multiplicatively (armor_pen_percent etc..), computes the result in percent
+            - s2.attribute in s1, subtract the 2 flat attributes
+        """
         subtraction = dict()
         for name, value in stats._dict.items():
             if name not in self._dict:
@@ -41,6 +56,7 @@ class Stats:
         return Stats(subtraction)
 
     def print_stats(self):
+        """pretty print the stats"""
         return print("\n".join([f"{k}: {v}" for k, v in self.__dict__.items()]))
 
     def get(self, attribute: str, default: float):
