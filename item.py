@@ -1,6 +1,6 @@
 from data_parser import ALL_ITEM_STATS
 from champion import Stats
-from buff import Buff, ResistanceReduction
+from buff import Buff, ArmorReduction
 
 
 print(ALL_ITEM_STATS["Black Cleaver"])
@@ -28,16 +28,17 @@ class BlackCleaver(BaseItem):
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, **kwargs)
-        # stacks are calculated so that they stack multiplicatively and correspond to 5% percent armor reduction
-        # stacked additively
+        # percent armor penetration stacks are calculated so that they stack multiplicatively and correspond to 5%
+        # percent armor reduction stacked additively
+        self.flat_reduction_stacks = [0, 0, 0, 0, 0, 0]
         self.percent_armor_reduction_stacks = [0.05, 0.05/0.95, 0.05/0.9, 0.05/0.85, 0.05/0.8, 0.05/0.75]
         self.stack_count = 0
 
     def apply_effect(self):
-        buff = ResistanceReduction(flat_reduction=0,
-                                   percent_reduction=self.percent_armor_reduction_stacks[self.stack_count],
-                                   duration_type='indefinite', compatible_damage_type='physical',
-                                   compatible_spell_type='all')
+        buff = ArmorReduction(flat_reduction=[0, 0, 0, 0, 0, 0],
+                              percent_reduction=self.percent_armor_reduction_stacks,
+                              duration_type='indefinite', stack_number=6, compatible_damage_type='physical',
+                              compatible_spell_type='all')
         buff.add_buff_to(self.item_holder)
         self.stack_count += 1
 

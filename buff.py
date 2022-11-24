@@ -18,16 +18,20 @@ class Buff:
     despite it being percent armor reduction which stacks multipliticavely in other instances)
     """
 
-    def __init__(self, transfer_type, duration_type, compatible_damage_type, compatible_spell_type):
-        self.transfer_type = transfer_type  # 'to spell' if it buffs/debuffs the spell, 'to owner', 'to enemy'
-        self.duration_type = duration_type  # 'indefinite', 'conditional', 'temporary'
-        self.compatible_damage_type = compatible_damage_type  # 'physical', 'magical', 'true', 'all'
-        self.compatible_spell_type = compatible_spell_type  # 'immobilize', 'slow', 'toggle', 'on-hit', 'shield, 'heal', 'all'
+    def __init__(self, transfer_type, duration_type, stack_number, compatible_damage_type, compatible_spell_type):
+        self.transfer_type = transfer_type  # 'to spell' if it buffs/debuffs the spell,'to owner','to enemy'
+        self.duration_type = duration_type  # 'indefinite', 'conditional', a number if it's temporary
+        self.stack_number = stack_number  # how many times it can stack
+        self.stack_count = 0  # how many times it has already stacked
+        self.compatible_damage_type = compatible_damage_type  # 'physical','magical','true','all'
+        self.compatible_spell_type = compatible_spell_type  # 'immobilize','slow','toggle','on-hit','shield,'heal','all'
 
 
-class ResistanceReduction(Buff):
-    def __init__(self, flat_reduction, percent_reduction, duration_type, compatible_damage_type, compatible_spell_type):
-        super(ResistanceReduction, self).__init__('to enemy', duration_type, compatible_damage_type, compatible_spell_type)
+class ArmorReduction(Buff):
+    def __init__(self, flat_reduction, percent_reduction, duration_type, stack_number, compatible_damage_type,
+                 compatible_spell_type):
+        super(ArmorReduction, self).__init__('to enemy', duration_type, stack_number, compatible_damage_type,
+                                                  compatible_spell_type)
         self.flat_reduction = flat_reduction
         self.percent_reduction = percent_reduction
 
@@ -38,13 +42,20 @@ class ResistanceReduction(Buff):
         if any(isinstance(x, type(self)) for x in champion.buff_list):
             # If there is another buff of the same class, adds itself to it
             buff = champion.buff_list[next(i for i, x in enumerate(champion.buff_list) if isinstance(x, type(self)))]
-            buff.flat_reduction += self.flat_reduction
-            buff.percent_reduction = 1 - (1 - buff.percent_reduction) * (1 - self.percent_reduction)
+            if buff.stack_count < buff.stack_number:
+                buff.stack_count += 1
         else:
             # If there isn't, simply add the buff
             champion.buff_list.append(self)
         champion.apply_buffs()  # Any time a buff is added to a champion, reapply every buff on that champion
 
     def apply_buff_to(self, champion):
-        champion.base_stats.armor = (champion.orig_base_stats.armor - self.flat_reduction * champion.orig_base_stats.armor / champion.orig_total_stats.armor) * (1 - self.percent_reduction)
-        champion.bonus_stats.armor = (champion.orig_bonus_stats.armor - self.flat_reduction * champion.orig_bonus_stats.armor / champion.orig_total_stats.armor) * (1 - self.percent_reduction)
+        if self.duration_type == 'indefinite':
+            champion.base_stats.armor = champion.orig_base_stats.armor
+            champion.bonus_stats.armor = champion.orig_bonus_stats.armor
+            for flat_reduction in self.flat_reduction[0:self.stack_count+1]:
+                champion.base_stats.armor -= flat_reduction * champion.orig_base_stats.armor / champion.orig_total_stats.armor
+                champion.bonus_stats.armor -= flat_reduction * champion.orig_bonus_stats.armor / champion.orig_total_stats.armor
+            for percent_reduction in self.percent_reduction[0:self.stack_count+1]:
+                champion.base_stats.armor = champion.base_stats.armor * (1 - percent_reduction)
+                champion.bonus_stats.armor = champion.bonus_stats.armor * (1 - percent_reduction)
