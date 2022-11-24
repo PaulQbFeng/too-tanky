@@ -93,6 +93,25 @@ def test_equip_black_cleaver():
 
 def test_auto_attack_black_cleaver():
     caitlyn = Caitlyn(level=11)
-    dummy_60 = Dummy(1000, 60, 60)
+    ahri = Ahri(level=11)
     blackcleaver = BlackCleaver()
     caitlyn.equip_item(blackcleaver)
+    orig_armor = ahri.orig_total_stats.armor
+    caitlyn.auto_attack(ahri)
+    assert round(ahri.total_stats.armor, 3) == round(orig_armor * 0.95, 3)
+    caitlyn.auto_attack(ahri)
+    assert round(ahri.total_stats.armor, 3) == round(orig_armor * 0.9, 3)
+    caitlyn.auto_attack(ahri)
+    assert round(ahri.total_stats.armor, 3) == round(orig_armor * 0.85, 3)
+    caitlyn.auto_attack(ahri)
+    assert round(ahri.total_stats.armor, 3) == round(orig_armor * 0.8, 3)
+    caitlyn.auto_attack(ahri)
+    assert round(ahri.total_stats.armor, 3) == round(orig_armor * 0.75, 3)
+    caitlyn.auto_attack(ahri)
+    assert round(ahri.total_stats.armor, 3) == round(orig_armor * 0.7, 3)
+    caitlyn.auto_attack(ahri)
+    assert round(ahri.total_stats.armor, 3) == round(orig_armor * 0.7, 3)
+    caitlyn.auto_attack(ahri)
+    assert round(ahri.total_stats.armor, 3) == round(orig_armor * 0.7, 3)
+
+
