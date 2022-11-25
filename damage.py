@@ -10,7 +10,7 @@ def pre_mitigation_damage(
     crit_damage: float = 0,
 ):
     """
-    Calculates the pre-mitigation physical damage of a spell or an autoattack
+    Calculates the pre-mitigation damage of a spell or an autoattack
     All values regarding damage modifiers should include the buffs/debuffs coming from spells, summoner spells, or items
     from both the attacker AND the defender
     """
@@ -85,31 +85,7 @@ def damage_after_resistance(
         return damage_after_positive_resistance(pre_mitigation_damage, resistance_eq)
 
 
-def magical_damage_after_magic_resist(
-    pre_mitigation_damage: float,
-    base_magic_resist: float,
-    bonus_magic_resist: float,
-    flat_magic_resist_pen: float = 0,
-    magic_resist_pen_mult_factor: float = 1,
-    bonus_magic_resist_pen_mult_factor: float = 1,
-):
-    """
-    Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with Y amount of armor
-    """
-    defense_magic_resist = base_magic_resist + bonus_magic_resist
-    if defense_magic_resist < 0:
-        return damage_after_negative_resistance(pre_mitigation_damage, defense_magic_resist)
-    else:
-        magic_resist_eq = (
-            base_magic_resist * magic_resist_pen_mult_factor
-            + bonus_magic_resist * magic_resist_pen_mult_factor * bonus_magic_resist_pen_mult_factor
-        )
-        magic_resist_eq -= flat_magic_resist_pen
-        magic_resist_eq = max(magic_resist_eq, 0)
-        return damage_after_positive_resistance(pre_mitigation_damage, magic_resist_eq)
-
-
-def damage_physical_attack(
+def damage_physical_auto_attack(
     base_attack_damage: float,
     base_armor: float,
     bonus_attack_damage: float = 0,
@@ -162,9 +138,9 @@ def damage_magical_attack(
     crit_damage: float = 0,
 ):
     """
-    Calculates the output damage of crit/non-crit, empowered/modified/normal auto attacks
+    Calculates the output damage of a magical spell.
     The base magic_resist and bonus magic_resist of the champion being attacked should already take into account the flat or
-    percentage magic_resist reduction resulting from spells like Garen E, Trundle R, Olaf Q, Corki E, or items like Black Cleaver
+    percentage magic_resist reduction.
     """
     pre_mtg_dmg = pre_mitigation_damage(
         base_ability_power,
@@ -184,7 +160,7 @@ def damage_magical_attack(
     )
 
 
-def avg_damage_physical_attack(
+def avg_damage_physical_auto_attack(
     base_attack_damage: float,
     bonus_attack_damage: float,
     lethality: float,

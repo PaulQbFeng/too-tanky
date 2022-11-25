@@ -1,7 +1,7 @@
 import math
 
 from champion import Dummy
-from damage import damage_physical_attack
+from damage import damage_physical_auto_attack
 
 
 def tests_normal_auto_attack_cait_dummy_60():
@@ -15,7 +15,7 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot no crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=62,
                 bonus_attack_damage=13.4,
                 lethality=0,
@@ -36,7 +36,7 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot no crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=75.4,
                 lethality=0,
@@ -56,7 +56,7 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot with crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=75.4,
                 lethality=0,
@@ -77,7 +77,7 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot no crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=105.4,
                 lethality=0,
@@ -97,7 +97,7 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot with crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=105.4,
                 lethality=0,
@@ -118,7 +118,7 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot no crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=65.4,
                 lethality=18,
@@ -138,7 +138,7 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot with crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=65.4,
                 lethality=18,
@@ -159,7 +159,7 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot no crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=95.4,
                 lethality=18,
@@ -179,7 +179,7 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot with crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=95.4,
                 lethality=18,
@@ -208,7 +208,7 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot no crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=62,
                 bonus_attack_damage=13.4,
                 lethality=0,
@@ -229,7 +229,7 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot no crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=75.4,
                 lethality=0,
@@ -249,7 +249,7 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot with crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=75.4,
                 lethality=0,
@@ -270,7 +270,7 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot no crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=105.4,
                 lethality=0,
@@ -290,7 +290,7 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot with crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=105.4,
                 lethality=0,
@@ -311,7 +311,7 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot no crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=65.4,
                 lethality=18,
@@ -331,7 +331,7 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot with crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=65.4,
                 lethality=18,
@@ -352,7 +352,7 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot no crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=95.4,
                 lethality=18,
@@ -372,7 +372,7 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot with crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=95.4,
                 lethality=18,
