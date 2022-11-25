@@ -138,28 +138,6 @@ class Ahri(BaseChampion):
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
 
-    def Q(Spell):
-        damage = 0
-
-        def __init__(self, level: int = 0, **kwargs):
-            super().__init__("magic_damage", level)
-            self.update_spell_from_level(level)
-
-        def update_spell_from_level(self, level: int):
-            if level == 1:
-                self.damage = 2 * 40
-            if level == 2:
-                self.damage = 2 * 65
-            if level == 3:
-                self.damage = 2 * 90
-            if level == 4:
-                self.damage = 2 * 115
-            if level == 5:
-                self.damage = 2 * 140
-
-        def pre_mitig_damage(self):  # pre-mitigation damage
-            return self.damage
-
 
 class Caitlyn(BaseChampion):
     champion_name = "Caitlyn"
