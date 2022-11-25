@@ -145,43 +145,6 @@ def damage_physical_auto_attack(
     )
 
 
-def damage_magical_spell(
-    spell_base_damage: int,
-    base_ability_power: float,
-    base_magic_resist: float,
-    bonus_ability_power: float = 0,
-    bonus_magic_resist: float = 0,
-    flat_magic_resist_pen: float = 0,
-    magic_resist_pen_mult_factor: float = 1,
-    bonus_magic_resist_pen_mult_factor: float = 1,
-    damage_modifier_flat: float = 0,
-    damage_modifier_percent_mult_factor: float = 1,
-    crit: bool = False,
-    crit_damage: float = 0,
-):
-    """
-    Calculates the output damage of a magical spell.
-    The base magic_resist and bonus magic_resist of the champion being attacked should already take into account the flat or
-    percentage magic_resist reduction.
-    """
-    pre_mtg_dmg = pre_mitigation_damage(
-        base_ability_power,
-        bonus_ability_power,
-        damage_modifier_flat,
-        damage_modifier_percent_mult_factor,
-        crit,
-        crit_damage,
-    )
-    return damage_after_resistance(
-        pre_mtg_dmg,
-        base_magic_resist,
-        bonus_magic_resist,
-        flat_magic_resist_pen,
-        magic_resist_pen_mult_factor,
-        bonus_magic_resist_pen_mult_factor,
-    )
-
-
 def avg_damage_physical_auto_attack(
     base_attack_damage: float,
     bonus_attack_damage: float,
