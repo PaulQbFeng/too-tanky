@@ -56,29 +56,33 @@ def damage_after_negative_resistance(pre_mitigation_damage: float, resistance: f
     return pre_mitigation_damage * (2 - 100 / (100 - resistance))
 
 
-def physical_damage_after_armor(
+def get_flat_armor_pen_with_lethality(lethality, attacker_level):
+    """Compute flat armor pen from lethality and attacker level."""
+    return lethality * (0.6 + 0.4 * attacker_level / 18)
+
+
+def damage_after_resistance(
     pre_mitigation_damage: float,
-    base_armor: float,
-    bonus_armor: float,
-    lethality: float,
-    attacker_level: int,
-    armor_pen_mult_factor: float,
-    bonus_armor_pen_mult_factor: float,
+    base_resistance: float,
+    bonus_resistance: float,
+    flat_resistance_pen: float,
+    resistance_pen_mult_factor: float,
+    bonus_resistance_pen_mult_factor: float,
 ):
     """
-    Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with Y amount of armor
+    Calculates the output damage if X amount of pre-mitigation damage is dealt to a champion with Y amount of resistance.
     """
-    defense_armor = base_armor + bonus_armor
-    if defense_armor < 0:
-        return damage_after_negative_resistance(pre_mitigation_damage, defense_armor)
+    defense_resistance = base_resistance + bonus_resistance
+    if defense_resistance < 0:
+        return damage_after_negative_resistance(pre_mitigation_damage, defense_resistance)
     else:
-        flat_armor_pen = lethality * (0.6 + 0.4 * attacker_level / 18)
-        armor_eq = (
-            base_armor * armor_pen_mult_factor + bonus_armor * armor_pen_mult_factor * bonus_armor_pen_mult_factor
+        resistance_eq = (
+            base_resistance * resistance_pen_mult_factor
+            + bonus_resistance * resistance_pen_mult_factor * bonus_resistance_pen_mult_factor
         )
-        armor_eq -= flat_armor_pen
-        armor_eq = max(armor_eq, 0)
-        return damage_after_positive_resistance(pre_mitigation_damage, armor_eq)
+        resistance_eq -= flat_resistance_pen
+        resistance_eq = max(resistance_eq, 0)
+        return damage_after_positive_resistance(pre_mitigation_damage, resistance_eq)
 
 
 def magical_damage_after_magic_resist(
@@ -132,12 +136,13 @@ def damage_physical_attack(
         crit,
         crit_damage,
     )
-    return physical_damage_after_armor(
+    flat_armor_pen = get_flat_armor_pen_with_lethality(lethality, attacker_level)
+
+    return damage_after_resistance(
         pre_mtg_dmg,
         base_armor,
         bonus_armor,
-        lethality,
-        attacker_level,
+        flat_armor_pen,
         armor_pen_mult_factor,
         bonus_armor_pen_mult_factor,
     )
@@ -148,8 +153,7 @@ def damage_magical_attack(
     base_magic_resist: float,
     bonus_ability_power: float = 0,
     bonus_magic_resist: float = 0,
-    attacker_level: int = 1,
-    lethality: float = 0,
+    flat_magic_resist_pen: float = 0,
     magic_resist_pen_mult_factor: float = 1,
     bonus_magic_resist_pen_mult_factor: float = 1,
     damage_modifier_flat: float = 0,
@@ -170,12 +174,11 @@ def damage_magical_attack(
         crit,
         crit_damage,
     )
-    return magical_damage_after_magic_resist(
+    return damage_after_resistance(
         pre_mtg_dmg,
         base_magic_resist,
         bonus_magic_resist,
-        lethality,
-        attacker_level,
+        flat_magic_resist_pen,
         magic_resist_pen_mult_factor,
         bonus_magic_resist_pen_mult_factor,
     )
@@ -208,12 +211,13 @@ def avg_damage_physical_attack(
         crit_chance,
         crit_damage,
     )
-    return physical_damage_after_armor(
+    flat_armor_pen = get_flat_armor_pen_with_lethality(lethality, attacker_level)
+
+    return damage_after_resistance(
         pre_mtg_dmg,
         base_armor,
         bonus_armor,
-        lethality,
-        attacker_level,
+        flat_armor_pen,
         armor_pen_mult_factor,
         bonus_armor_pen_mult_factor,
     )
