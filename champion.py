@@ -4,7 +4,7 @@ import stats_calculator as sc
 from damage import damage_after_resistance, damage_physical_auto_attack, pre_mitigation_spell_damage
 from data_parser import ALL_CHAMPION_BASE_STATS
 from item import BaseItem
-from spell import BaseSpell
+from spell import QAnnie
 from stats import Stats
 
 
@@ -32,12 +32,6 @@ class BaseChampion:
         self.item_stats = sc.get_items_total_stats(self.inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
         self.current_health = self.orig_base_stats.health
-
-        self.passive = BaseSpell("passive", "type", level)
-        self.base_q = BaseSpell("basic", "not leveled", 0)
-        self.base_w = BaseSpell("basic", "not leveled", 0)
-        self.base_e = BaseSpell("basic", "not leveled", 0)
-        self.base_r = BaseSpell("ulti", "not leveled", 0)
 
     def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
@@ -120,26 +114,20 @@ class Annie(BaseChampion):
 
     def spell_q(self, level, enemy_champion):
         # TODO: move to class
-        self.base_q.name = "Desintegrate"
-        self.base_q.damage_type = "magical"
-        self.base_q.ap_ratio = 0.8
-        self.base_q.damage_list = [80, 115, 150, 185, 220]
-        # ----
-        self.base_q.level = level
-        self.damage = self.base_q.damage_list[self.base_q.level - 1]
+        self.q = QAnnie(level=level)
 
         pre_mtg_dmg = pre_mitigation_spell_damage(
-            base_spell_damage=self.damage,
-            ratio=self.base_q.ratio,
-            base_damage=self.orig_base_stats.ability_power,
+            base_spell_damage=self.q.base_spell_damage,
+            ratio=self.q.ratio,
+            base_damage=self.orig_base_stats.get("ability_power", 0),
             bonus_damage=self.orig_bonus_stats.get("ability_power", 0),
         )
 
         post_mtg_dmg = damage_after_resistance(
-            pre_mtg_dmg=pre_mtg_dmg,
-            base_magic_resist=enemy_champion.orig_base_stats.magic_resist,
-            bonus_magic_resist=enemy_champion.orig_bonus_stats.magic_resist,
-            flat_magic_resist_pen=enemy_champion.orig_bonus_stats.get("flat_magic_resist_pen", 0),
+            pre_mitigation_damage=pre_mtg_dmg,
+            base_resistance=enemy_champion.orig_base_stats.magic_resist,
+            bonus_resistance=enemy_champion.orig_bonus_stats.magic_resist,
+            flat_resistance_pen=enemy_champion.orig_bonus_stats.get("flat_magic_resist_pen", 0),
         )
         return post_mtg_dmg
 

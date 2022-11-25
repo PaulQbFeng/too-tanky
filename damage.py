@@ -36,7 +36,8 @@ def pre_mitigation_spell_damage(
     """
 
     return (
-        base_spell_damage * ratio * (base_damage + bonus_damage) * damage_modifier_percent_mult_factor
+        base_spell_damage
+        + ratio * (base_damage + bonus_damage) * damage_modifier_percent_mult_factor
         + damage_modifier_flat
     )
 

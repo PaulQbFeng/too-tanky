@@ -57,7 +57,7 @@ class Stats:
 
     def print_stats(self):
         """pretty print the stats"""
-        return print("\n".join([f"{k}: {v}" for k, v in self.__dict__.items()]))
+        return print("\n".join([f"{k}: {v}" for k, v in self._dict.items()]))
 
     def get(self, attribute: str, default: float):
         """Similar to a dict get with default value"""
