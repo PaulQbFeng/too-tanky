@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 import stats_calculator as sc
-from damage import damage_auto_attack
+from damage import damage_physical_attack
 from data_parser import ALL_CHAMPION_BASE_STATS
 from item import BaseItem
 from stats import Stats
@@ -28,15 +28,15 @@ class BaseChampion:
         for item in self.inventory:
             self.apply_unique_item_passive(item)
 
-        self.item_stats = sc.get_items_total_stats(self.inventory)              
+        self.item_stats = sc.get_items_total_stats(self.inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
         self.current_health = self.orig_base_stats.health
-        
-        self.passive = Spell( "passive", type, level)
-        self.q = Spell( "basic", "not leveled", 0)
-        self.w = Spell( "basic", "not leveled", 0)
-        self.e = Spell( "basic", "not leveled", 0)
-        self.r = Spell( "ulti", "not leveled", 0)
+
+        self.passive = Spell("passive", type, level)
+        self.q = Spell("basic", "not leveled", 0)
+        self.w = Spell("basic", "not leveled", 0)
+        self.e = Spell("basic", "not leveled", 0)
+        self.r = Spell("ulti", "not leveled", 0)
 
     def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
@@ -60,7 +60,7 @@ class BaseChampion:
     def auto_attack_damage(self, enemy_champion, is_crit: bool = False):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
 
-        damage = damage_auto_attack(
+        damage = damage_physical_attack(
             base_attack_damage=self.orig_base_stats.attack_damage,
             base_armor=enemy_champion.orig_base_stats.armor,
             bonus_attack_damage=self.orig_bonus_stats.get("attack_damage", 0),
@@ -95,11 +95,13 @@ class Dummy:
         assert health <= 10000
 
         self.orig_base_stats = Stats({"armor": 0, "magic_resist": 0})
-        self.orig_bonus_stats = Stats({
-            "health": health,
-            "armor": bonus_resistance,
-            "magic_resist": bonus_resistance,
-        })
+        self.orig_bonus_stats = Stats(
+            {
+                "health": health,
+                "armor": bonus_resistance,
+                "magic_resist": bonus_resistance,
+            }
+        )
         self.current_health = health
 
     def take_damage(self, damage):
@@ -109,7 +111,7 @@ class Dummy:
 
 
 class Spell:
-    def __init__(self, nature: str = "not leveled", spell_type : str = "not leveled", level : int = 0):
+    def __init__(self, nature: str = "not leveled", spell_type: str = "not leveled", level: int = 0):
         self.nature = nature
         self.spell_type = spell_type
         self.level = level
@@ -130,12 +132,12 @@ class Annie(BaseChampion):
             super().__init__("magic_damage", level)
             self.update_spell_from_level(level)
 
-        def update_spell_from_level(self, level : int):
-            damage_list = [80,115,150,185,220]
-            self.damage=damage_list[level -1]
-        
-        def pre_mitig_damage(self): #pre-mitigation damage , need to add ap ratio
-            return self.damage # + ap_ratio * 
+        def update_spell_from_level(self, level: int):
+            damage_list = [80, 115, 150, 185, 220]
+            self.damage = damage_list[level - 1]
+
+        def pre_mitig_damage(self):  # pre-mitigation damage , need to add ap ratio
+            return self.damage  # + ap_ratio *
 
 
 class Ahri(BaseChampion):
@@ -151,19 +153,19 @@ class Ahri(BaseChampion):
             super().__init__("magic_damage", level)
             self.update_spell_from_level(level)
 
-        def update_spell_from_level(self, level : int):
+        def update_spell_from_level(self, level: int):
             if level == 1:
-                self.damage = 2*40
+                self.damage = 2 * 40
             if level == 2:
-                self.damage = 2*65
+                self.damage = 2 * 65
             if level == 3:
-                self.damage = 2*90
+                self.damage = 2 * 90
             if level == 4:
-                self.damage = 2*115
+                self.damage = 2 * 115
             if level == 5:
-                self.damage = 2*140
-        
-        def pre_mitig_damage(self): #pre-mitigation damage
+                self.damage = 2 * 140
+
+        def pre_mitig_damage(self):  # pre-mitigation damage
             return self.damage
 
 
