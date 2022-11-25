@@ -1,10 +1,10 @@
 from typing import List, Optional
 
 import stats_calculator as sc
-from damage import damage_magical_attack, damage_physical_auto_attack
+from damage import damage_after_resistance, damage_physical_auto_attack, pre_mitigation_spell_damage
 from data_parser import ALL_CHAMPION_BASE_STATS
 from item import BaseItem
-from spell import Spell
+from spell import BaseSpell
 from stats import Stats
 
 
@@ -33,11 +33,11 @@ class BaseChampion:
         self.orig_bonus_stats = self.get_bonus_stats()
         self.current_health = self.orig_base_stats.health
 
-        self.passive = Spell("passive", "type", level)
-        self.base_q = Spell("basic", "not leveled", 0)
-        self.base_w = Spell("basic", "not leveled", 0)
-        self.base_e = Spell("basic", "not leveled", 0)
-        self.base_r = Spell("ulti", "not leveled", 0)
+        self.passive = BaseSpell("passive", "type", level)
+        self.base_q = BaseSpell("basic", "not leveled", 0)
+        self.base_w = BaseSpell("basic", "not leveled", 0)
+        self.base_e = BaseSpell("basic", "not leveled", 0)
+        self.base_r = BaseSpell("ulti", "not leveled", 0)
 
     def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
@@ -118,24 +118,30 @@ class Annie(BaseChampion):
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
 
-    def spell_q(self, enemy_champion):
+    def spell_q(self, level, enemy_champion):
+        # TODO: move to class
         self.base_q.name = "Desintegrate"
         self.base_q.damage_type = "magical"
         self.base_q.ap_ratio = 0.8
-        damage_list = [80, 115, 150, 185, 220]
-        self.damage = damage_list[self.base_q.level - 1]
+        self.base_q.damage_list = [80, 115, 150, 185, 220]
+        # ----
+        self.base_q.level = level
+        self.damage = self.base_q.damage_list[self.base_q.level - 1]
 
-        damage = damage_magical_attack(
-            base_ability_power=self.orig_base_stats.ability_power,
-            base_magic_resist=enemy_champion.orig_base_stats.magic_resist,
-            bonus_ability_power=self.orig_bonus_stats.get("ability_power", 0),
-            bonus_magic_resist=enemy_champion.orig_bonus_stats.get("magic_resist", 0),
-            flat_magic_resist_pen=self.orig_bonus_stats.get("flat_magic_resist_pen", 0),
-            magic_resist_pen_mult_factor=1 - self.orig_bonus_stats.get("magic_resist_pen_percent", 0) / 100,
-            bonus_magic_resist_pen_mult_factor=1 - self.orig_bonus_stats.get("bonus_magic_resist_pen_percent", 0) / 100,
+        pre_mtg_dmg = pre_mitigation_spell_damage(
+            base_spell_damage=self.damage,
+            ratio=self.base_q.ratio,
+            base_damage=self.orig_base_stats.ability_power,
+            bonus_damage=self.orig_bonus_stats.get("ability_power", 0),
         )
 
-        return damage
+        post_mtg_dmg = damage_after_resistance(
+            pre_mtg_dmg=pre_mtg_dmg,
+            base_magic_resist=enemy_champion.orig_base_stats.magic_resist,
+            bonus_magic_resist=enemy_champion.orig_bonus_stats.magic_resist,
+            flat_magic_resist_pen=enemy_champion.orig_bonus_stats.get("flat_magic_resist_pen", 0),
+        )
+        return post_mtg_dmg
 
 
 class Ahri(BaseChampion):

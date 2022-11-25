@@ -21,6 +21,26 @@ def pre_mitigation_damage(
     return (base_damage + bonus_damage) * damage_modifier_percent_mult_factor + damage_modifier_flat
 
 
+def pre_mitigation_spell_damage(
+    base_spell_damage: float,
+    ratio: float,
+    base_damage: float,
+    bonus_damage: float,
+    damage_modifier_flat: float = 0,
+    damage_modifier_percent_mult_factor: float = 1,
+):
+    """
+    Calculates the pre-mitigation damage of a spell or an autoattack
+    All values regarding damage modifiers should include the buffs/debuffs coming from spells, summoner spells, or items
+    from both the attacker AND the defender
+    """
+
+    return (
+        base_spell_damage * ratio * (base_damage + bonus_damage) * damage_modifier_percent_mult_factor
+        + damage_modifier_flat
+    )
+
+
 def avg_pre_mitigation_physical_damage(
     base_attack_damage: float,
     bonus_attack_damage: float,
@@ -66,8 +86,8 @@ def damage_after_resistance(
     base_resistance: float,
     bonus_resistance: float,
     flat_resistance_pen: float,
-    resistance_pen_mult_factor: float,
-    bonus_resistance_pen_mult_factor: float,
+    resistance_pen_mult_factor: float = 1,
+    bonus_resistance_pen_mult_factor: float = 1,
 ):
     """
     Calculates the output damage if X amount of pre-mitigation damage is dealt to a champion with Y amount of resistance.
@@ -124,7 +144,8 @@ def damage_physical_auto_attack(
     )
 
 
-def damage_magical_attack(
+def damage_magical_spell(
+    spell_base_damage: int,
     base_ability_power: float,
     base_magic_resist: float,
     bonus_ability_power: float = 0,
