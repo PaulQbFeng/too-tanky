@@ -25,6 +25,8 @@ class BaseChampion:
         self.orig_bonus_stats = Stats()
         self.base_stats = Stats()
         self.bonus_stats = Stats()
+        self.flat_armor_reduction = 0
+        self.percent_armor_reduction = 0
         self.update_stat_from_level(ALL_CHAMPION_BASE_STATS[champion_name])
         self.items = []
         self.buff_list = []
@@ -42,6 +44,20 @@ class BaseChampion:
         stats.add_stats(self.base_stats)
         stats.add_stats(self.bonus_stats)
         return stats
+
+    @property
+    def base_armor(self):
+        return (self.orig_base_stats.armor - self.flat_armor_reduction * self.orig_base_stats.armor /
+                self.orig_total_stats.armor) * (1 - self.percent_armor_reduction)
+
+    @property
+    def bonus_armor(self):
+        return (self.orig_bonus_stats.armor - self.flat_armor_reduction * self.orig_bonus_stats.armor /
+                self.orig_total_stats.armor) * (1 - self.percent_armor_reduction)
+
+    @property
+    def total_armor(self):
+        return self.base_armor + self.bonus_armor
 
     def update_stat_from_level(self, champion_stats):
         """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
@@ -115,7 +131,10 @@ class BaseChampion:
         self.bonus_stats.add_stats(item.stats)
         item.apply_effect()
 
-    def apply_buffs(self):
+    def apply_buff(self, buff):
+        buff.apply_buff_to(self)
+
+    def apply_all_buffs(self):
         # This function is called in buff.add_buff_to
         # Buffs with 'to owner' are applied whenever a buff is added to self.buff_list
         for buff in self.buff_list:
