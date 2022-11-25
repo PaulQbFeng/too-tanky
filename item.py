@@ -113,5 +113,22 @@ class RubyCrystal(BaseItem):
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, **kwargs)
 
+        
+class SeryldaGrudge(BaseItem): #missing passive, ability haste
+    item_name = "Serylda's Grudge"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, **kwargs)
+        self.stats["armor_pen_percent"] = 30
+
+        
+class YoumuuGhostblade(BaseItem): #missing passive, active, ability haste
+    item_name = "Youmuu's Ghostblade"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, **kwargs)
+        self.stats["lethality"] = 18
+
+
 
 ALL_ITEM_CLASSES = {cls.item_name: cls for cls in BaseItem.__subclasses__()}
