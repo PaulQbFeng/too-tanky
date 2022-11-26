@@ -5,7 +5,7 @@ def pre_mitigation_auto_attack_damage(
     base_offensive_stats: float,
     bonus_offensive_stats: float,
     damage_modifier_flat: float,
-    damage_modifier_percent_mult_factor: float,
+    damage_modifier_percent: float,
     crit: bool = False,
     crit_damage: float = 0,
 ):
@@ -14,11 +14,15 @@ def pre_mitigation_auto_attack_damage(
     All values regarding damage modifiers should include the buffs/debuffs coming from spells, summoner spells, or items
     from both the attacker AND the defender
     """
+    tot_off_stats = base_offensive_stats + bonus_offensive_stats
+    dmg_mod_perc_multiplier = 1 - damage_modifier_percent / 100
+
     if crit:
-        return (base_offensive_stats + bonus_offensive_stats) * damage_modifier_percent_mult_factor * (
-            1.75 + crit_damage
-        ) + damage_modifier_flat
-    return (base_offensive_stats + bonus_offensive_stats) * damage_modifier_percent_mult_factor + damage_modifier_flat
+        crit_multiplier = (1.75 + crit_damage)
+    else:
+        crit_multiplier = 1
+
+    return tot_off_stats * dmg_mod_perc_multiplier * crit_multiplier + damage_modifier_flat
 
 
 def pre_mitigation_spell_damage(
@@ -27,7 +31,7 @@ def pre_mitigation_spell_damage(
     base_offensive_stats: float,
     bonus_offensive_stats: float,
     damage_modifier_flat: float = 0,
-    damage_modifier_percent_mult_factor: float = 1,
+    damage_modifier_percent: float = 0,
 ):
     """
     Calculates the pre-mitigation damage of a spell or an autoattack
@@ -35,16 +39,16 @@ def pre_mitigation_spell_damage(
     from both the attacker AND the defender
     """
 
-    return (
-        (base_spell_damage + ratio * (base_offensive_stats + bonus_offensive_stats) + damage_modifier_flat) * 
-        damage_modifier_percent_mult_factor
-    )
+    tot_off_stats = base_offensive_stats + bonus_offensive_stats
+    dmg_mod_perc_multiplier = 1 - damage_modifier_percent / 100
+
+    return (base_spell_damage + ratio * tot_off_stats + damage_modifier_flat) * dmg_mod_perc_multiplier
 
 def avg_pre_mitigation_auto_attack_damage(
     base_attack_damage: float,
     bonus_attack_damage: float,
     damage_modifier_flat: float,
-    damage_modifier_percent_mult_factor: float,
+    damage_modifier_percent: float,
     crit_chance: float,
     crit_damage: float,
 ):
@@ -54,9 +58,10 @@ def avg_pre_mitigation_auto_attack_damage(
     All values regarding damage modifiers should include the buffs/debuffs coming from spells, summoner spells, or items
     from both the attacker AND the defender
     """
-    return (base_attack_damage + bonus_attack_damage) * damage_modifier_percent_mult_factor * (
-        1 + crit_chance * (0.75 + crit_damage)
-    ) + damage_modifier_flat
+    tot_off_stats = base_attack_damage + bonus_attack_damage
+    dmg_mod_perc_multiplier = 1 - damage_modifier_percent / 100
+
+    return  tot_off_stats * dmg_mod_perc_multiplier * (1 + crit_chance * (0.75 + crit_damage)) + damage_modifier_flat
 
 
 def damage_after_positive_resistance(pre_mitigation_auto_attack_damage: float, resistance: float):
@@ -85,19 +90,22 @@ def damage_after_resistance(
     base_resistance: float,
     bonus_resistance: float,
     flat_resistance_pen: float,
-    resistance_pen_mult_factor: float = 1,
-    bonus_resistance_pen_mult_factor: float = 1,
+    resistance_pen: float = 0,
+    bonus_resistance_pen: float = 0,
 ):
     """
     Calculates the output damage if X amount of pre-mitigation damage is dealt to a champion with Y amount of resistance.
     """
     defense_resistance = base_resistance + bonus_resistance
+    res_pen_multiplier = 1 - resistance_pen / 100
+    bonus_res_pen_multiplier = 1 - bonus_resistance_pen / 100
+
     if defense_resistance < 0:
         return damage_after_negative_resistance(pre_mitigation_damage, defense_resistance)
     else:
         resistance_eq = (
-            base_resistance * resistance_pen_mult_factor
-            + bonus_resistance * resistance_pen_mult_factor * bonus_resistance_pen_mult_factor
+            base_resistance * res_pen_multiplier
+            + bonus_resistance * res_pen_multiplier * bonus_res_pen_multiplier
         )
         resistance_eq -= flat_resistance_pen
         resistance_eq = max(resistance_eq, 0)
@@ -111,10 +119,10 @@ def damage_physical_auto_attack(
     bonus_armor: float = 0,
     attacker_level: int = 1,
     lethality: float = 0,
-    armor_pen_mult_factor: float = 1,
-    bonus_armor_pen_mult_factor: float = 1,
+    armor_pen: float = 0,
+    bonus_armor_pen: float = 0,
     damage_modifier_flat: float = 0,
-    damage_modifier_percent_mult_factor: float = 1,
+    damage_modifier_percent: float = 0,
     crit: bool = False,
     crit_damage: float = 0,
 ):
@@ -127,7 +135,7 @@ def damage_physical_auto_attack(
         base_attack_damage,
         bonus_attack_damage,
         damage_modifier_flat,
-        damage_modifier_percent_mult_factor,
+        damage_modifier_percent,
         crit,
         crit_damage,
     )
@@ -138,8 +146,8 @@ def damage_physical_auto_attack(
         base_armor,
         bonus_armor,
         flat_armor_pen,
-        armor_pen_mult_factor,
-        bonus_armor_pen_mult_factor,
+        armor_pen,
+        bonus_armor_pen,
     )
 
 
@@ -148,12 +156,12 @@ def avg_damage_physical_auto_attack(
     bonus_attack_damage: float,
     lethality: float,
     attacker_level: int,
-    armor_pen_mult_factor: float,
-    bonus_armor_pen_mult_factor: float,
+    armor_pen: float,
+    bonus_armor_pen: float,
     base_armor: float,
     bonus_armor: float,
     damage_modifier_flat: float,
-    damage_modifier_percent_mult_factor: float,
+    damage_modifier_percent: float,
     crit_chance: float,
     crit_damage: float,
 ):
@@ -166,7 +174,7 @@ def avg_damage_physical_auto_attack(
         base_attack_damage,
         bonus_attack_damage,
         damage_modifier_flat,
-        damage_modifier_percent_mult_factor,
+        damage_modifier_percent,
         crit_chance,
         crit_damage,
     )
@@ -177,6 +185,6 @@ def avg_damage_physical_auto_attack(
         base_armor,
         bonus_armor,
         flat_armor_pen,
-        armor_pen_mult_factor,
-        bonus_armor_pen_mult_factor,
+        armor_pen,
+        bonus_armor_pen,
     )

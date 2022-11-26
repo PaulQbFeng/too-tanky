@@ -62,8 +62,8 @@ class BaseChampion:
             bonus_armor=enemy_champion.orig_bonus_stats.get("armor", 0),
             attacker_level=self.level,
             lethality=self.orig_bonus_stats.get("lethality", 0),
-            armor_pen_mult_factor=1 - self.orig_bonus_stats.get("armor_pen_percent", 0) / 100,
-            bonus_armor_pen_mult_factor=1 - self.orig_bonus_stats.get("bonus_armor_pen_percent", 0) / 100,
+            armor_pen=self.orig_bonus_stats.get("armor_pen_percent", 0),
+            bonus_armor_pen=self.orig_bonus_stats.get("bonus_armor_pen_percent", 0),
             crit=is_crit,
             crit_damage=self.orig_bonus_stats.get("crit_damage", 0),
         )
