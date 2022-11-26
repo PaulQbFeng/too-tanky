@@ -140,4 +140,11 @@ class BlastingWand(BaseItem):
         super().__init__(item_name=__class__.item_name, **kwargs)
 
 
+class NeedlesslyLargeRod(BaseItem):
+    item_name = "Needlessly Large Rod"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, **kwargs)
+
+
 ALL_ITEM_CLASSES = {cls.item_name: cls for cls in BaseItem.__subclasses__()}
