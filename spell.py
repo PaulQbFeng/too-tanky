@@ -47,4 +47,4 @@ class QAnnie(BaseSpell):
         self.damage_type = "magical"
         self.base_damage_per_level = [80, 115, 150, 185, 220]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratio = self.ratios[0] # ratios is a list of 2 values, maybe it's ratio for 2 different damage type 
+        self.ratio = self.ratios[0]  # ratios is a list of 2 values, maybe it's ratio for 2 different damage type

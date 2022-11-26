@@ -16,3 +16,4 @@ from .belveth import BelVeth
 from .blitzcrank import Blitzcrank
 from .brand import Brand
 from .braum import Braum
+from .xerath import Xerath
