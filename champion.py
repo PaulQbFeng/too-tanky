@@ -1,10 +1,9 @@
 from typing import List, Optional
 
 import stats_calculator as sc
-from damage import damage_after_resistance, damage_physical_auto_attack, pre_mitigation_spell_damage
+from damage import damage_physical_auto_attack
 from data_parser import ALL_CHAMPION_BASE_STATS
 from item import BaseItem
-from spell import QAnnie
 from stats import Stats
 
 
@@ -103,78 +102,3 @@ class Dummy:
         """Takes damage from an enemy champion"""
 
         self.current_health -= damage
-
-
-# Each champion has its own class as their spells have different effects.
-class Annie(BaseChampion):
-    champion_name = "Annie"
-
-    def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)
-
-    def spell_q(self, level, enemy_champion):
-        self.q = QAnnie(level=level)
-
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            base_spell_damage=self.q.base_spell_damage,
-            ratio=self.q.ratio,
-            base_offensive_stats=self.orig_base_stats.get("ability_power", 0),
-            bonus_offensive_stats=self.orig_bonus_stats.get("ability_power", 0),
-        )
-
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.orig_base_stats.magic_resist,
-            bonus_resistance=enemy_champion.orig_bonus_stats.magic_resist,
-            flat_resistance_pen=enemy_champion.orig_bonus_stats.get("flat_magic_resist_pen", 0),
-        )
-        return post_mtg_dmg
-
-
-class Ahri(BaseChampion):
-    champion_name = "Ahri"
-
-    def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)
-
-
-class Caitlyn(BaseChampion):
-    champion_name = "Caitlyn"
-
-    def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)
-
-
-class MissFortune(BaseChampion):
-    champion_name = "MissFortune"
-
-    def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)
-
-
-class Darius(BaseChampion):
-    champion_name = "Darius"
-
-    def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)
-
-
-class Jax(BaseChampion):
-    champion_name = "Jax"
-
-    def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)
-
-
-class Irelia(BaseChampion):
-    champion_name = "Irelia"
-
-    def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)
-
-
-class Zed(BaseChampion):
-    champion_name = "Zed"
-
-    def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)

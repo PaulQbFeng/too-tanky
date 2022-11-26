@@ -1,6 +1,7 @@
 import math
 
-from champion import Dummy, MissFortune
+from champion import Dummy
+from champions import MissFortune
 from damage import damage_physical_auto_attack, pre_mitigation_auto_attack_damage
 
 
