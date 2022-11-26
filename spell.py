@@ -13,13 +13,14 @@ class BaseSpell:
             'max_level': 0
         }
     Not all spell specifications are included in the data file which means there is a need to double check
-    the current specs + add the missing ones inside the subclass of BaseSpell. 
+    the current specs + add the missing ones inside the subclass of BaseSpell.
     """
+
     def __init__(self, champion_name, spell_key, level):
         self.champion_name = champion_name
         self.spell_key = spell_key
-        spell_specs = ALL_CHAMPION_SPELLS[champion_name][spell_key].copy()
-        for name, value in spell_specs.items():
+        self.spell_specs = ALL_CHAMPION_SPELLS[champion_name][spell_key].copy()
+        for name, value in self.spell_specs.items():
             setattr(self, name, value)
 
         self.level = level
@@ -29,5 +30,8 @@ class BaseSpell:
 
     def print_specs(self):
         """pretty print the stats"""
-        return print("\n".join([f"{k}: {v}" for k, v in self.__dict__.items()]))
+        return print("\n".join([f"{k}: {v}" for k, v in self.__dict__.items() if k != "spell_specs"]))
 
+    def print_orig_specs(self):
+        """pretty print the stats"""
+        return print("\n".join([f"{k}: {v}" for k, v in self.spell_specs.items()]))
