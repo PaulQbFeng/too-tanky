@@ -116,7 +116,7 @@ class SeryldaGrudge(BaseItem): #missing passive, ability haste
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, **kwargs)
-        self.stats["armor_pen_percent"] = 30
+        self.stats.add("armor_pen_percent", 30)
 
         
 class YoumuuGhostblade(BaseItem): #missing passive, active, ability haste
@@ -124,12 +124,24 @@ class YoumuuGhostblade(BaseItem): #missing passive, active, ability haste
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, **kwargs)
-        self.stats["lethality"] = 18
+        self.stats.add("lethality", 18)
 
+class AmplifyingTome(BaseItem):
+    item_name = "Amplifying Tome"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, **kwargs)
 
 
 class BlastingWand(BaseItem):
     item_name = "Blasting Wand"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, **kwargs)
+
+
+class NeedlesslyLargeRod(BaseItem):
+    item_name = "Needlessly Large Rod"
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, **kwargs)

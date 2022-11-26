@@ -20,5 +20,6 @@ from .caitlyn import Caitlyn
 from .darius import Darius
 from .irelia import Irelia
 from .jax import Jax
+from .malphite import Malphite
 from .missfortune import MissFortune
 from .zed import Zed
