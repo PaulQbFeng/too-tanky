@@ -1,4 +1,5 @@
-from champion import Ahri, Annie, Dummy
+from champion import Dummy
+from champions import Ahri, Annie
 from damage import damage_after_positive_resistance
 from item import ALL_ITEM_CLASSES, DoranBlade, Sheen
 

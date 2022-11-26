@@ -13,13 +13,13 @@ class BaseSpell:
             'max_level': 0
         }
     Not all spell specifications are included in the data file which means there is a need to double check
-    the current specs + add the missing ones inside the subclass of BaseSpell. 
+    the current specs + add the missing ones inside the subclass of BaseSpell.
     """
     def __init__(self, champion_name, spell_key, level):
         self.champion_name = champion_name
         self.spell_key = spell_key
-        spell_specs = ALL_CHAMPION_SPELLS[champion_name][spell_key].copy()
-        for name, value in spell_specs.items():
+        self.spell_specs = ALL_CHAMPION_SPELLS[champion_name][spell_key].copy()
+        for name, value in self.spell_specs.items():
             setattr(self, name, value)
 
         self.level = level
@@ -29,22 +29,8 @@ class BaseSpell:
 
     def print_specs(self):
         """pretty print the stats"""
-        return print("\n".join([f"{k}: {v}" for k, v in self.__dict__.items()]))
+        return print("\n".join([f"{k}: {v}" for k, v in self.__dict__.items() if k != "spell_specs"]))
 
-
-class QAnnie(BaseSpell):
-    champion_name = "Annie"
-    spell_key = "q"
-
-    def __init__(self, level):
-        super().__init__(champion_name=__class__.champion_name, spell_key=__class__.spell_key, level=level)
-
-        if self.spell_key in ["q", "w", "e"]:
-            self.nature = "normal"
-        else:
-            self.nature = "ulti"
-        
-        self.damage_type = "magical"
-        self.base_damage_per_level = [80, 115, 150, 185, 220]
-        self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratio = self.ratios[0]  # ratios is a list of 2 values, maybe it's ratio for 2 different damage type
+    def print_orig_specs(self):
+        """pretty print the stats"""
+        return print("\n".join([f"{k}: {v}" for k, v in self.spell_specs.items()]))
