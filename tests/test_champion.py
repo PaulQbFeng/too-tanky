@@ -1,7 +1,7 @@
 import math
 
 from champion import Ahri, Annie, Darius, Dummy
-from item import ALL_ITEM_CLASSES
+from item import ALL_ITEM_CLASSES, BlastingWand
 from stats import Stats
 
 
@@ -84,10 +84,12 @@ def test_get_stats():
 
 
 def test_annie_q():
-    annie = Annie(level=1)
-    q = annie.Q(level=3)
+    annie = Annie(level=17)
+    dummy = Dummy(health=1000, bonus_resistance=30)
+    annie.equip_item(item=BlastingWand())
+    dmg = annie.spell_q(level=5, enemy_champion=dummy)
 
-    assert q.pre_mitig_damage() == 150
+    assert round(dmg, 2) == 193.85
 
 
 def test_auto_attack_with_item_component():

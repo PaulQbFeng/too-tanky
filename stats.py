@@ -9,12 +9,12 @@ class Stats:
 
     def __init__(self, stat_dict: Optional[dict] = None):
         if stat_dict is None:
-            stat_dict = {}
-
-        self._dict = stat_dict
+            self._dict = {}
+        else:
+            self._dict = stat_dict.copy()
 
     def __getattr__(self, attribute):
-        """Use underlying dict"""
+        """Get attribute from underlying dict"""
         return self._dict.get(attribute)
 
     def __add__(self, stats):
@@ -57,8 +57,12 @@ class Stats:
 
     def print_stats(self):
         """pretty print the stats"""
-        return print("\n".join([f"{k}: {v}" for k, v in self.__dict__.items()]))
+        return print("\n".join([f"{k}: {v}" for k, v in self._dict.items()]))
 
     def get(self, attribute: str, default: float):
         """Similar to a dict get with default value"""
         return self._dict.get(attribute, default)
+
+    def add(self, attribute: str, value: float):
+        """Add single value to stats"""
+        self._dict[attribute] = value

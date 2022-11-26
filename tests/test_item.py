@@ -5,7 +5,7 @@ from item import ALL_ITEM_CLASSES, DoranBlade, Sheen
 
 def test_DoranBlade():
     doranblade = DoranBlade()
-    assert doranblade.stats == {"attack_damage": 8, "health": 80, "gold": 450}
+    assert doranblade.stats._dict == {"attack_damage": 8, "health": 80, "gold": 450}
 
 
 def test_Sheen():

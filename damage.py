@@ -1,121 +1,128 @@
 # TODO: it seems that hp are ceiled while damage floored. (however it seems that the ad is rounded in the stat section ingame)
 
 
-def pre_mitigation_damage(
-    base_damage: float,
-    bonus_damage: float,
+def pre_mitigation_auto_attack_damage(
+    base_offensive_stats: float,
+    bonus_offensive_stats: float,
     damage_modifier_flat: float,
-    damage_modifier_percent_mult_factor: float,
+    damage_modifier_percent: float,
     crit: bool = False,
     crit_damage: float = 0,
 ):
     """
-    Calculates the pre-mitigation physical damage of a spell or an autoattack
+    Calculates the pre-mitigation damage of a spell or an autoattack
     All values regarding damage modifiers should include the buffs/debuffs coming from spells, summoner spells, or items
     from both the attacker AND the defender
     """
+    tot_off_stats = base_offensive_stats + bonus_offensive_stats
+    dmg_mod_perc_multiplier = 1 - damage_modifier_percent / 100
+
     if crit:
-        return (base_damage + bonus_damage) * damage_modifier_percent_mult_factor * (
-            1.75 + crit_damage
-        ) + damage_modifier_flat
-    return (base_damage + bonus_damage) * damage_modifier_percent_mult_factor + damage_modifier_flat
+        crit_multiplier = (1.75 + crit_damage)
+    else:
+        crit_multiplier = 1
+
+    return tot_off_stats * dmg_mod_perc_multiplier * crit_multiplier + damage_modifier_flat
 
 
-def avg_pre_mitigation_physical_damage(
+def pre_mitigation_spell_damage(
+    base_spell_damage: float,
+    ratio: float,
+    base_offensive_stats: float,
+    bonus_offensive_stats: float,
+    damage_modifier_flat: float = 0,
+    damage_modifier_percent: float = 0,
+):
+    """
+    Calculates the pre-mitigation damage of a spell or an autoattack
+    All values regarding damage modifiers should include the buffs/debuffs coming from spells, summoner spells, or items
+    from both the attacker AND the defender
+    """
+
+    tot_off_stats = base_offensive_stats + bonus_offensive_stats
+    dmg_mod_perc_multiplier = 1 - damage_modifier_percent / 100
+
+    return (base_spell_damage + ratio * tot_off_stats + damage_modifier_flat) * dmg_mod_perc_multiplier
+
+def avg_pre_mitigation_auto_attack_damage(
     base_attack_damage: float,
     bonus_attack_damage: float,
     damage_modifier_flat: float,
-    damage_modifier_percent_mult_factor: float,
+    damage_modifier_percent: float,
     crit_chance: float,
     crit_damage: float,
 ):
     """
-    Calculates the pre-mitigation physical damage AVERAGE (based on crit chance) of a spell or an autoattack.
+    Calculates the pre-mitigation autoattack damage AVERAGE (based on crit chance) of a spell or an autoattack.
     This is only relevant for damage sources that can crit.
     All values regarding damage modifiers should include the buffs/debuffs coming from spells, summoner spells, or items
     from both the attacker AND the defender
     """
-    return (base_attack_damage + bonus_attack_damage) * damage_modifier_percent_mult_factor * (
-        1 + crit_chance * (0.75 + crit_damage)
-    ) + damage_modifier_flat
+    tot_off_stats = base_attack_damage + bonus_attack_damage
+    dmg_mod_perc_multiplier = 1 - damage_modifier_percent / 100
+
+    return  tot_off_stats * dmg_mod_perc_multiplier * (1 + crit_chance * (0.75 + crit_damage)) + damage_modifier_flat
 
 
-def damage_after_positive_resistance(pre_mitigation_damage: float, resistance: float):
+def damage_after_positive_resistance(pre_mitigation_auto_attack_damage: float, resistance: float):
     """
     Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with Y amount of
     armor (positive)
     """
-    return pre_mitigation_damage * 100 / (100 + resistance)
+    return pre_mitigation_auto_attack_damage * 100 / (100 + resistance)
 
 
-def damage_after_negative_resistance(pre_mitigation_damage: float, resistance: float):
+def damage_after_negative_resistance(pre_mitigation_auto_attack_damage: float, resistance: float):
     """
     Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with negative
     armor.
     """
-    return pre_mitigation_damage * (2 - 100 / (100 - resistance))
+    return pre_mitigation_auto_attack_damage * (2 - 100 / (100 - resistance))
 
 
-def physical_damage_after_armor(
+def get_flat_armor_pen_with_lethality(lethality, attacker_level):
+    """Compute flat armor pen from lethality and attacker level."""
+    return lethality * (0.6 + 0.4 * attacker_level / 18)
+
+
+def damage_after_resistance(
     pre_mitigation_damage: float,
-    base_armor: float,
-    bonus_armor: float,
-    lethality: float,
-    attacker_level: int,
-    armor_pen_mult_factor: float,
-    bonus_armor_pen_mult_factor: float,
+    base_resistance: float,
+    bonus_resistance: float,
+    flat_resistance_pen: float,
+    resistance_pen: float = 0,
+    bonus_resistance_pen: float = 0,
 ):
     """
-    Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with Y amount of armor
+    Calculates the output damage if X amount of pre-mitigation damage is dealt to a champion with Y amount of resistance.
     """
-    defense_armor = base_armor + bonus_armor
-    if defense_armor < 0:
-        return damage_after_negative_resistance(pre_mitigation_damage, defense_armor)
+    defense_resistance = base_resistance + bonus_resistance
+    res_pen_multiplier = 1 - resistance_pen / 100
+    bonus_res_pen_multiplier = 1 - bonus_resistance_pen / 100
+
+    if defense_resistance < 0:
+        return damage_after_negative_resistance(pre_mitigation_damage, defense_resistance)
     else:
-        flat_armor_pen = lethality * (0.6 + 0.4 * attacker_level / 18)
-        armor_eq = (
-            base_armor * armor_pen_mult_factor + bonus_armor * armor_pen_mult_factor * bonus_armor_pen_mult_factor
+        resistance_eq = (
+            base_resistance * res_pen_multiplier
+            + bonus_resistance * res_pen_multiplier * bonus_res_pen_multiplier
         )
-        armor_eq -= flat_armor_pen
-        armor_eq = max(armor_eq, 0)
-        return damage_after_positive_resistance(pre_mitigation_damage, armor_eq)
+        resistance_eq -= flat_resistance_pen
+        resistance_eq = max(resistance_eq, 0)
+        return damage_after_positive_resistance(pre_mitigation_damage, resistance_eq)
 
 
-def magical_damage_after_magic_resist(
-    pre_mitigation_damage: float,
-    base_magic_resist: float,
-    bonus_magic_resist: float,
-    flat_magic_resist_pen: float = 0,
-    magic_resist_pen_mult_factor: float = 1,
-    bonus_magic_resist_pen_mult_factor: float = 1,
-):
-    """
-    Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with Y amount of armor
-    """
-    defense_magic_resist = base_magic_resist + bonus_magic_resist
-    if defense_magic_resist < 0:
-        return damage_after_negative_resistance(pre_mitigation_damage, defense_magic_resist)
-    else:
-        magic_resist_eq = (
-            base_magic_resist * magic_resist_pen_mult_factor
-            + bonus_magic_resist * magic_resist_pen_mult_factor * bonus_magic_resist_pen_mult_factor
-        )
-        magic_resist_eq -= flat_magic_resist_pen
-        magic_resist_eq = max(magic_resist_eq, 0)
-        return damage_after_positive_resistance(pre_mitigation_damage, magic_resist_eq)
-
-
-def damage_physical_attack(
+def damage_physical_auto_attack(
     base_attack_damage: float,
     base_armor: float,
     bonus_attack_damage: float = 0,
     bonus_armor: float = 0,
     attacker_level: int = 1,
     lethality: float = 0,
-    armor_pen_mult_factor: float = 1,
-    bonus_armor_pen_mult_factor: float = 1,
+    armor_pen: float = 0,
+    bonus_armor_pen: float = 0,
     damage_modifier_flat: float = 0,
-    damage_modifier_percent_mult_factor: float = 1,
+    damage_modifier_percent: float = 0,
     crit: bool = False,
     crit_damage: float = 0,
 ):
@@ -124,74 +131,37 @@ def damage_physical_attack(
     The base armor and bonus armor of the champion being attacked should already take into account the flat or
     percentage armor reduction resulting from spells like Garen E, Trundle R, Olaf Q, Corki E, or items like Black Cleaver
     """
-    pre_mtg_dmg = pre_mitigation_damage(
+    pre_mtg_dmg = pre_mitigation_auto_attack_damage(
         base_attack_damage,
         bonus_attack_damage,
         damage_modifier_flat,
-        damage_modifier_percent_mult_factor,
+        damage_modifier_percent,
         crit,
         crit_damage,
     )
-    return physical_damage_after_armor(
+    flat_armor_pen = get_flat_armor_pen_with_lethality(lethality, attacker_level)
+
+    return damage_after_resistance(
         pre_mtg_dmg,
         base_armor,
         bonus_armor,
-        lethality,
-        attacker_level,
-        armor_pen_mult_factor,
-        bonus_armor_pen_mult_factor,
+        flat_armor_pen,
+        armor_pen,
+        bonus_armor_pen,
     )
 
 
-def damage_magical_attack(
-    base_ability_power: float,
-    base_magic_resist: float,
-    bonus_ability_power: float = 0,
-    bonus_magic_resist: float = 0,
-    attacker_level: int = 1,
-    lethality: float = 0,
-    magic_resist_pen_mult_factor: float = 1,
-    bonus_magic_resist_pen_mult_factor: float = 1,
-    damage_modifier_flat: float = 0,
-    damage_modifier_percent_mult_factor: float = 1,
-    crit: bool = False,
-    crit_damage: float = 0,
-):
-    """
-    Calculates the output damage of crit/non-crit, empowered/modified/normal auto attacks
-    The base magic_resist and bonus magic_resist of the champion being attacked should already take into account the flat or
-    percentage magic_resist reduction resulting from spells like Garen E, Trundle R, Olaf Q, Corki E, or items like Black Cleaver
-    """
-    pre_mtg_dmg = pre_mitigation_damage(
-        base_ability_power,
-        bonus_ability_power,
-        damage_modifier_flat,
-        damage_modifier_percent_mult_factor,
-        crit,
-        crit_damage,
-    )
-    return magical_damage_after_magic_resist(
-        pre_mtg_dmg,
-        base_magic_resist,
-        bonus_magic_resist,
-        lethality,
-        attacker_level,
-        magic_resist_pen_mult_factor,
-        bonus_magic_resist_pen_mult_factor,
-    )
-
-
-def avg_damage_physical_attack(
+def avg_damage_physical_auto_attack(
     base_attack_damage: float,
     bonus_attack_damage: float,
     lethality: float,
     attacker_level: int,
-    armor_pen_mult_factor: float,
-    bonus_armor_pen_mult_factor: float,
+    armor_pen: float,
+    bonus_armor_pen: float,
     base_armor: float,
     bonus_armor: float,
     damage_modifier_flat: float,
-    damage_modifier_percent_mult_factor: float,
+    damage_modifier_percent: float,
     crit_chance: float,
     crit_damage: float,
 ):
@@ -200,20 +170,21 @@ def avg_damage_physical_attack(
     The base armor and bonus armor of the champion being attacked should already take into account the flat or
     percentage armor reduction resulting from spells like Garen E, Trundle R, Olaf Q, Corki E, or items like Black Cleaver
     """
-    pre_mtg_dmg = avg_pre_mitigation_physical_damage(
+    pre_mtg_dmg = avg_pre_mitigation_auto_attack_damage(
         base_attack_damage,
         bonus_attack_damage,
         damage_modifier_flat,
-        damage_modifier_percent_mult_factor,
+        damage_modifier_percent,
         crit_chance,
         crit_damage,
     )
-    return physical_damage_after_armor(
+    flat_armor_pen = get_flat_armor_pen_with_lethality(lethality, attacker_level)
+
+    return damage_after_resistance(
         pre_mtg_dmg,
         base_armor,
         bonus_armor,
-        lethality,
-        attacker_level,
-        armor_pen_mult_factor,
-        bonus_armor_pen_mult_factor,
+        flat_armor_pen,
+        armor_pen,
+        bonus_armor_pen,
     )

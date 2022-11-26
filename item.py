@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from damage import damage_after_positive_resistance
 from data_parser import ALL_ITEM_STATS
+from stats import Stats
 
 
 @dataclass
@@ -11,7 +12,7 @@ class ItemPassive:
 
     name: str = ""
     unique: bool = False
-    stats: dict = None
+    stats: Stats = None
 
 
 class AbstractItem(ABC):
@@ -29,7 +30,7 @@ class BaseItem:
     """
 
     def __init__(self, item_name: str):
-        self.stats = ALL_ITEM_STATS[item_name].copy()
+        self.stats = Stats(ALL_ITEM_STATS[item_name].copy())
         self.passive = ItemPassive()
 
     def apply_passive(self):
@@ -76,14 +77,10 @@ class SerratedDirk(BaseItem):
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, **kwargs)
-        self.passive = ItemPassive(name="Gouge", unique=True, stats={"lethality": 10})
+        self.passive = ItemPassive(name="Gouge", unique=True, stats=Stats({"lethality": 10}))
 
     def apply_passive(self):
-        for stat_name, stat_value in self.passive.stats.items():
-            if stat_name not in self.stats:
-                self.stats[stat_name] = stat_value
-            else:
-                self.stats[stat_name] += stat_value
+        self.stats = self.stats + self.passive.stats
 
 
 class LastWhisper(BaseItem):
@@ -91,7 +88,7 @@ class LastWhisper(BaseItem):
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, **kwargs)
-        self.stats["armor_pen_percent"] = 18
+        self.stats.add("armor_pen_percent", 18)
 
 
 class Sheen(BaseItem):
@@ -129,6 +126,13 @@ class YoumuuGhostblade(BaseItem): #missing passive, active, ability haste
         super().__init__(item_name=__class__.item_name, **kwargs)
         self.stats["lethality"] = 18
 
+
+
+class BlastingWand(BaseItem):
+    item_name = "Blasting Wand"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, **kwargs)
 
 
 ALL_ITEM_CLASSES = {cls.item_name: cls for cls in BaseItem.__subclasses__()}

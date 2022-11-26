@@ -1,9 +1,10 @@
 from typing import List, Optional
 
 import stats_calculator as sc
-from damage import damage_physical_attack
+from damage import damage_after_resistance, damage_physical_auto_attack, pre_mitigation_spell_damage
 from data_parser import ALL_CHAMPION_BASE_STATS
 from item import BaseItem
+from spell import QAnnie
 from stats import Stats
 
 
@@ -32,12 +33,6 @@ class BaseChampion:
         self.orig_bonus_stats = self.get_bonus_stats()
         self.current_health = self.orig_base_stats.health
 
-        self.passive = Spell("passive", type, level)
-        self.q = Spell("basic", "not leveled", 0)
-        self.w = Spell("basic", "not leveled", 0)
-        self.e = Spell("basic", "not leveled", 0)
-        self.r = Spell("ulti", "not leveled", 0)
-
     def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
         if len(self.inventory) == 0:
@@ -60,15 +55,15 @@ class BaseChampion:
     def auto_attack_damage(self, enemy_champion, is_crit: bool = False):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
 
-        damage = damage_physical_attack(
+        damage = damage_physical_auto_attack(
             base_attack_damage=self.orig_base_stats.attack_damage,
             base_armor=enemy_champion.orig_base_stats.armor,
             bonus_attack_damage=self.orig_bonus_stats.get("attack_damage", 0),
             bonus_armor=enemy_champion.orig_bonus_stats.get("armor", 0),
             attacker_level=self.level,
             lethality=self.orig_bonus_stats.get("lethality", 0),
-            armor_pen_mult_factor=1 - self.orig_bonus_stats.get("armor_pen_percent", 0) / 100,
-            bonus_armor_pen_mult_factor=1 - self.orig_bonus_stats.get("bonus_armor_pen_percent", 0) / 100,
+            armor_pen=self.orig_bonus_stats.get("armor_pen_percent", 0),
+            bonus_armor_pen=self.orig_bonus_stats.get("bonus_armor_pen_percent", 0),
             crit=is_crit,
             crit_damage=self.orig_bonus_stats.get("crit_damage", 0),
         )
@@ -110,13 +105,6 @@ class Dummy:
         self.current_health -= damage
 
 
-class Spell:
-    def __init__(self, nature: str = "not leveled", spell_type: str = "not leveled", level: int = 0):
-        self.nature = nature
-        self.spell_type = spell_type
-        self.level = level
-
-
 # Each champion has its own class as their spells have different effects.
 class Annie(BaseChampion):
     champion_name = "Annie"
@@ -124,20 +112,23 @@ class Annie(BaseChampion):
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
 
-    class Q(Spell):
-        damage = 0
-        ap_ratio = 0.8
+    def spell_q(self, level, enemy_champion):
+        self.q = QAnnie(level=level)
 
-        def __init__(self, level: int = 0, **kwargs):
-            super().__init__("magic_damage", level)
-            self.update_spell_from_level(level)
+        pre_mtg_dmg = pre_mitigation_spell_damage(
+            base_spell_damage=self.q.base_spell_damage,
+            ratio=self.q.ratio,
+            base_offensive_stats=self.orig_base_stats.get("ability_power", 0),
+            bonus_offensive_stats=self.orig_bonus_stats.get("ability_power", 0),
+        )
 
-        def update_spell_from_level(self, level: int):
-            damage_list = [80, 115, 150, 185, 220]
-            self.damage = damage_list[level - 1]
-
-        def pre_mitig_damage(self):  # pre-mitigation damage , need to add ap ratio
-            return self.damage  # + ap_ratio *
+        post_mtg_dmg = damage_after_resistance(
+            pre_mitigation_damage=pre_mtg_dmg,
+            base_resistance=enemy_champion.orig_base_stats.magic_resist,
+            bonus_resistance=enemy_champion.orig_bonus_stats.magic_resist,
+            flat_resistance_pen=enemy_champion.orig_bonus_stats.get("flat_magic_resist_pen", 0),
+        )
+        return post_mtg_dmg
 
 
 class Ahri(BaseChampion):
@@ -145,28 +136,6 @@ class Ahri(BaseChampion):
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
-
-    def Q(Spell):
-        damage = 0
-
-        def __init__(self, level: int = 0, **kwargs):
-            super().__init__("magic_damage", level)
-            self.update_spell_from_level(level)
-
-        def update_spell_from_level(self, level: int):
-            if level == 1:
-                self.damage = 2 * 40
-            if level == 2:
-                self.damage = 2 * 65
-            if level == 3:
-                self.damage = 2 * 90
-            if level == 4:
-                self.damage = 2 * 115
-            if level == 5:
-                self.damage = 2 * 140
-
-        def pre_mitig_damage(self):  # pre-mitigation damage
-            return self.damage
 
 
 class Caitlyn(BaseChampion):

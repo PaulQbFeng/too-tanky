@@ -1,7 +1,7 @@
 import math
 
 from champion import Dummy
-from damage import damage_physical_attack
+from damage import damage_physical_auto_attack
 
 
 def tests_normal_auto_attack_cait_dummy_60():
@@ -15,17 +15,17 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot no crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=62,
                 bonus_attack_damage=13.4,
                 lethality=0,
                 attacker_level=1,
-                armor_pen_mult_factor=1,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=0,
+                bonus_armor_pen=0,
                 base_armor=dummy_60.orig_base_stats.armor,
                 bonus_armor=dummy_60.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=False,
                 crit_damage=0,
             )
@@ -36,17 +36,17 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot no crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=75.4,
                 lethality=0,
                 attacker_level=11,
-                armor_pen_mult_factor=1,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=0,
+                bonus_armor_pen=0,
                 base_armor=dummy_60.orig_base_stats.armor,
                 bonus_armor=dummy_60.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=False,
                 crit_damage=0,
             )
@@ -56,17 +56,17 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot with crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=75.4,
                 lethality=0,
                 attacker_level=11,
-                armor_pen_mult_factor=1,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=0,
+                bonus_armor_pen=0,
                 base_armor=dummy_60.orig_base_stats.armor,
                 bonus_armor=dummy_60.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=True,
                 crit_damage=0,
             )
@@ -77,17 +77,17 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot no crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=105.4,
                 lethality=0,
                 attacker_level=11,
-                armor_pen_mult_factor=0.7,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=30,
+                bonus_armor_pen=0,
                 base_armor=dummy_60.orig_base_stats.armor,
                 bonus_armor=dummy_60.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=False,
                 crit_damage=0,
             )
@@ -97,17 +97,17 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot with crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=105.4,
                 lethality=0,
                 attacker_level=11,
-                armor_pen_mult_factor=0.7,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=30,
+                bonus_armor_pen=0,
                 base_armor=dummy_60.orig_base_stats.armor,
                 bonus_armor=dummy_60.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=True,
                 crit_damage=0,
             )
@@ -118,17 +118,17 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot no crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=65.4,
                 lethality=18,
                 attacker_level=11,
-                armor_pen_mult_factor=1,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=0,
+                bonus_armor_pen=0,
                 base_armor=dummy_60.orig_base_stats.armor,
                 bonus_armor=dummy_60.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=False,
                 crit_damage=0,
             )
@@ -138,17 +138,17 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot with crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=65.4,
                 lethality=18,
                 attacker_level=11,
-                armor_pen_mult_factor=1,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=0,
+                bonus_armor_pen=0,
                 base_armor=dummy_60.orig_base_stats.armor,
                 bonus_armor=dummy_60.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=True,
                 crit_damage=0,
             )
@@ -159,17 +159,17 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot no crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=95.4,
                 lethality=18,
                 attacker_level=11,
-                armor_pen_mult_factor=0.7,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=30,
+                bonus_armor_pen=0,
                 base_armor=dummy_60.orig_base_stats.armor,
                 bonus_armor=dummy_60.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=False,
                 crit_damage=0,
             )
@@ -179,17 +179,17 @@ def tests_normal_auto_attack_cait_dummy_60():
     # No headshot with crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=95.4,
                 lethality=18,
                 attacker_level=11,
-                armor_pen_mult_factor=0.7,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=30,
+                bonus_armor_pen=0,
                 base_armor=dummy_60.orig_base_stats.armor,
                 bonus_armor=dummy_60.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=True,
                 crit_damage=0,
             )
@@ -208,17 +208,17 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot no crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=62,
                 bonus_attack_damage=13.4,
                 lethality=0,
                 attacker_level=1,
-                armor_pen_mult_factor=1,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=0,
+                bonus_armor_pen=0,
                 base_armor=dummy_10.orig_base_stats.armor,
                 bonus_armor=dummy_10.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=False,
                 crit_damage=0,
             )
@@ -229,17 +229,17 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot no crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=75.4,
                 lethality=0,
                 attacker_level=11,
-                armor_pen_mult_factor=1,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=0,
+                bonus_armor_pen=0,
                 base_armor=dummy_10.orig_base_stats.armor,
                 bonus_armor=dummy_10.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=False,
                 crit_damage=0,
             )
@@ -249,17 +249,17 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot with crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=75.4,
                 lethality=0,
                 attacker_level=11,
-                armor_pen_mult_factor=1,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=0,
+                bonus_armor_pen=0,
                 base_armor=dummy_10.orig_base_stats.armor,
                 bonus_armor=dummy_10.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=True,
                 crit_damage=0,
             )
@@ -270,17 +270,17 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot no crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=105.4,
                 lethality=0,
                 attacker_level=11,
-                armor_pen_mult_factor=0.7,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=30,
+                bonus_armor_pen=0,
                 base_armor=dummy_10.orig_base_stats.armor,
                 bonus_armor=dummy_10.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=False,
                 crit_damage=0,
             )
@@ -290,17 +290,17 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot with crit
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=105.4,
                 lethality=0,
                 attacker_level=11,
-                armor_pen_mult_factor=0.7,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=30,
+                bonus_armor_pen=0,
                 base_armor=dummy_10.orig_base_stats.armor,
                 bonus_armor=dummy_10.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=True,
                 crit_damage=0,
             )
@@ -311,17 +311,17 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot no crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=65.4,
                 lethality=18,
                 attacker_level=11,
-                armor_pen_mult_factor=1,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=0,
+                bonus_armor_pen=0,
                 base_armor=dummy_10.orig_base_stats.armor,
                 bonus_armor=dummy_10.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=False,
                 crit_damage=0,
             )
@@ -331,17 +331,17 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot with crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=65.4,
                 lethality=18,
                 attacker_level=11,
-                armor_pen_mult_factor=1,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=0,
+                bonus_armor_pen=0,
                 base_armor=dummy_10.orig_base_stats.armor,
                 bonus_armor=dummy_10.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=True,
                 crit_damage=0,
             )
@@ -352,17 +352,17 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot no crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=95.4,
                 lethality=18,
                 attacker_level=11,
-                armor_pen_mult_factor=0.7,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=30,
+                bonus_armor_pen=0,
                 base_armor=dummy_10.orig_base_stats.armor,
                 bonus_armor=dummy_10.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=False,
                 crit_damage=0,
             )
@@ -372,17 +372,17 @@ def tests_normal_auto_attack_cait_dummy_10():
     # No headshot with crit no duskblade effect
     assert (
         round(
-            damage_physical_attack(
+            damage_physical_auto_attack(
                 base_attack_damage=95.345,
                 bonus_attack_damage=95.4,
                 lethality=18,
                 attacker_level=11,
-                armor_pen_mult_factor=0.7,
-                bonus_armor_pen_mult_factor=1,
+                armor_pen=30,
+                bonus_armor_pen=0,
                 base_armor=dummy_10.orig_base_stats.armor,
                 bonus_armor=dummy_10.orig_bonus_stats.armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent_mult_factor=1,
+                damage_modifier_percent=0,
                 crit=True,
                 crit_damage=0,
             )

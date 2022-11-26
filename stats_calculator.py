@@ -34,5 +34,5 @@ def get_items_total_stats(items: BaseItem):
 
     total_item_stats = Stats()
     for item in items:
-        total_item_stats = total_item_stats + Stats(item.stats)  # TODO: implem __iadd__
+        total_item_stats = total_item_stats + item.stats  # TODO: implem __iadd__
     return total_item_stats
