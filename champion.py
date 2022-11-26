@@ -113,7 +113,6 @@ class Annie(BaseChampion):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
 
     def spell_q(self, level, enemy_champion):
-        # TODO: move to class
         self.q = QAnnie(level=level)
 
         pre_mtg_dmg = pre_mitigation_spell_damage(
