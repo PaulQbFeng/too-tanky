@@ -11,9 +11,6 @@ class Stats:
         if stat_dict is None:
             self._dict = {}
         else:
-            print(type(stat_dict))
-            if isinstance(stat_dict, Stats):
-                print(stat_dict.print_stats())
             self._dict = stat_dict.copy()
 
     def __getattr__(self, attribute):
