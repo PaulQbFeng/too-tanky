@@ -145,6 +145,13 @@ class Caitlyn(BaseChampion):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
 
 
+class MissFortune(BaseChampion):
+    champion_name = "MissFortune"
+
+    def __init__(self, **kwargs):
+        super().__init__(champion_name=__class__.champion_name, **kwargs)
+
+
 class Darius(BaseChampion):
     champion_name = "Darius"
 

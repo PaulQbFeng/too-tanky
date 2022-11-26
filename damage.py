@@ -15,14 +15,14 @@ def pre_mitigation_auto_attack_damage(
     from both the attacker AND the defender
     """
     tot_off_stats = base_offensive_stats + bonus_offensive_stats
-    dmg_mod_perc_multiplier = 1 - damage_modifier_percent / 100
+    dmg_mod_perc_multiplier = 1 + damage_modifier_percent / 100
 
     if crit:
         crit_multiplier = (1.75 + crit_damage)
     else:
         crit_multiplier = 1
 
-    return tot_off_stats * dmg_mod_perc_multiplier * crit_multiplier + damage_modifier_flat
+    return (tot_off_stats * crit_multiplier + damage_modifier_flat) * dmg_mod_perc_multiplier
 
 
 def pre_mitigation_spell_damage(

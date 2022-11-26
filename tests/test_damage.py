@@ -1,7 +1,7 @@
 import math
 
-from champion import Dummy
-from damage import damage_physical_auto_attack
+from champion import Dummy, MissFortune
+from damage import damage_physical_auto_attack, pre_mitigation_auto_attack_damage
 
 
 def tests_normal_auto_attack_cait_dummy_60():
@@ -389,3 +389,9 @@ def tests_normal_auto_attack_cait_dummy_10():
         )
         == 334
     )
+
+def test_pre_mtg_damage():
+    # mf with passive (damage flat modifier) + prowler's claw (damage percent modifier) and crit
+    mf = MissFortune(level=1)
+    print(mf.orig_base_stats.attack_damage)
+    assert round(pre_mitigation_auto_attack_damage(mf.orig_base_stats.attack_damage, mf.orig_bonus_stats.get('attack_damage', 60), 56, 15, True, 0)) == 290
