@@ -1,9 +1,9 @@
 # TODO: it seems that hp are ceiled while damage floored. (however it seems that the ad is rounded in the stat section ingame)
 
 
-def pre_mitigation_damage(
-    base_damage: float,
-    bonus_damage: float,
+def pre_mitigation_auto_attack_damage(
+    base_offensive_stats: float,
+    bonus_offensive_stats: float,
     damage_modifier_flat: float,
     damage_modifier_percent_mult_factor: float,
     crit: bool = False,
@@ -15,17 +15,17 @@ def pre_mitigation_damage(
     from both the attacker AND the defender
     """
     if crit:
-        return (base_damage + bonus_damage) * damage_modifier_percent_mult_factor * (
+        return (base_offensive_stats + bonus_offensive_stats) * damage_modifier_percent_mult_factor * (
             1.75 + crit_damage
         ) + damage_modifier_flat
-    return (base_damage + bonus_damage) * damage_modifier_percent_mult_factor + damage_modifier_flat
+    return (base_offensive_stats + bonus_offensive_stats) * damage_modifier_percent_mult_factor + damage_modifier_flat
 
 
 def pre_mitigation_spell_damage(
     base_spell_damage: float,
     ratio: float,
-    base_damage: float,
-    bonus_damage: float,
+    base_offensive_stats: float,
+    bonus_offensive_stats: float,
     damage_modifier_flat: float = 0,
     damage_modifier_percent_mult_factor: float = 1,
 ):
@@ -36,13 +36,11 @@ def pre_mitigation_spell_damage(
     """
 
     return (
-        base_spell_damage
-        + ratio * (base_damage + bonus_damage) * damage_modifier_percent_mult_factor
-        + damage_modifier_flat
+        (base_spell_damage + ratio * (base_offensive_stats + bonus_offensive_stats) + damage_modifier_flat) * 
+        damage_modifier_percent_mult_factor
     )
 
-
-def avg_pre_mitigation_physical_damage(
+def avg_pre_mitigation_auto_attack_damage(
     base_attack_damage: float,
     bonus_attack_damage: float,
     damage_modifier_flat: float,
@@ -51,7 +49,7 @@ def avg_pre_mitigation_physical_damage(
     crit_damage: float,
 ):
     """
-    Calculates the pre-mitigation physical damage AVERAGE (based on crit chance) of a spell or an autoattack.
+    Calculates the pre-mitigation autoattack damage AVERAGE (based on crit chance) of a spell or an autoattack.
     This is only relevant for damage sources that can crit.
     All values regarding damage modifiers should include the buffs/debuffs coming from spells, summoner spells, or items
     from both the attacker AND the defender
@@ -61,20 +59,20 @@ def avg_pre_mitigation_physical_damage(
     ) + damage_modifier_flat
 
 
-def damage_after_positive_resistance(pre_mitigation_damage: float, resistance: float):
+def damage_after_positive_resistance(pre_mitigation_auto_attack_damage: float, resistance: float):
     """
     Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with Y amount of
     armor (positive)
     """
-    return pre_mitigation_damage * 100 / (100 + resistance)
+    return pre_mitigation_auto_attack_damage * 100 / (100 + resistance)
 
 
-def damage_after_negative_resistance(pre_mitigation_damage: float, resistance: float):
+def damage_after_negative_resistance(pre_mitigation_auto_attack_damage: float, resistance: float):
     """
     Calculates the output damage if X amount of pre-mitigation physical damage is dealt to a champion with negative
     armor.
     """
-    return pre_mitigation_damage * (2 - 100 / (100 - resistance))
+    return pre_mitigation_auto_attack_damage * (2 - 100 / (100 - resistance))
 
 
 def get_flat_armor_pen_with_lethality(lethality, attacker_level):
@@ -125,7 +123,7 @@ def damage_physical_auto_attack(
     The base armor and bonus armor of the champion being attacked should already take into account the flat or
     percentage armor reduction resulting from spells like Garen E, Trundle R, Olaf Q, Corki E, or items like Black Cleaver
     """
-    pre_mtg_dmg = pre_mitigation_damage(
+    pre_mtg_dmg = pre_mitigation_auto_attack_damage(
         base_attack_damage,
         bonus_attack_damage,
         damage_modifier_flat,
@@ -164,7 +162,7 @@ def avg_damage_physical_auto_attack(
     The base armor and bonus armor of the champion being attacked should already take into account the flat or
     percentage armor reduction resulting from spells like Garen E, Trundle R, Olaf Q, Corki E, or items like Black Cleaver
     """
-    pre_mtg_dmg = avg_pre_mitigation_physical_damage(
+    pre_mtg_dmg = avg_pre_mitigation_auto_attack_damage(
         base_attack_damage,
         bonus_attack_damage,
         damage_modifier_flat,
