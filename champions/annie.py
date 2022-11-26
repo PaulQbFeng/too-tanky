@@ -1,0 +1,1 @@
+from champion import BaseChampion
