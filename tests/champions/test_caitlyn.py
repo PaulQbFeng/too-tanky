@@ -1,7 +1,7 @@
 from damage import damage_physical_auto_attack
 from champion import Dummy
 from champions import Caitlyn
-from item import DoranBlade
+from item import DoranBlade, LongSword
 
 
 def test_auto_attack_dummy_60():
@@ -20,4 +20,24 @@ def test_auto_attack_dummy_60():
     assert round(caitlyn.auto_attack_damage(dummy_60, False)) == 70
     # Caitlyn level 11 with an infinity edge
     # No headshot no crit
+
+
+def test_q_dummy_30():
+    dummy_30 = Dummy(1000, 30)
+    caitlyn = Caitlyn(level=1)
+    caitlyn.equip_item(LongSword())
+    assert round(caitlyn.spell_q(1, dummy_30)) == 108
+    caitlyn = Caitlyn(level=3)
+    caitlyn.equip_item(LongSword())
+    assert round(caitlyn.spell_q(2, dummy_30)) == 156
+    caitlyn = Caitlyn(level=6)
+    caitlyn.equip_item(LongSword())
+    assert round(caitlyn.spell_q(3, dummy_30)) == 210
+    caitlyn = Caitlyn(level=7)
+    caitlyn.equip_item(LongSword())
+    assert round(caitlyn.spell_q(4, dummy_30)) == 259
+    caitlyn = Caitlyn(level=9)
+    caitlyn.equip_item(LongSword())
+    assert round(caitlyn.spell_q(5, dummy_30)) == 315
+
 
