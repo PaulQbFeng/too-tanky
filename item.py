@@ -58,6 +58,13 @@ class LongSword(BaseItem):
         super().__init__(item_name=__class__.item_name, **kwargs)
 
 
+class CloakofAgility(BaseItem):
+    item_name = "Cloak of Agility"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, **kwargs)
+
+
 class BFSword(BaseItem):
     item_name = "B. F. Sword"
 
