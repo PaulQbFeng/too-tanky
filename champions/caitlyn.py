@@ -51,7 +51,7 @@ class Caitlyn(BaseChampion):
 
         pre_mtg_dmg = pre_mitigation_spell_damage(
             base_spell_damage=self.q.base_spell_damage,
-            ratio=self.q.ratio,
+            ratio=self.q.ratios[level-1],
             base_offensive_stats=self.orig_base_stats.get("attack_damage", 0),
             bonus_offensive_stats=self.orig_bonus_stats.get("attack_damage", 0),
         )
@@ -60,6 +60,9 @@ class Caitlyn(BaseChampion):
             pre_mitigation_damage=pre_mtg_dmg,
             base_resistance=enemy_champion.orig_base_stats.armor,
             bonus_resistance=enemy_champion.orig_bonus_stats.armor,
+            flat_resistance_pen=self.orig_bonus_stats.get('flat_armor_pen', 0),
+            resistance_pen=self.orig_bonus_stats.get('percent_armor_pen', 0),
+            bonus_resistance_pen=self.orig_bonus_stats.get('percent_bonus_armor_pen', 0)
         )
         return post_mtg_dmg
 
