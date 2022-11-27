@@ -9,27 +9,14 @@ class Caitlyn(BaseChampion):
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
         self.auto_attack_count = 0
+        self.w_hit = False
 
     def auto_attack_damage(self, enemy_champion, is_crit: bool = False):
-        if self.auto_attack_count < 6:
-            damage = damage_physical_auto_attack(
-                base_attack_damage=self.orig_base_stats.attack_damage,
-                base_armor=enemy_champion.orig_base_stats.armor,
-                bonus_attack_damage=self.orig_bonus_stats.get("attack_damage", 0),
-                bonus_armor=enemy_champion.orig_bonus_stats.get("armor", 0),
-                attacker_level=self.level,
-                lethality=self.orig_bonus_stats.get("lethality", 0),
-                armor_pen=self.orig_bonus_stats.get("armor_pen_percent", 0),
-                bonus_armor_pen=self.orig_bonus_stats.get("bonus_armor_pen_percent", 0),
-                crit=is_crit,
-                crit_damage=self.orig_bonus_stats.get("crit_damage", 0),
-            )
-            self.auto_attack_count += 1
-        if self.auto_attack_count == 6:
-            if 1 <= self.level <= 6:
-                attack_damage = self.orig_base_stats.get('attack_damage', 0) + self.orig_bonus_stats.get('attack_damage', 0)
-                crit_chance = self.orig_base_stats.get('crit_chance', 0) + self.orig_bonus_stats.get('crit_chance', 0)
-                damage_modifier_flat = attack_damage * (0.6 + 1.3125 * crit_chance)
+        if self.w_hit:
+            bonus_attack_damage = self.orig_bonus_stats.get('attack_damage', 0)
+            attack_damage = self.orig_base_stats.attack_damage + self.orig_bonus_stats.get('attack_damage', 0)
+            crit_chance = self.orig_bonus_stats.get('crit_chance', 0)
+            damage_modifier_flat = attack_damage * (0.6 + 1.3125 * crit_chance) + self.w.base_spell_damage + self.w.bonus_attack_damage_ratio * bonus_attack_damage
             damage = damage_physical_auto_attack(
                 base_attack_damage=self.orig_base_stats.attack_damage,
                 base_armor=enemy_champion.orig_base_stats.armor,
@@ -43,7 +30,41 @@ class Caitlyn(BaseChampion):
                 crit=is_crit,
                 crit_damage=self.orig_bonus_stats.get("crit_damage", 0),
             )
-            self.auto_attack_count = 0
+            self.w_hit = False
+        else:
+            if self.auto_attack_count < 6:
+                damage = damage_physical_auto_attack(
+                    base_attack_damage=self.orig_base_stats.attack_damage,
+                    base_armor=enemy_champion.orig_base_stats.armor,
+                    bonus_attack_damage=self.orig_bonus_stats.get("attack_damage", 0),
+                    bonus_armor=enemy_champion.orig_bonus_stats.get("armor", 0),
+                    attacker_level=self.level,
+                    lethality=self.orig_bonus_stats.get("lethality", 0),
+                    armor_pen=self.orig_bonus_stats.get("armor_pen_percent", 0),
+                    bonus_armor_pen=self.orig_bonus_stats.get("bonus_armor_pen_percent", 0),
+                    crit=is_crit,
+                    crit_damage=self.orig_bonus_stats.get("crit_damage", 0),
+                )
+                self.auto_attack_count += 1
+            if self.auto_attack_count == 6:
+                if 1 <= self.level <= 6:
+                    attack_damage = self.orig_base_stats.get('attack_damage', 0) + self.orig_bonus_stats.get('attack_damage', 0)
+                    crit_chance = self.orig_base_stats.get('crit_chance', 0) + self.orig_bonus_stats.get('crit_chance', 0)
+                    damage_modifier_flat = attack_damage * (0.6 + 1.3125 * crit_chance)
+                damage = damage_physical_auto_attack(
+                    base_attack_damage=self.orig_base_stats.attack_damage,
+                    base_armor=enemy_champion.orig_base_stats.armor,
+                    bonus_attack_damage=self.orig_bonus_stats.get("attack_damage", 0),
+                    bonus_armor=enemy_champion.orig_bonus_stats.get("armor", 0),
+                    attacker_level=self.level,
+                    lethality=self.orig_bonus_stats.get("lethality", 0),
+                    armor_pen=self.orig_bonus_stats.get("armor_pen_percent", 0),
+                    bonus_armor_pen=self.orig_bonus_stats.get("bonus_armor_pen_percent", 0),
+                    damage_modifier_flat=damage_modifier_flat,
+                    crit=is_crit,
+                    crit_damage=self.orig_bonus_stats.get("crit_damage", 0),
+                )
+                self.auto_attack_count = 0
         return damage
 
     def spell_q(self, level, enemy_champion):
@@ -66,9 +87,13 @@ class Caitlyn(BaseChampion):
         )
         return post_mtg_dmg
 
+    def spell_w(self, level):
+        self.w = WCaitlyn(level=level)
+        self.w_hit = True
+
 
 class QCaitlyn(BaseSpell):
-    champion_name = "Annie"
+    champion_name = "Caitlyn"
     spell_key = "q"
 
     def __init__(self, level):
@@ -83,3 +108,22 @@ class QCaitlyn(BaseSpell):
         self.base_damage_per_level = [50, 90, 130, 170, 210]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [1.25, 1.45, 1.65, 1.85, 2.05]
+
+
+class WCaitlyn(BaseSpell):
+    champion_name = "Caitlyn"
+    spell_key = "w"
+
+    def __init__(self, level):
+        super().__init__(champion_name=__class__.champion_name, spell_key=__class__.spell_key, level=level)
+
+        if self.spell_key in ["q", "w", "e"]:
+            self.nature = "normal"
+        else:
+            self.nature = "ulti"
+
+        self.damage_type = "physical"
+        self.base_damage_per_level = [40, 85, 130, 175, 220]
+        self.base_spell_damage = self.base_damage_per_level[level - 1]
+        self.ratios = [0.4, 0.5, 0.6, 0.7, 0.8]
+        self.bonus_attack_damage_ratio = self.ratios[level-1]
