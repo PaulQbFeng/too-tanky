@@ -44,8 +44,7 @@ def test_q_dummy_30():
 def test_w_auto_attack_dummy_30():
     dummy_30 = Dummy(1000, 30)
 
-    caitlyn = Caitlyn(level=1)
-    caitlyn.equip_item(LongSword())
+    caitlyn = Caitlyn(level=1, inventory=[LongSword()])
     caitlyn.spell_w(level=1)
     assert round(caitlyn.auto_attack_damage(dummy_30, False)) == 122
     caitlyn.equip_item(CloakofAgility())
@@ -55,4 +54,29 @@ def test_w_auto_attack_dummy_30():
     caitlyn.spell_w(level=1)
     assert round(caitlyn.auto_attack_damage(dummy_30, True)) == 175
 
-    caitlyn = Caitlyn(level=3)
+    caitlyn = Caitlyn(level=3, inventory=[LongSword(), CloakofAgility()])
+    caitlyn.spell_w(level=2)
+    assert round(caitlyn.auto_attack_damage(dummy_30, False)) == 176
+    caitlyn.spell_w(level=2)
+    assert round(caitlyn.auto_attack_damage(dummy_30, True)) == 221
+
+    caitlyn = Caitlyn(level=5, inventory=[LongSword(), CloakofAgility()])
+    caitlyn.spell_w(level=3)
+    assert round(caitlyn.auto_attack_damage(dummy_30, False)) == 220
+    caitlyn.spell_w(level=3)
+    assert round(caitlyn.auto_attack_damage(dummy_30, True)) == 269
+
+    caitlyn = Caitlyn(level=7, inventory=[LongSword(), CloakofAgility()])
+    print(caitlyn.orig_base_stats.attack_damage)
+    caitlyn.spell_w(level=4)
+    assert round(caitlyn.auto_attack_damage(dummy_30, False)) == 286
+    caitlyn.spell_w(level=4)
+    assert round(caitlyn.auto_attack_damage(dummy_30, True)) == 338
+
+    caitlyn = Caitlyn(level=13, inventory=[LongSword(), CloakofAgility()])
+    print(caitlyn.orig_base_stats.attack_damage)
+    caitlyn.spell_w(level=5)
+    assert round(caitlyn.auto_attack_damage(dummy_30, False)) == 385
+    caitlyn.spell_w(level=5)
+    assert round(caitlyn.auto_attack_damage(dummy_30, True)) == 450
+    
