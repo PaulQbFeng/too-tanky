@@ -23,7 +23,8 @@ class Xerath(BaseChampion):
             pre_mitigation_damage=pre_mtg_dmg,
             base_resistance=enemy_champion.orig_base_stats.magic_resist,
             bonus_resistance=enemy_champion.orig_bonus_stats.magic_resist,
-            flat_resistance_pen=enemy_champion.orig_bonus_stats.get("flat_magic_resist_pen", 0),
+            flat_resistance_pen=self.orig_bonus_stats.get("flat_magic_resist_pen", 0),
+            resistance_pen=self.orig_bonus_stats.get("percent_magic_resist_pen", 0),
         )
         return post_mtg_dmg
 
@@ -41,7 +42,8 @@ class Xerath(BaseChampion):
             pre_mitigation_damage=pre_mtg_dmg,
             base_resistance=enemy_champion.orig_base_stats.magic_resist,
             bonus_resistance=enemy_champion.orig_bonus_stats.magic_resist,
-            flat_resistance_pen=enemy_champion.orig_bonus_stats.get("flat_magic_resist_pen", 0),
+            flat_resistance_pen=self.orig_bonus_stats.get("flat_magic_resist_pen", 0),
+            resistance_pen=self.orig_bonus_stats.get("percent_magic_resist_pen", 0),
         )
         if not is_empowered:
             return post_mtg_dmg
@@ -62,7 +64,8 @@ class Xerath(BaseChampion):
             pre_mitigation_damage=pre_mtg_dmg,
             base_resistance=enemy_champion.orig_base_stats.magic_resist,
             bonus_resistance=enemy_champion.orig_bonus_stats.magic_resist,
-            flat_resistance_pen=enemy_champion.orig_bonus_stats.get("flat_magic_resist_pen", 0),
+            flat_resistance_pen=self.orig_bonus_stats.get("flat_magic_resist_pen", 0),
+            resistance_pen=self.orig_bonus_stats.get("percent_magic_resist_pen", 0),
         )
         return post_mtg_dmg
 
@@ -81,7 +84,8 @@ class Xerath(BaseChampion):
             pre_mitigation_damage=pre_mtg_dmg,
             base_resistance=enemy_champion.orig_base_stats.magic_resist,
             bonus_resistance=enemy_champion.orig_bonus_stats.magic_resist,
-            flat_resistance_pen=enemy_champion.orig_bonus_stats.get("flat_magic_resist_pen", 0),
+            flat_resistance_pen=self.orig_bonus_stats.get("flat_magic_resist_pen", 0),
+            resistance_pen=self.orig_bonus_stats.get("percent_magic_resist_pen", 0),
         )
         return post_mtg_dmg * nb_hit
 
