@@ -1,82 +1,60 @@
-from damage import damage_physical_auto_attack
 from champion import Dummy
 from champions import Caitlyn
-from item import DoranBlade, LongSword, CloakofAgility
+from item import LongSword, CloakofAgility
 
 
-def test_auto_attack_dummy_60():
+def auto_attack_default_run(inventory, enemy_champion, test_values):
+    for level in [1]:  # should include levels 7 and 13 because headshot damage scales with level
+        caitlyn = Caitlyn(level=level, inventory=inventory)
+        assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values[0]  # No headshot no crit
+        caitlyn.auto_attack_count = 6
+        assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values[1]  # Headshot and no crit
+
+
+def test_auto_attack():
     """
     Tests of caitlyn non-crit autoattacks without her passive (Headshot) at different levels and with
     different items against a dummy with 60 bonus armor and 60 bonus mr
     Caitlyn has one adaptive force rune which gives 5.4 attack damage
     """
-    dummy_60 = Dummy(health=1000, bonus_resistance=60)
-    # Caitlyn level 1 with a doran's blade
-    caitlyn = Caitlyn(level=1)
-    caitlyn.equip_item(DoranBlade())
-    # No headshot no crit
-    assert round(caitlyn.auto_attack_damage(dummy_60, False)) == 44
-    caitlyn.auto_attack_count = 6
-    assert round(caitlyn.auto_attack_damage(dummy_60, False)) == 70
-    # Caitlyn level 11 with an infinity edge
-    # No headshot no crit
+    # Test of attack_count
+    caitlyn = Caitlyn()
+    dummy = Dummy(1000, 0)
+    caitlyn.auto_attack_damage(dummy, False)
+    caitlyn.auto_attack_damage(dummy, False)
+    caitlyn.auto_attack_damage(dummy, False)
+    caitlyn.auto_attack_damage(dummy, False)
+    caitlyn.auto_attack_damage(dummy, False)
+    caitlyn.auto_attack_damage(dummy, False)
+    assert caitlyn.auto_attack_count == 6
+    # Test of auto attack damage (with consideration of headshot and crit)
+    auto_attack_default_run([LongSword()], Dummy(1000, 60), [45, 70])
 
 
-def test_q_dummy_30():
-    dummy_30 = Dummy(1000, 30)
-    caitlyn = Caitlyn(level=1)
-    caitlyn.equip_item(LongSword())
-    assert round(caitlyn.spell_q(1, dummy_30)) == 108
-    caitlyn = Caitlyn(level=3)
-    caitlyn.equip_item(LongSword())
-    assert round(caitlyn.spell_q(2, dummy_30)) == 156
-    caitlyn = Caitlyn(level=6)
-    caitlyn.equip_item(LongSword())
-    assert round(caitlyn.spell_q(3, dummy_30)) == 210
-    caitlyn = Caitlyn(level=7)
-    caitlyn.equip_item(LongSword())
-    assert round(caitlyn.spell_q(4, dummy_30)) == 259
-    caitlyn = Caitlyn(level=9)
-    caitlyn.equip_item(LongSword())
-    assert round(caitlyn.spell_q(5, dummy_30)) == 315
+def q_default_run(inventory, enemy_champion, test_values):
+    for i in range(1, 6):
+        caitlyn = Caitlyn(level=2*i-1, inventory=inventory)
+        assert round(caitlyn.spell_q(i, enemy_champion)) == test_values[i-1]
 
 
-def test_w_auto_attack_dummy_30():
-    dummy_30 = Dummy(1000, 30)
+def test_q():
+    q_default_run([LongSword()], Dummy(1000, 30), [108, 156, 206, 259, 315])
 
-    caitlyn = Caitlyn(level=1, inventory=[LongSword()])
-    caitlyn.spell_w(level=1)
-    assert round(caitlyn.auto_attack_damage(dummy_30, False)) == 122
-    caitlyn.equip_item(CloakofAgility())
-    caitlyn.spell_w(level=1)
-    assert round(caitlyn.auto_attack_damage(dummy_30, False)) == 133
-    assert round(caitlyn.auto_attack_damage(dummy_30, False)) == 55
-    caitlyn.spell_w(level=1)
-    assert round(caitlyn.auto_attack_damage(dummy_30, True)) == 175
 
-    caitlyn = Caitlyn(level=3, inventory=[LongSword(), CloakofAgility()])
-    caitlyn.spell_w(level=2)
-    assert round(caitlyn.auto_attack_damage(dummy_30, False)) == 176
-    caitlyn.spell_w(level=2)
-    assert round(caitlyn.auto_attack_damage(dummy_30, True)) == 221
-
-    caitlyn = Caitlyn(level=5, inventory=[LongSword(), CloakofAgility()])
-    caitlyn.spell_w(level=3)
-    assert round(caitlyn.auto_attack_damage(dummy_30, False)) == 220
-    caitlyn.spell_w(level=3)
-    assert round(caitlyn.auto_attack_damage(dummy_30, True)) == 269
-
-    caitlyn = Caitlyn(level=7, inventory=[LongSword(), CloakofAgility()])
-    print(caitlyn.orig_base_stats.attack_damage)
-    caitlyn.spell_w(level=4)
-    assert round(caitlyn.auto_attack_damage(dummy_30, False)) == 286
-    caitlyn.spell_w(level=4)
-    assert round(caitlyn.auto_attack_damage(dummy_30, True)) == 338
-
-    caitlyn = Caitlyn(level=13, inventory=[LongSword(), CloakofAgility()])
-    print(caitlyn.orig_base_stats.attack_damage)
+def w_default_run(inventory, enemy_champion, test_values):
+    for i in range(1, 5):
+        caitlyn = Caitlyn(level=2*i-1, inventory=inventory)
+        caitlyn.spell_w(level=i)
+        assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values[2*i-2]
+        caitlyn.spell_w(level=i)
+        assert round(caitlyn.auto_attack_damage(enemy_champion, True)) == test_values[2*i-1]
+    # last test with lvl 13 for robustness with headshot dmg lvl scaling
+    caitlyn = Caitlyn(level=13, inventory=inventory)
     caitlyn.spell_w(level=5)
-    assert round(caitlyn.auto_attack_damage(dummy_30, False)) == 385
+    assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values[8]
     caitlyn.spell_w(level=5)
-    assert round(caitlyn.auto_attack_damage(dummy_30, True)) == 450
-    
+    assert round(caitlyn.auto_attack_damage(enemy_champion, True)) == test_values[9]
+
+
+def test_w():
+    w_default_run([LongSword(), CloakofAgility()], Dummy(1000, 30), [133, 175, 176, 221, 220, 269, 286, 338, 385, 450])
