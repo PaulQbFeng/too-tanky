@@ -80,9 +80,9 @@ def get_champion_spell_stats(folder: str):
             spell_key = spell["spellKey"]
             out_dict[data["name"]][spell_key] = {
                 "name": spell["name"],
-                "range": spell["range"][:5],
-                "cost": spell["costCoefficients"][:5],
-                "cooldown": spell["cooldownCoefficients"][:5],
+                "range": spell["range"],
+                "cost": spell["costCoefficients"],
+                "cooldown": spell["cooldownCoefficients"],
                 "ratios": [spell["coefficients"]["coefficient1"], spell["coefficients"]["coefficient2"]],
                 "max_level": spell["maxLevel"],
             }
