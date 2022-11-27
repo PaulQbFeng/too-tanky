@@ -28,7 +28,7 @@ def test_auto_attack():
     caitlyn.auto_attack_damage(dummy, False)
     assert caitlyn.auto_attack_count == 6
     # Test of auto attack damage (with consideration of headshot and crit)
-    auto_attack_default_run([LongSword()], Dummy(1000, 60), [45, 70])
+    auto_attack_default_run([LongSword()], Dummy(1000, 60), [45, 72])
 
 
 def q_default_run(inventory, enemy_champion, test_values):
