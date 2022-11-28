@@ -99,7 +99,7 @@ def test_auto_attack_with_item_component():
     ahri = Ahri(level=4, inventory=inventory)
     dummy = Dummy(health=1000, bonus_resistance=100)
 
-    assert ahri.orig_bonus_stats._dict == {"armor": 15, "gold": 2825, "attack_damage": 75}
+    assert ahri.orig_bonus_stats._dict == {"armor": 15, "attack_damage": 75}
     assert round(ahri.auto_attack_damage(dummy)) == 67
 
 
@@ -120,8 +120,8 @@ def test_auto_attack_with_item_component_2():
 
 def test_darius_auto_attack():
     darius = Darius(level=18)
-    assert round(darius.current_health) == 2590
+    assert round(darius.health) == 2590
 
     dummy = Dummy(health=1000, bonus_resistance=100)
     darius.do_auto_attack(dummy)
-    assert round(dummy.current_health) == 926
+    assert round(dummy.health) == 926

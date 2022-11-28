@@ -30,7 +30,9 @@ class BaseItem:
     """
 
     def __init__(self, item_name: str):
-        self.stats = Stats(ALL_ITEM_STATS[item_name].copy())
+        item_stats = ALL_ITEM_STATS[item_name].copy()
+        self.gold = item_stats.pop("gold")
+        self.stats = Stats(item_stats)
         self.passive = ItemPassive()
 
     def apply_passive(self):
