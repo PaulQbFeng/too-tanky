@@ -105,12 +105,9 @@ class Caitlyn(BaseChampion):
 
     def spell_r(self, level, enemy_champion):
         self.r = RCaitlyn(level=level)
-        print(self.r.base_spell_damage)
 
         damage_modifier_flat = self.r.bonus_attack_damage_ratio * self.orig_bonus_stats.get("attack_damage", 0)
-        print(damage_modifier_flat)
         crit_chance = self.orig_bonus_stats.get("crit_chance", 0)
-        print(crit_chance)
 
         pre_mtg_dmg = pre_mitigation_spell_damage(
             base_spell_damage=self.r.base_spell_damage,
