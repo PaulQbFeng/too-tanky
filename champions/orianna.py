@@ -36,11 +36,7 @@ class ROrianna(BaseSpell):
     def __init__(self, level):
         super().__init__(champion_name=__class__.champion_name, spell_key=__class__.spell_key, level=level)
 
-        if self.spell_key in ["q", "w", "e"]:
-            self.nature = "normal"
-        else:
-            self.nature = "ulti"
-
+        self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
         self.base_damage_per_level = [200, 275, 350]
         self.base_spell_damage = self.base_damage_per_level[level - 1]

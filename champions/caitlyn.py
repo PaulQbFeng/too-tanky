@@ -140,11 +140,7 @@ class QCaitlyn(BaseSpell):
     def __init__(self, level):
         super().__init__(champion_name=__class__.champion_name, spell_key=__class__.spell_key, level=level)
 
-        if self.spell_key in ["q", "w", "e"]:
-            self.nature = "normal"
-        else:
-            self.nature = "ulti"
-
+        self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "physical"
         self.base_damage_per_level = [50, 90, 130, 170, 210]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
@@ -159,11 +155,7 @@ class WCaitlyn(BaseSpell):
     def __init__(self, level):
         super().__init__(champion_name=__class__.champion_name, spell_key=__class__.spell_key, level=level)
 
-        if self.spell_key in ["q", "w", "e"]:
-            self.nature = "normal"
-        else:
-            self.nature = "ulti"
-
+        self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "physical"
         self.base_damage_per_level = [40, 85, 130, 175, 220]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
@@ -178,11 +170,7 @@ class ECaitlyn(BaseSpell):
     def __init__(self, level):
         super().__init__(champion_name=__class__.champion_name, spell_key=__class__.spell_key, level=level)
 
-        if self.spell_key in ["q", "w", "e"]:
-            self.nature = "normal"
-        else:
-            self.nature = "ulti"
-
+        self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
         self.base_damage_per_level = [80, 130, 180, 230, 280]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
@@ -196,10 +184,7 @@ class RCaitlyn(BaseSpell):
     def __init__(self, level):
         super().__init__(champion_name=__class__.champion_name, spell_key=__class__.spell_key, level=level)
 
-        if self.spell_key in ["q", "w", "e"]:
-            self.nature = "normal"
-        else:
-            self.nature = "ulti"
+        self.nature = self.get_spell_nature(self.spell_key)        
         self.damage_type = "physical"
         self.base_damage_per_level = [300, 525, 750]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
