@@ -19,16 +19,16 @@ class Caitlyn(BaseChampion):
             self.passive_multiplier = 1.2
 
     def auto_attack_damage(self, enemy_champion, is_crit: bool = False):
-        base_attack_damage = self.orig_base_stats.attack_damage
-        bonus_attack_damage = self.orig_bonus_stats.get('attack_damage', 0)
+        base_attack_damage = self.base_attack_damage
+        bonus_attack_damage = self.bonus_attack_damage
         attack_damage = base_attack_damage + bonus_attack_damage
-        crit_chance = self.orig_bonus_stats.get("crit_chance", 0)
-        crit_damage = self.orig_bonus_stats.get("crit_damage", 0)
-        base_armor = enemy_champion.orig_base_stats.armor
-        bonus_armor = enemy_champion.orig_bonus_stats.armor
-        lethality = self.orig_bonus_stats.get("lethality", 0)
-        armor_pen = self.orig_bonus_stats.get("armor_pen_percent", 0)
-        bonus_armor_pen = self.orig_bonus_stats.get("bonus_armor_pen_percent", 0)
+        crit_chance = self.bonus_crit_chance
+        crit_damage = self.crit_damage
+        base_armor = enemy_champion.base_armor
+        bonus_armor = enemy_champion.bonus_armor
+        lethality = self.lethality
+        armor_pen = self.armor_pen_percent
+        bonus_armor_pen = self.armor_bonus_pen_percent
         damage_modifier_flat = 0
         std_headshot_dmg = attack_damage * (self.passive_multiplier + 1.3125 * crit_chance)
 
@@ -70,17 +70,17 @@ class Caitlyn(BaseChampion):
         pre_mtg_dmg = pre_mitigation_spell_damage(
             base_spell_damage=self.q.base_spell_damage,
             ratio=self.q.ratio,
-            base_offensive_stats=self.orig_base_stats.get("attack_damage", 0),
-            bonus_offensive_stats=self.orig_bonus_stats.get("attack_damage", 0),
+            base_offensive_stats=self.base_attack_damage,
+            bonus_offensive_stats=self.bonus_attack_damage,
         )
 
         post_mtg_dmg = damage_after_resistance(
             pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.orig_base_stats.armor,
-            bonus_resistance=enemy_champion.orig_bonus_stats.armor,
-            flat_resistance_pen=self.orig_bonus_stats.get('flat_armor_pen', 0),
-            resistance_pen=self.orig_bonus_stats.get('percent_armor_pen', 0),
-            bonus_resistance_pen=self.orig_bonus_stats.get('percent_bonus_armor_pen', 0)
+            base_resistance=enemy_champion.base_armor,
+            bonus_resistance=enemy_champion.bonus_armor,
+            flat_resistance_pen=self.armor_pen_flat,
+            resistance_pen=self.armor_pen_percent,
+            bonus_resistance_pen=self.armor_bonus_pen_percent
         )
         return post_mtg_dmg
 
@@ -95,40 +95,40 @@ class Caitlyn(BaseChampion):
         pre_mtg_dmg = pre_mitigation_spell_damage(
             base_spell_damage=self.e.base_spell_damage,
             ratio=self.e.ratio,
-            base_offensive_stats=self.orig_base_stats.get("ability_power", 0),
-            bonus_offensive_stats=self.orig_bonus_stats.get("ability_power", 0),
+            base_offensive_stats=self.base_ability_power,
+            bonus_offensive_stats=self.bonus_ability_power,
         )
 
         post_mtg_dmg = damage_after_resistance(
             pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.orig_base_stats.magic_resist,
-            bonus_resistance=enemy_champion.orig_bonus_stats.magic_resist,
-            flat_resistance_pen=self.orig_bonus_stats.get("flat_magic_resist_pen", 0),
-            resistance_pen=self.orig_bonus_stats.get("percent_magic_resist_pen", 0),
+            base_resistance=enemy_champion.base_magic_resist,
+            bonus_resistance=enemy_champion.bonus_magic_resist,
+            flat_resistance_pen=self.magic_pen_flat,
+            resistance_pen=self.magic_pen_percent,
         )
         return post_mtg_dmg
 
     def spell_r(self, level, enemy_champion):
         self.r = RCaitlyn(level=level)
 
-        damage_modifier_flat = self.r.bonus_attack_damage_ratio * self.orig_bonus_stats.get("attack_damage", 0)
-        crit_chance = self.orig_bonus_stats.get("crit_chance", 0)
+        damage_modifier_flat = self.r.bonus_attack_damage_ratio * self.bonus_attack_damage
+        crit_chance = self.bonus_crit_chance
 
         pre_mtg_dmg = pre_mitigation_spell_damage(
             base_spell_damage=self.r.base_spell_damage,
             ratio=0,
-            base_offensive_stats=self.orig_base_stats.get("attack_damage", 0),
-            bonus_offensive_stats=self.orig_bonus_stats.get("attack_damage", 0),
+            base_offensive_stats=self.base_attack_damage,
+            bonus_offensive_stats=self.bonus_attack_damage,
             damage_modifier_flat=damage_modifier_flat,
         )
 
         post_mtg_dmg = damage_after_resistance(
             pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.orig_base_stats.armor,
-            bonus_resistance=enemy_champion.orig_bonus_stats.armor,
-            flat_resistance_pen=self.orig_bonus_stats.get('flat_armor_pen', 0),
-            resistance_pen=self.orig_bonus_stats.get('percent_armor_pen', 0),
-            bonus_resistance_pen=self.orig_bonus_stats.get('percent_bonus_armor_pen', 0)
+            base_resistance=enemy_champion.base_armor,
+            bonus_resistance=enemy_champion.bonus_armor,
+            flat_resistance_pen=self.armor_pen_flat,
+            resistance_pen=self.armor_pen_percent,
+            bonus_resistance_pen=self.armor_bonus_pen_percent
         )
         return post_mtg_dmg * (1 + crit_chance*0.25)
 
