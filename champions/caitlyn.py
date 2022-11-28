@@ -1,7 +1,6 @@
 from champion import BaseChampion
 from damage import damage_physical_auto_attack, pre_mitigation_spell_damage, damage_after_resistance
 from spell import BaseSpell
-import math
 
 
 class Caitlyn(BaseChampion):
@@ -31,19 +30,25 @@ class Caitlyn(BaseChampion):
         armor_pen = self.orig_bonus_stats.get("armor_pen_percent", 0)
         bonus_armor_pen = self.orig_bonus_stats.get("bonus_armor_pen_percent", 0)
         damage_modifier_flat = 0
+        std_headshot_dmg = attack_damage * (self.passive_multiplier + 1.3125 * crit_chance)
+
         if self.w_hit:
-            damage_modifier_flat = attack_damage * (self.passive_multiplier + 1.3125 * crit_chance) + self.w.base_spell_damage + self.w.bonus_attack_damage_ratio * bonus_attack_damage
+            damage_modifier_flat = (
+                std_headshot_dmg + self.w.base_spell_damage + 
+                self.w.bonus_attack_damage_ratio * bonus_attack_damage
+            )
             self.w_hit = False
         else:
             if self.e_hit:
-                damage_modifier_flat = attack_damage * (self.passive_multiplier + 1.3125 * crit_chance)
+                damage_modifier_flat = std_headshot_dmg
                 self.e_hit = False
             else:
                 if self.auto_attack_count < 6:
                     self.auto_attack_count += 1
                 elif self.auto_attack_count == 6:
-                    damage_modifier_flat = attack_damage * (self.passive_multiplier + 1.3125 * crit_chance)
+                    damage_modifier_flat = std_headshot_dmg
                     self.auto_attack_count = 0
+
         damage = damage_physical_auto_attack(
             base_attack_damage=base_attack_damage,
             base_armor=base_armor,
