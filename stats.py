@@ -14,8 +14,8 @@ class Stats:
             self._dict = stat_dict.copy()
 
     def __getattr__(self, attribute):
-        """Get attribute from underlying dict"""
-        return self._dict.get(attribute)
+        """Get attribute from underlying dict, default at 0"""
+        return self._dict.get(attribute, 0)
 
     def __add__(self, stats):
         """
@@ -58,10 +58,6 @@ class Stats:
     def print_stats(self):
         """pretty print the stats"""
         return print("\n".join([f"{k}: {v}" for k, v in self._dict.items()]))
-
-    def get(self, attribute: str, default: float):
-        """Similar to a dict get with default value"""
-        return self._dict.get(attribute, default)
 
     def add(self, attribute: str, value: float):
         """Add single value to stats"""
