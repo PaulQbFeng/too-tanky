@@ -5,7 +5,7 @@ from item import LongSword, CloakofAgility
 
 def auto_attack_default_run(inventory, enemy_champion, test_values):
     for i in range(1, 4):
-        caitlyn = Caitlyn(level=6*(i-1)+1, inventory=inventory)
+        caitlyn = Caitlyn(level=6*(i-1)+1, inventory=inventory)  # for levels 1, 7, 13
         assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values[2*i-2]  # No headshot no crit
         caitlyn.auto_attack_count = 6
         assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values[2*i-1]  # Headshot and no crit
@@ -32,9 +32,9 @@ def test_auto_attack():
 
 
 def q_default_run(inventory, enemy_champion, test_values):
-    for i in range(1, 6):
-        caitlyn = Caitlyn(level=2*i-1, inventory=inventory)
-        assert round(caitlyn.spell_q(i, enemy_champion)) == test_values[i-1]
+    for spell_level in range(1, 6):
+        caitlyn = Caitlyn(level=2*spell_level-1, inventory=inventory)  # for levels 1, 3, 5, 7, 9
+        assert round(caitlyn.spell_q(spell_level, enemy_champion)) == test_values[spell_level-1]
 
 
 def test_q():
@@ -42,12 +42,12 @@ def test_q():
 
 
 def w_default_run(inventory, enemy_champion, test_values):
-    for i in range(1, 5):
-        caitlyn = Caitlyn(level=2*i-1, inventory=inventory)
-        caitlyn.spell_w(level=i)
-        assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values[2*i-2]
-        caitlyn.spell_w(level=i)
-        assert round(caitlyn.auto_attack_damage(enemy_champion, True)) == test_values[2*i-1]
+    for spell_level in range(1, 5):
+        caitlyn = Caitlyn(level=2*spell_level-1, inventory=inventory)  # for levels 1, 3, 5, 7
+        caitlyn.spell_w(level=spell_level)
+        assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values[2*spell_level-2]
+        caitlyn.spell_w(level=spell_level)
+        assert round(caitlyn.auto_attack_damage(enemy_champion, True)) == test_values[2*spell_level-1]
     # last test with lvl 13 for robustness with headshot dmg lvl scaling
     caitlyn = Caitlyn(level=13, inventory=inventory)
     caitlyn.spell_w(level=5)
@@ -61,12 +61,12 @@ def test_w():
 
 
 def e_default_run(inventory, enemy_champion, test_values_e, test_values_empowered_auto_attack):
-    for i in range(1, 6):
-        caitlyn = Caitlyn(level=2*i-1, inventory=inventory)
-        assert round(caitlyn.spell_e(level=i, enemy_champion=enemy_champion)) == test_values_e[i-1]
-        assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values_empowered_auto_attack[2*i-2]
-        caitlyn.spell_e(level=i, enemy_champion=enemy_champion)
-        assert round(caitlyn.auto_attack_damage(enemy_champion, True)) == test_values_empowered_auto_attack[2*i-1]
+    for spell_level in range(1, 6):
+        caitlyn = Caitlyn(level=2*spell_level-1, inventory=inventory)  # for levels 1, 3, 5, 7, 9
+        assert round(caitlyn.spell_e(level=spell_level, enemy_champion=enemy_champion)) == test_values_e[spell_level-1]
+        assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values_empowered_auto_attack[2*spell_level-2]
+        caitlyn.spell_e(level=spell_level, enemy_champion=enemy_champion)
+        assert round(caitlyn.auto_attack_damage(enemy_champion, True)) == test_values_empowered_auto_attack[2*spell_level-1]
 
 
 def test_e():
@@ -74,9 +74,9 @@ def test_e():
 
 
 def r_default_run(inventory, enemy_champion, test_values):
-    for i in range(1, 4):
-        caitlyn = Caitlyn(level=i*5+1, inventory=inventory)
-        assert round(caitlyn.spell_r(level=i, enemy_champion=enemy_champion)) == test_values[i-1]
+    for spell_level in range(1, 4):
+        caitlyn = Caitlyn(level=spell_level*5+1, inventory=inventory)  # for levels 6, 11, 16
+        assert round(caitlyn.spell_r(level=spell_level, enemy_champion=enemy_champion)) == test_values[spell_level-1]
 
 
 def test_r():
@@ -91,7 +91,10 @@ def test_r():
 def test_passive_w_e_interaction():
     dummy = Dummy(1000, 40)
     caitlyn = Caitlyn(level=2, inventory=[LongSword()])
+    # Caitlyn has Headshot ready
     caitlyn.auto_attack_count = 6
+    # W and E should empower the next autoattack without consuming stacks
+    # If cait uses W and E (regardless of the order), the first autoattack will always apply the W additional damage
     caitlyn.spell_w(level=1)
     caitlyn.spell_e(level=1, enemy_champion=dummy)
     assert round(caitlyn.auto_attack_damage(dummy, False)) == 117
@@ -100,7 +103,6 @@ def test_passive_w_e_interaction():
     assert caitlyn.auto_attack_count == 6
     assert round(caitlyn.auto_attack_damage(dummy, False)) == 85
     assert caitlyn.auto_attack_count == 0
-
     caitlyn.auto_attack_count = 6
     caitlyn.spell_e(level=1, enemy_champion=dummy)
     caitlyn.spell_w(level=1)
