@@ -14,16 +14,16 @@ class Malphite(BaseChampion):
         pre_mtg_dmg = pre_mitigation_spell_damage(
             base_spell_damage=self.q.base_spell_damage,
             ratio=self.q.ratio,
-            base_offensive_stats=self.orig_base_stats.get("ability_power", 0),
-            bonus_offensive_stats=self.orig_bonus_stats.get("ability_power", 0),
+            base_offensive_stats=self.base_ability_power,
+            bonus_offensive_stats=self.bonus_ability_power,
         )
 
         post_mtg_dmg = damage_after_resistance(
             pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.orig_base_stats.magic_resist,
-            bonus_resistance=enemy_champion.orig_bonus_stats.magic_resist,
-            flat_resistance_pen=self.orig_bonus_stats.get("flat_magic_resist_pen", 0),
-            resistance_pen=self.orig_bonus_stats.get("percent_magic_resist_pen", 0),
+            base_resistance=enemy_champion.base_magic_resist,
+            bonus_resistance=enemy_champion.bonus_magic_resist,
+            flat_resistance_pen=self.magic_pen_flat,
+            resistance_pen=self.magic_pen_percent,
         )
         return post_mtg_dmg
 
@@ -33,23 +33,23 @@ class Malphite(BaseChampion):
         pre_mtg_dmg = pre_mitigation_spell_damage(
             base_spell_damage=self.e.base_spell_damage,
             ratio=self.e.ratio,
-            base_offensive_stats=self.orig_base_stats.get("ability_power", 0),
-            bonus_offensive_stats=self.orig_bonus_stats.get("ability_power", 0),
+            base_offensive_stats=self.base_ability_power,
+            bonus_offensive_stats=self.bonus_ability_power,
         )
         #add armor ratio
         pre_mtg_dmg = pre_mtg_dmg + pre_mitigation_spell_damage(
             base_spell_damage=0,
             ratio=0.3,
-            base_offensive_stats=self.orig_base_stats.get("armor", 0),
-            bonus_offensive_stats=self.orig_bonus_stats.get("armor", 0),
+            base_offensive_stats=self.base_armor,
+            bonus_offensive_stats=self.bonus_armor,
         )
 
         post_mtg_dmg = damage_after_resistance(
             pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.orig_base_stats.magic_resist,
-            bonus_resistance=enemy_champion.orig_bonus_stats.magic_resist,
-            flat_resistance_pen=self.orig_bonus_stats.get("flat_magic_resist_pen", 0),
-            resistance_pen=self.orig_bonus_stats.get("percent_magic_resist_pen", 0),
+            base_resistance=enemy_champion.base_magic_resist,
+            bonus_resistance=enemy_champion.bonus_magic_resist,
+            flat_resistance_pen=self.magic_pen_flat,
+            resistance_pen=self.magic_pen_percent,
         )
         return post_mtg_dmg
     
@@ -59,16 +59,16 @@ class Malphite(BaseChampion):
         pre_mtg_dmg = pre_mitigation_spell_damage(
             base_spell_damage=self.r.base_spell_damage,
             ratio=self.r.ratio,
-            base_offensive_stats=self.orig_base_stats.get("ability_power", 0),
-            bonus_offensive_stats=self.orig_bonus_stats.get("ability_power", 0),
+            base_offensive_stats=self.base_ability_power,
+            bonus_offensive_stats=self.bonus_ability_power,
         )
 
         post_mtg_dmg = damage_after_resistance(
             pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.orig_base_stats.magic_resist,
-            bonus_resistance=enemy_champion.orig_bonus_stats.magic_resist,
-            flat_resistance_pen=self.orig_bonus_stats.get("flat_magic_resist_pen", 0),
-            resistance_pen=self.orig_bonus_stats.get("percent_magic_resist_pen", 0),
+            base_resistance=enemy_champion.base_magic_resist,
+            bonus_resistance=enemy_champion.bonus_magic_resist,
+            flat_resistance_pen=self.magic_pen_flat,
+            resistance_pen=self.magic_pen_percent,
         )
         return post_mtg_dmg
    
