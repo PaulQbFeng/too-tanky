@@ -16,49 +16,21 @@ def test_dummy_0_res():
 
 def test_dummy_30_res():
     dummy = Dummy(1000, 30)
-    xerath = Xerath(level=1)
-    blastingwand = BlastingWand()
-    assert round(xerath.spell_q(1, dummy)) == 54
-    assert round(xerath.spell_w(1, dummy, False)) == 46
-    assert round(xerath.spell_w(1, dummy, True)) == 77
-    xerath.equip_item(blastingwand)
-    assert round(xerath.spell_q(1, dummy)) == 80
-    assert round(xerath.spell_w(1, dummy, False)) == 65
-    assert round(xerath.spell_w(1, dummy, True)) == 108
-    assert round(xerath.spell_e(1, dummy)) == 75
-    xerath = Xerath(level=6)
-    xerath.equip_item(blastingwand)
-    assert round(xerath.spell_r(1, dummy, 0)) == 0
-    assert round(xerath.spell_r(1, dummy, 1)) == 168
-    assert round(xerath.spell_r(1, dummy, 2)) == 335
-    assert round(xerath.spell_r(1, dummy, 3)) == 503
-    xerath = Xerath(level=3)
-    xerath.equip_item(blastingwand)
-    assert round(xerath.spell_q(2, dummy)) == 111
-    assert round(xerath.spell_w(2, dummy, False)) == 92
-    assert round(xerath.spell_w(2, dummy, True)) == 153
-    assert round(xerath.spell_e(2, dummy)) == 98
-    xerath = Xerath(level=11)
-    xerath.equip_item(blastingwand)
-    assert round(xerath.spell_r(2, dummy, 1)) == 206
-    xerath = Xerath(level=5)
-    xerath.equip_item(blastingwand)
-    assert round(xerath.spell_q(3, dummy)) == 142
-    assert round(xerath.spell_w(3, dummy, False)) == 118
-    assert round(xerath.spell_w(3, dummy, True)) == 197
-    assert round(xerath.spell_e(3, dummy)) == 122
-    xerath = Xerath(level=7)
-    xerath.equip_item(blastingwand)
-    assert round(xerath.spell_q(4, dummy)) == 172
-    assert round(xerath.spell_w(4, dummy, False)) == 145
-    assert round(xerath.spell_w(4, dummy, True)) == 242
-    assert round(xerath.spell_e(4, dummy)) == 145
-    xerath = Xerath(level=16)
-    xerath.equip_item(blastingwand)
-    assert round(xerath.spell_r(3, dummy, 1)) == 245
-    xerath = Xerath(level=9)
-    xerath.equip_item(blastingwand)
-    assert round(xerath.spell_q(5, dummy)) == 203
-    assert round(xerath.spell_w(5, dummy, False)) == 172
-    assert round(xerath.spell_w(5, dummy, True)) == 287
-    assert round(xerath.spell_e(5, dummy)) == 168
+    q_test_values = [80, 111, 142, 172, 203]
+    w_test_values = [65, 108, 92, 153, 118, 197, 145, 242, 172, 287]
+    e_test_values = [75, 98, 122, 145, 168]
+    r_test_values = [168, 206, 245]
+    xerath = Xerath(level=16, inventory=[BlastingWand()])  # since xerath damage doesn't scale with his level we can fix his level
+    for spell_level in range(1, 6):
+        assert round(xerath.spell_q(spell_level, dummy)) == q_test_values[spell_level-1]
+        assert round(xerath.spell_w(spell_level, dummy, False)) == w_test_values[2*spell_level-2]
+        assert round(xerath.spell_w(spell_level, dummy, True)) == w_test_values[2*spell_level-1]
+        assert round(xerath.spell_e(spell_level, dummy)) == e_test_values[spell_level - 1]
+    r_exact_values = []
+    for spell_level in range(1, 4):
+        r_exact_value = xerath.spell_r(spell_level, dummy, 1)
+        assert round(r_exact_value) == r_test_values[spell_level-1]
+        r_exact_values.append(r_exact_value)
+    for spell_level in range(1, 4):
+        for i in range(0, spell_level + 3):
+            assert round(xerath.spell_r(spell_level, dummy, i)) == round(i * r_exact_values[spell_level-1])
