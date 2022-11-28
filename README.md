@@ -33,8 +33,11 @@ Run `pytest` inside the working directory to test the setup.
 
 ... and go back to step 1 to develop a new feature !
 
+## Ideas and proposals 
 
-## Dive in to the maths
+Create a Github issue to suggest changes, an idea, to keep track of the tasks to do.
+
+## Dive into the maths
 
 - To understand champion base stat evolution per level: https://leagueoflegends.fandom.com/wiki/Champion_statistic
 - To understand all the basics regarding damage calculation: https://docs.google.com/document/d/1wPY_ct0J45I3wxpHZgoLFAQKTSU2UfqF/edit?usp=sharing&ouid=100966089533647159501&rtpof=true&sd=true
