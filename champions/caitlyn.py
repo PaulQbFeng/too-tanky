@@ -1,6 +1,7 @@
 from champion import BaseChampion
 from damage import damage_physical_auto_attack, pre_mitigation_spell_damage, damage_after_resistance
 from spell import BaseSpell
+import math
 
 
 class Caitlyn(BaseChampion):
@@ -139,8 +140,12 @@ class Caitlyn(BaseChampion):
 
     def spell_r(self, level, enemy_champion):
         self.r = RCaitlyn(level=level)
+        print(self.r.base_spell_damage)
 
-        damage_modifier_flat = self.r.bonus_attack_damage_ratio * self.orig_bonus_stats.get('bonus_attack_damage', 0)
+        damage_modifier_flat = self.r.bonus_attack_damage_ratio * self.orig_bonus_stats.get("attack_damage", 0)
+        print(damage_modifier_flat)
+        crit_chance = self.orig_bonus_stats.get("crit_chance", 0)
+        print(crit_chance)
 
         pre_mtg_dmg = pre_mitigation_spell_damage(
             base_spell_damage=self.r.base_spell_damage,
@@ -158,7 +163,7 @@ class Caitlyn(BaseChampion):
             resistance_pen=self.orig_bonus_stats.get('percent_armor_pen', 0),
             bonus_resistance_pen=self.orig_bonus_stats.get('percent_bonus_armor_pen', 0)
         )
-        return post_mtg_dmg
+        return post_mtg_dmg * (1 + crit_chance*0.25)
 
 
 class QCaitlyn(BaseSpell):
@@ -229,4 +234,5 @@ class RCaitlyn(BaseSpell):
             self.nature = "ulti"
         self.damage_type = "physical"
         self.base_damage_per_level = [300, 525, 750]
+        self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.bonus_attack_damage_ratio = 2
