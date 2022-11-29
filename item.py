@@ -29,7 +29,8 @@ class BaseItem:
     Additional effects passive/active are handled in the children Champion specific classes.
     """
 
-    def __init__(self, item_name: str):
+    def __init__(self, item_name: str, item_type):
+        self.type = item_type
         self.stats = Stats(ALL_ITEM_STATS[item_name].copy())
         self.passive = ItemPassive()
 
@@ -41,42 +42,42 @@ class DoranBlade(BaseItem):
     item_name = "Doran's Blade"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Starter", **kwargs)
 
 
 class ClothArmor(BaseItem):
     item_name = "Cloth Armor"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
 
 
 class LongSword(BaseItem):
     item_name = "Long Sword"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
 
 
 class BFSword(BaseItem):
     item_name = "B. F. Sword"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
 
 
 class PickAxe(BaseItem):
     item_name = "Pickaxe"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
 
 
 class SerratedDirk(BaseItem):
     item_name = "Serrated Dirk"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
         self.passive = ItemPassive(name="Gouge", unique=True, stats=Stats({"lethality": 10}))
 
     def apply_passive(self):
@@ -87,7 +88,7 @@ class LastWhisper(BaseItem):
     item_name = "Last Whisper"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
         self.stats.add("armor_pen_percent", 18)
 
 
@@ -95,7 +96,7 @@ class Sheen(BaseItem):
     item_name = "Sheen"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
 
     def spellblade(self, owner_champion, enemy_champion):
         """Calculates the bonus damage dealt with an autoattack : 100% of base AD"""
@@ -108,14 +109,14 @@ class RubyCrystal(BaseItem):
     item_name = "Ruby Crystal"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
 
         
 class SeryldaGrudge(BaseItem): #missing passive, ability haste
     item_name = "Serylda's Grudge"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Legendary", **kwargs)
         self.stats.add("armor_pen_percent", 30)
 
         
@@ -123,28 +124,37 @@ class YoumuuGhostblade(BaseItem): #missing passive, active, ability haste
     item_name = "Youmuu's Ghostblade"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Legendary", **kwargs)
         self.stats.add("lethality", 18)
+
 
 class AmplifyingTome(BaseItem):
     item_name = "Amplifying Tome"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
 
 
 class BlastingWand(BaseItem):
     item_name = "Blasting Wand"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
 
 
 class NeedlesslyLargeRod(BaseItem):
     item_name = "Needlessly Large Rod"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+
+
+class Galeforce(BaseItem):
+    item_name = "Galeforce"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Mythic", **kwargs)
+
 
 
 ALL_ITEM_CLASSES = {cls.item_name: cls for cls in BaseItem.__subclasses__()}
