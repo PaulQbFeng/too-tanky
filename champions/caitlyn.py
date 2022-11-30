@@ -1,5 +1,5 @@
 from champion import BaseChampion
-from damage import damage_physical_auto_attack, pre_mitigation_spell_damage, damage_after_resistance
+from damage import damage_physical_auto_attack
 from spell import BaseSpell
 
 
@@ -67,22 +67,8 @@ class Caitlyn(BaseChampion):
     def spell_q(self, level, enemy_champion):
         self.q = QCaitlyn(level=level)
 
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            base_spell_damage=self.q.base_spell_damage,
-            ratio=self.q.ratio,
-            base_offensive_stats=self.base_attack_damage,
-            bonus_offensive_stats=self.bonus_attack_damage,
-        )
+        return self.spell_damage(spell=self.q, enemy_champion=enemy_champion)
 
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.base_armor,
-            bonus_resistance=enemy_champion.bonus_armor,
-            flat_resistance_pen=self.armor_pen_flat,
-            resistance_pen=self.armor_pen_percent,
-            bonus_resistance_pen=self.bonus_armor_pen_percent
-        )
-        return post_mtg_dmg
 
     def spell_w(self, level):
         self.w = WCaitlyn(level=level)
@@ -92,45 +78,21 @@ class Caitlyn(BaseChampion):
         self.e = ECaitlyn(level=level)
         self.e_hit = True
 
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            base_spell_damage=self.e.base_spell_damage,
-            ratio=self.e.ratio,
-            base_offensive_stats=self.base_ability_power,
-            bonus_offensive_stats=self.bonus_ability_power,
-        )
+        return self.spell_damage(spell=self.e, enemy_champion=enemy_champion)
 
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.base_magic_resist,
-            bonus_resistance=enemy_champion.bonus_magic_resist,
-            flat_resistance_pen=self.magic_pen_flat,
-            resistance_pen=self.magic_pen_percent,
-        )
-        return post_mtg_dmg
 
     def spell_r(self, level, enemy_champion):
         self.r = RCaitlyn(level=level)
 
         damage_modifier_flat = self.r.bonus_attack_damage_ratio * self.bonus_attack_damage
-        crit_chance = self.bonus_crit_chance
 
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            base_spell_damage=self.r.base_spell_damage,
-            ratio=0,
-            base_offensive_stats=self.base_attack_damage,
-            bonus_offensive_stats=self.bonus_attack_damage,
-            damage_modifier_flat=damage_modifier_flat,
+        post_mtg_dmg = self.spell_damage(
+            spell=self.r, 
+            enemy_champion=enemy_champion, 
+            damage_modifier_flat=damage_modifier_flat
         )
 
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.base_armor,
-            bonus_resistance=enemy_champion.bonus_armor,
-            flat_resistance_pen=self.armor_pen_flat,
-            resistance_pen=self.armor_pen_percent,
-            bonus_resistance_pen=self.bonus_armor_pen_percent
-        )
-        return post_mtg_dmg * (1 + crit_chance*0.25)
+        return post_mtg_dmg * (1 + self.bonus_crit_chance * 0.25)
 
 
 class QCaitlyn(BaseSpell):
@@ -142,10 +104,12 @@ class QCaitlyn(BaseSpell):
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "physical"
+        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [50, 90, 130, 170, 210]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratios = [1.25, 1.45, 1.65, 1.85, 2.05]
-        self.ratio = self.ratios[level-1]
+        self.ratio_per_level = [1.25, 1.45, 1.65, 1.85, 2.05]
+        self.ratios = [self.ratio_per_level[level - 1]]
+        self.ratio_stats = ["attack_damage"]
 
 
 class WCaitlyn(BaseSpell):
@@ -157,10 +121,11 @@ class WCaitlyn(BaseSpell):
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "physical"
+        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [40, 85, 130, 175, 220]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratios = [0.4, 0.5, 0.6, 0.7, 0.8]
-        self.bonus_attack_damage_ratio = self.ratios[level-1]
+        self.ratio_per_level = [0.4, 0.5, 0.6, 0.7, 0.8]
+        self.bonus_attack_damage_ratio = self.ratio_per_level[level-1]
 
 
 class ECaitlyn(BaseSpell):
@@ -172,9 +137,11 @@ class ECaitlyn(BaseSpell):
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
+        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [80, 130, 180, 230, 280]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratio = 0.8
+        self.ratios = [0.8]
+        self.ratio_stats = ["ability_power"]
 
 
 class RCaitlyn(BaseSpell):
@@ -186,6 +153,8 @@ class RCaitlyn(BaseSpell):
 
         self.nature = self.get_spell_nature(self.spell_key)        
         self.damage_type = "physical"
+        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [300, 525, 750]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.bonus_attack_damage_ratio = 2
+        self.ratio_stats = []

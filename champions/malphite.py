@@ -1,6 +1,5 @@
 from champion import BaseChampion
 from spell import BaseSpell
-from damage import damage_after_resistance, pre_mitigation_spell_damage
 
 class Malphite(BaseChampion):
     champion_name = "Malphite"
@@ -11,66 +10,19 @@ class Malphite(BaseChampion):
     def spell_q(self, level, enemy_champion):
         self.q = QMalphite(level=level)
 
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            base_spell_damage=self.q.base_spell_damage,
-            ratio=self.q.ratio,
-            base_offensive_stats=self.base_ability_power,
-            bonus_offensive_stats=self.bonus_ability_power,
-        )
-
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.base_magic_resist,
-            bonus_resistance=enemy_champion.bonus_magic_resist,
-            flat_resistance_pen=self.magic_pen_flat,
-            resistance_pen=self.magic_pen_percent,
-        )
-        return post_mtg_dmg
+        return self.spell_damage(spell=self.q, enemy_champion=enemy_champion)
 
     def spell_e(self, level, enemy_champion):
         self.e = EMalphite(level=level)
 
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            base_spell_damage=self.e.base_spell_damage,
-            ratio=self.e.ratio,
-            base_offensive_stats=self.base_ability_power,
-            bonus_offensive_stats=self.bonus_ability_power,
-        )
-        #add armor ratio
-        pre_mtg_dmg = pre_mtg_dmg + pre_mitigation_spell_damage(
-            base_spell_damage=0,
-            ratio=0.3,
-            base_offensive_stats=self.base_armor,
-            bonus_offensive_stats=self.bonus_armor,
-        )
+        return self.spell_damage(spell=self.e, enemy_champion=enemy_champion)
 
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.base_magic_resist,
-            bonus_resistance=enemy_champion.bonus_magic_resist,
-            flat_resistance_pen=self.magic_pen_flat,
-            resistance_pen=self.magic_pen_percent,
-        )
-        return post_mtg_dmg
     
     def spell_r(self, level, enemy_champion):
         self.r = RMalphite(level=level)
 
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            base_spell_damage=self.r.base_spell_damage,
-            ratio=self.r.ratio,
-            base_offensive_stats=self.base_ability_power,
-            bonus_offensive_stats=self.bonus_ability_power,
-        )
+        return self.spell_damage(spell=self.r, enemy_champion=enemy_champion)
 
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.base_magic_resist,
-            bonus_resistance=enemy_champion.bonus_magic_resist,
-            flat_resistance_pen=self.magic_pen_flat,
-            resistance_pen=self.magic_pen_percent,
-        )
-        return post_mtg_dmg
    
 class QMalphite(BaseSpell):
     champion_name = "Malphite"
@@ -81,9 +33,11 @@ class QMalphite(BaseSpell):
 
         self.nature = self.get_spell_nature(self.spell_key)        
         self.damage_type = "magical"
+        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [70, 120, 170, 220, 270]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratio = self.ratios[0] # ratios is a list of 2 values, maybe it's ratio for 2 different damage type 
+        self.ratios = [0.6]
+        self.ratio_stats = ["ability_power"]
 
 class EMalphite(BaseSpell):
     champion_name = "Malphite"
@@ -94,10 +48,12 @@ class EMalphite(BaseSpell):
 
         self.nature = self.get_spell_nature(self.spell_key)        
         self.damage_type = "magical"
+        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [60, 95, 130, 165, 200]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratio = 0.9 # ratio ap only, armor ratio is coded in Malphite
-        
+        self.ratios = [0.9, 0.3]
+        self.ratio_stats = ["ability_power", "armor"]
+
 class RMalphite(BaseSpell):
     champion_name = "Malphite"
     spell_key = "r"
@@ -107,7 +63,9 @@ class RMalphite(BaseSpell):
 
         self.nature = self.get_spell_nature(self.spell_key)        
         self.damage_type = "magical"
+        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [200, 300, 400]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratio = 0.9 # ratios is a list of 2 values, maybe it's ratio for 2 different damage type 
+        self.ratios = [0.9]
+        self.ratio_stats = ["ability_power"]
         

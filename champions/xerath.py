@@ -1,5 +1,4 @@
 from champion import BaseChampion
-from damage import pre_mitigation_spell_damage, damage_after_resistance
 from spell import BaseSpell
 
 
@@ -12,39 +11,13 @@ class Xerath(BaseChampion):
     def spell_q(self, level, enemy_champion):
         self.q = QXerath(level=level)
 
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            base_spell_damage=self.q.base_spell_damage,
-            ratio=self.q.ratio,
-            base_offensive_stats=self.base_ability_power,
-            bonus_offensive_stats=self.bonus_ability_power,
-        )
-
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.base_magic_resist,
-            bonus_resistance=enemy_champion.bonus_magic_resist,
-            flat_resistance_pen=self.magic_pen_flat,
-            resistance_pen=self.magic_pen_percent,
-        )
-        return post_mtg_dmg
+        return self.spell_damage(spell=self.q, enemy_champion=enemy_champion)
 
     def spell_w(self, level: int, enemy_champion: BaseChampion, is_empowered: bool):
         self.w = WXerath(level=level)
 
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            base_spell_damage=self.w.base_spell_damage,
-            ratio=self.w.ratio,
-            base_offensive_stats=self.base_ability_power,
-            bonus_offensive_stats=self.bonus_ability_power,
-        )
+        post_mtg_dmg = self.spell_damage(spell=self.w, enemy_champion=enemy_champion)
 
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.base_magic_resist,
-            bonus_resistance=enemy_champion.bonus_magic_resist,
-            flat_resistance_pen=self.magic_pen_flat,
-            resistance_pen=self.magic_pen_percent,
-        )
         if not is_empowered:
             return post_mtg_dmg
         else:
@@ -53,40 +26,15 @@ class Xerath(BaseChampion):
     def spell_e(self, level, enemy_champion):
         self.e = EXerath(level=level)
 
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            base_spell_damage=self.e.base_spell_damage,
-            ratio=self.e.ratio,
-            base_offensive_stats=self.base_ability_power,
-            bonus_offensive_stats=self.bonus_ability_power,
-        )
+        return self.spell_damage(spell=self.e, enemy_champion=enemy_champion)
 
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.base_magic_resist,
-            bonus_resistance=enemy_champion.bonus_magic_resist,
-            flat_resistance_pen=self.magic_pen_flat,
-            resistance_pen=self.magic_pen_percent,
-        )
-        return post_mtg_dmg
 
     def spell_r(self, level: int, enemy_champion: BaseChampion, nb_hit):
         self.r = RXerath(level=level)
         assert 0 <= nb_hit <= self.r.recast_per_level[level-1]
 
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            base_spell_damage=self.r.base_spell_damage,
-            ratio=self.r.ratio,
-            base_offensive_stats=self.base_ability_power,
-            bonus_offensive_stats=self.bonus_ability_power,
-        )
+        post_mtg_dmg = self.spell_damage(spell=self.r, enemy_champion=enemy_champion)
 
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.base_magic_resist,
-            bonus_resistance=enemy_champion.bonus_magic_resist,
-            flat_resistance_pen=self.magic_pen_flat,
-            resistance_pen=self.magic_pen_percent,
-        )
         return post_mtg_dmg * nb_hit
 
 
@@ -99,9 +47,11 @@ class QXerath(BaseSpell):
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
+        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [70, 110, 150, 190, 230]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratio = self.ratios[0]  # ratios is a list of 2 values, maybe it's ratio for 2 different damage type
+        self.ratios = [0.85]
+        self.ratio_stats = ["ability_power"]
 
 
 class WXerath(BaseSpell):
@@ -113,10 +63,11 @@ class WXerath(BaseSpell):
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
+        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [60, 95, 130, 165, 200]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratio = 0.6
-
+        self.ratios = [0.6]
+        self.ratio_stats = ["ability_power"]
 
 class EXerath(BaseSpell):
     champion_name = "Xerath"
@@ -127,10 +78,11 @@ class EXerath(BaseSpell):
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
+        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [80, 110, 140, 170, 200]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratio = 0.45
-
+        self.ratios = [0.45]
+        self.ratio_stats = ["ability_power"]
 
 class RXerath(BaseSpell):
     champion_name = "Xerath"
@@ -141,7 +93,9 @@ class RXerath(BaseSpell):
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
+        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [200, 250, 300]
         self.recast_per_level = [3, 4, 5]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratio = 0.45
+        self.ratios = [0.45]
+        self.ratio_stats = ["ability_power"]
