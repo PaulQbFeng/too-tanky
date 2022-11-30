@@ -1,11 +1,6 @@
 from data_parser import ALL_CHAMPION_SPELLS
 
 
-def get_spell_nature(spell_key: str) -> str:
-    if spell_key in ["q", "w", "e"]:
-        return "normal"
-    return "ulti"
-
 class BaseSpell:
     """
     ALL_CHAMPION_SPELLS["Kog\'Maw"]["e"] contains:
@@ -31,11 +26,26 @@ class BaseSpell:
         self.range = self.range[level - 1]
         self.cost = self.cost[level - 1]
         self.cooldown = self.cooldown[level - 1]
+        self.damage_type = None
 
-    def get_spell_nature(self, spell_key: str) -> str:
+    @staticmethod
+    def get_spell_nature(spell_key: str) -> str:
         if spell_key in ["q", "w", "e"]:
-            return "normal"
+            return "basic"
         return "ulti"
+    
+    def get_resistance_type(self) -> str:
+        """Get resistance type based on spell damage type"""
+        # TODO: Might be changed into a dict
+        
+        if self.damage_type == "magical":
+            res_type = "magic_resist"
+        elif self.damage_type == "physical":
+            res_type = "armor"
+        else:
+            raise AttributeError(f"spell_damage type {self.damage_type} not taken into account")
+
+        return res_type 
 
     def print_specs(self):
         """pretty print the stats"""
