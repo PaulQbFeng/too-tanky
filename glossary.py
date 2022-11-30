@@ -46,21 +46,19 @@ DEFAULT_STAT_LIST = [
     "attack_range",
     "health_regen",
     "mana_regen",
-    "crit_chance",
     "attack_damage",
     "ability_power",
-    "life_steal",
     "attack_speed",
 ]
 
 EXTRA_STAT_LIST = [
-    "damage_modifier_flat",
-    "damage_modifier_percent",
     "lethality",
     "crit_damage", 
     "magic_pen_flat",
     "magic_pen_percent",
     "armor_pen_flat",
     "armor_pen_percent",
-    "armor_bonus_pen_percent"
+    "bonus_armor_pen_percent"
+    "life_steal",
+    "crit_chance",
 ]
