@@ -28,7 +28,7 @@ class Caitlyn(BaseChampion):
         bonus_armor = enemy_champion.bonus_armor
         lethality = self.lethality
         armor_pen = self.armor_pen_percent
-        bonus_armor_pen = self.armor_bonus_pen_percent
+        bonus_armor_pen = self.bonus_armor_pen_percent
         damage_modifier_flat = 0
         std_headshot_dmg = attack_damage * (self.passive_multiplier + 1.3125 * crit_chance)
 
@@ -80,7 +80,7 @@ class Caitlyn(BaseChampion):
             bonus_resistance=enemy_champion.bonus_armor,
             flat_resistance_pen=self.armor_pen_flat,
             resistance_pen=self.armor_pen_percent,
-            bonus_resistance_pen=self.armor_bonus_pen_percent
+            bonus_resistance_pen=self.bonus_armor_pen_percent
         )
         return post_mtg_dmg
 
@@ -128,7 +128,7 @@ class Caitlyn(BaseChampion):
             bonus_resistance=enemy_champion.bonus_armor,
             flat_resistance_pen=self.armor_pen_flat,
             resistance_pen=self.armor_pen_percent,
-            bonus_resistance_pen=self.armor_bonus_pen_percent
+            bonus_resistance_pen=self.bonus_armor_pen_percent
         )
         return post_mtg_dmg * (1 + crit_chance*0.25)
 

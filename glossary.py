@@ -49,6 +49,7 @@ DEFAULT_STAT_LIST = [
     "attack_damage",
     "ability_power",
     "attack_speed",
+    "crit_chance",
 ]
 
 EXTRA_STAT_LIST = [
@@ -58,7 +59,6 @@ EXTRA_STAT_LIST = [
     "magic_pen_percent",
     "armor_pen_flat",
     "armor_pen_percent",
-    "bonus_armor_pen_percent"
+    "bonus_armor_pen_percent",
     "life_steal",
-    "crit_chance",
 ]
