@@ -42,7 +42,28 @@ class BaseChampion:
         self.item_stats = sc.get_items_total_stats(self.inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
         self.add_bonus_stats_to_champion()
-        self.add_total_stats_to_champion()
+    
+    def getter_wrapper(stat_name):
+        """Wrapper to use a single getter for all total stat attributes"""
+        def total_stat_getter(self):
+            base_value = getattr(self, "base_" + stat_name)
+            bonus_value = getattr(self, "bonus_" + stat_name)
+            return base_value + bonus_value
+        return total_stat_getter
+    
+    # TODO: currently the setter is not supporter 
+    health = property(fget=getter_wrapper("health"))
+    mana = property(fget=getter_wrapper("mana"))
+    movespeed = property(fget=getter_wrapper("movespeed"))
+    armor = property(fget=getter_wrapper("armor"))
+    magic_resist = property(fget=getter_wrapper("magic_resist"))
+    attack_range = property(fget=getter_wrapper("attack_range"))
+    health_regen = property(fget=getter_wrapper("health_regen"))
+    mana_regen = property(fget=getter_wrapper("mana_regen"))
+    attack_damage = property(fget=getter_wrapper("attack_damage"))
+    ability_power = property(fget=getter_wrapper("ability_power"))
+    attack_speed = property(fget=getter_wrapper("attack_speed"))
+    crit_chance = property(fget=getter_wrapper("crit_chance"))
 
     def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
@@ -65,10 +86,6 @@ class BaseChampion:
             else:
                 raise AttributeError(f"{name} stat name not recognized")
 
-    def add_total_stats_to_champion(self):
-        for stat_name in DEFAULT_STAT_LIST:
-            total_value = getattr(self, "base_" + stat_name) + getattr(self, "bonus_" + stat_name)
-            setattr(self, stat_name, total_value)
 
     def equip_item(self, item: BaseItem):
         assert len(self.inventory) <= 5, "inventory can't contain more than 6 items"
@@ -77,7 +94,6 @@ class BaseChampion:
         self.item_stats = sc.get_items_total_stats(self.inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
         self.add_bonus_stats_to_champion()
-        self.add_total_stats_to_champion()
 
     def auto_attack_damage(self, enemy_champion, is_crit: bool = False):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
@@ -90,7 +106,7 @@ class BaseChampion:
             attacker_level=self.level,
             lethality=self.lethality,
             armor_pen=self.armor_pen_percent,
-            bonus_armor_pen=self.armor_bonus_pen_percent,
+            bonus_armor_pen=self.bonus_armor_pen_percent,
             crit=is_crit,
             crit_damage=self.crit_damage,
         )
