@@ -48,6 +48,7 @@ class BaseChampion:
         assert len(self.inventory) <= 5, "inventory can't contain more than 6 items"
         self.apply_unique_item_passive(item)
         self.inventory.append(item)
+        item.holder = self
         self.item_stats = sc.get_items_total_stats(self.inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
 

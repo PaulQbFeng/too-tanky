@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from damage import damage_after_positive_resistance
+from damage import damage_after_resistance
 from data_parser import ALL_ITEM_STATS
 from stats import Stats
 
@@ -33,6 +33,7 @@ class BaseItem:
         self.type = item_type
         self.stats = Stats(ALL_ITEM_STATS[item_name].copy())
         self.passive = ItemPassive()
+        self.holder = None
 
     def apply_passive(self):
         pass
@@ -155,6 +156,24 @@ class Galeforce(BaseItem):
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, item_type="Mythic", **kwargs)
 
+    def apply_active(self, enemy_champion):
+        if self.holder.level < 10:
+            base_active_damage = 180
+        elif self.holder.level >= 10:
+            base_active_damage = 195 + (self.holder.level - 10) * 15
+        percent_missing_health = 1 - enemy_champion.health/(enemy_champion.orig_base_stats.health + enemy_champion.orig_bonus_stats.health)
+        if percent_missing_health <= 0.7:
+            pre_mtg_dmg = base_active_damage + 0.45 * self.holder.bonus_attack_damage * (1 + percent_missing_health * 5 / 7)
+        else:
+            pre_mtg_dmg = base_active_damage + 0.45 * self.holder.bonus_attack_damage * 1.5
+        return damage_after_resistance(
+            pre_mitigation_damage=pre_mtg_dmg,
+            base_resistance=enemy_champion.base_magic_resist,
+            bonus_resistance=enemy_champion.bonus_magic_resist,
+            flat_resistance_pen=self.holder.flat_magic_resist_pen,
+            resistance_pen=self.holder.percent_magic_resist_pen,
+            bonus_resistance_pen=0
+        )
 
 
 ALL_ITEM_CLASSES = {cls.item_name: cls for cls in BaseItem.__subclasses__()}
