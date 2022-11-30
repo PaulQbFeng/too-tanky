@@ -29,10 +29,11 @@ class BaseItem:
     Additional effects passive/active are handled in the children Champion specific classes.
     """
 
-    def __init__(self, item_name: str):
+    def __init__(self, item_name: str, item_type: str):
         item_stats = ALL_ITEM_STATS[item_name].copy()
         self.gold = item_stats.pop("gold")
         self.stats = Stats(item_stats)
+        self.type = item_type
         self.passive = ItemPassive()
         self.holder = None
 
@@ -65,7 +66,7 @@ class CloakofAgility(BaseItem):
     item_name = "Cloak of Agility"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, **kwargs)
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
 
 
 class BFSword(BaseItem):
@@ -178,8 +179,8 @@ class Galeforce(BaseItem):
             pre_mitigation_damage=pre_mtg_dmg,
             base_resistance=enemy_champion.base_magic_resist,
             bonus_resistance=enemy_champion.bonus_magic_resist,
-            flat_resistance_pen=self.holder.flat_magic_resist_pen,
-            resistance_pen=self.holder.percent_magic_resist_pen,
+            flat_resistance_pen=self.holder.magic_resist_pen_flat,
+            resistance_pen=self.holder.magic_resist_pen_percent,
             bonus_resistance_pen=0
         )
 

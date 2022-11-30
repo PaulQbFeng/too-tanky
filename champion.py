@@ -86,7 +86,6 @@ class BaseChampion:
             else:
                 raise AttributeError(f"{name} stat name not recognized")
 
-
     def equip_item(self, item: BaseItem):
         assert len(self.inventory) <= 5, "inventory can't contain more than 6 items"
         self.apply_unique_item_passive(item)
