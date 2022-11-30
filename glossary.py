@@ -20,6 +20,7 @@ MAPPING_CHAMPION_STANDARD = {
     "attackspeedperlevel": "attack_speed_perlevel",
     "attackspeed": "attack_speed"
 }
+
 MAPPING_ITEM_STANDARD = {
     'FlatMovementSpeedMod': 'move_speed',
     'FlatHPPoolMod':'health',
@@ -36,6 +37,28 @@ MAPPING_ITEM_STANDARD = {
     "gold": "gold"
 }
 
+DEFAULT_STAT_LIST = [
+    "health",
+    "mana",
+    "movespeed",
+    "armor",
+    "magic_resist",
+    "attack_range",
+    "health_regen",
+    "mana_regen",
+    "attack_damage",
+    "ability_power",
+    "attack_speed",
+    "crit_chance",
+]
 
-
-
+EXTRA_STAT_LIST = [
+    "lethality",
+    "crit_damage", 
+    "magic_pen_flat",
+    "magic_pen_percent",
+    "armor_pen_flat",
+    "armor_pen_percent",
+    "bonus_armor_pen_percent",
+    "life_steal",
+]

@@ -20,9 +20,9 @@ def test_ahri_stat_perlevel():
     attack_damage = []
     for i in range(1, 19):
         ahri = Ahri(level=i)
-        attack_damage.append(round(ahri.orig_base_stats.attack_damage))
-        health_point.append(math.ceil(ahri.orig_base_stats.health))
-        attack_speed.append(round(ahri.orig_base_stats.attack_speed, 3))
+        attack_damage.append(round(ahri.attack_damage))
+        health_point.append(math.ceil(ahri.health))
+        attack_speed.append(round(ahri.attack_speed, 3))
 
     assert attack_speed == [
         0.668,
@@ -72,15 +72,15 @@ def test_ahri_stat_perlevel():
 def test_get_stats():
     annie = Annie(level=18)
 
-    assert round(annie.orig_base_stats.health, 2) == 2328.0
-    assert round(annie.orig_base_stats.mana, 2) == 843.0
-    assert round(annie.orig_base_stats.armor, 2) == 107.4
-    assert round(annie.orig_base_stats.magic_resist, 2) == 52.1
-    assert round(annie.orig_base_stats.health_regen, 2) == 14.85
-    assert round(annie.orig_base_stats.mana_regen, 2) == 21.6
-    assert round(annie.orig_base_stats.crit_chance, 2) == 0.0
-    assert round(annie.orig_base_stats.attack_damage, 2) == 95.05
-    assert round(annie.orig_base_stats.attack_speed, 2) == 0.71
+    assert round(annie.health, 2) == 2328.0
+    assert round(annie.mana, 2) == 843.0
+    assert round(annie.armor, 2) == 107.4
+    assert round(annie.magic_resist, 2) == 52.1
+    assert round(annie.health_regen, 2) == 14.85
+    assert round(annie.mana_regen, 2) == 21.6
+    assert round(annie.crit_chance, 2) == 0.0
+    assert round(annie.attack_damage, 2) == 95.05
+    assert round(annie.attack_speed, 2) == 0.71
     assert annie.level == 18
 
 
@@ -99,7 +99,7 @@ def test_auto_attack_with_item_component():
     ahri = Ahri(level=4, inventory=inventory)
     dummy = Dummy(health=1000, bonus_resistance=100)
 
-    assert ahri.orig_bonus_stats._dict == {"armor": 15, "gold": 2825, "attack_damage": 75}
+    assert ahri.orig_bonus_stats._dict == {"armor": 15, "attack_damage": 75}
     assert round(ahri.auto_attack_damage(dummy)) == 67
 
 
@@ -110,9 +110,9 @@ def test_auto_attack_with_item_component_2():
     ahri = Ahri(level=7, inventory=inventory)
     dummy = Dummy(health=1000, bonus_resistance=60)
 
-    assert ahri.orig_bonus_stats.attack_damage == 80
-    assert ahri.orig_bonus_stats.lethality == 10
-    assert ahri.orig_bonus_stats.armor_pen_percent == 18
+    assert ahri.bonus_attack_damage == 80
+    assert ahri.lethality == 10
+    assert ahri.armor_pen_percent == 18
 
     assert round(ahri.auto_attack_damage(dummy)) == 104
     assert round(ahri.auto_attack_damage(dummy, is_crit=True)) == 182
@@ -120,8 +120,8 @@ def test_auto_attack_with_item_component_2():
 
 def test_darius_auto_attack():
     darius = Darius(level=18)
-    assert round(darius.current_health) == 2590
+    assert round(darius.health) == 2590
 
     dummy = Dummy(health=1000, bonus_resistance=100)
     darius.do_auto_attack(dummy)
-    assert round(dummy.current_health) == 926
+    assert round(dummy.health) == 926

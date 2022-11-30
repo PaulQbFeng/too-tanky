@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from damage import damage_after_resistance
+from damage import damage_after_resistance, damage_after_positive_resistance
 from data_parser import ALL_ITEM_STATS
 from stats import Stats
 
@@ -29,9 +29,10 @@ class BaseItem:
     Additional effects passive/active are handled in the children Champion specific classes.
     """
 
-    def __init__(self, item_name: str, item_type):
-        self.type = item_type
-        self.stats = Stats(ALL_ITEM_STATS[item_name].copy())
+    def __init__(self, item_name: str):
+        item_stats = ALL_ITEM_STATS[item_name].copy()
+        self.gold = item_stats.pop("gold")
+        self.stats = Stats(item_stats)
         self.passive = ItemPassive()
         self.holder = None
 
@@ -58,6 +59,13 @@ class LongSword(BaseItem):
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+
+
+class CloakofAgility(BaseItem):
+    item_name = "Cloak of Agility"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, **kwargs)
 
 
 class BFSword(BaseItem):
@@ -102,7 +110,7 @@ class Sheen(BaseItem):
     def spellblade(self, owner_champion, enemy_champion):
         """Calculates the bonus damage dealt with an autoattack : 100% of base AD"""
         return damage_after_positive_resistance(
-            owner_champion.orig_base_stats.attack_damage, enemy_champion.orig_bonus_stats.armor
+            owner_champion.base_attack_damage, enemy_champion.bonus_armor
         )
 
 
