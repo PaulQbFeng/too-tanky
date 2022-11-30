@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Callable
 
 import stats_calculator as sc
 from damage import damage_physical_auto_attack
@@ -43,7 +43,7 @@ class BaseChampion:
         self.orig_bonus_stats = self.get_bonus_stats()
         self.add_bonus_stats_to_champion()
     
-    def getter_wrapper(stat_name):
+    def getter_wrapper(stat_name: str) -> Callable:
         """Wrapper to use a single getter for all total stat attributes"""
         def total_stat_getter(self):
             base_value = getattr(self, "base_" + stat_name)
@@ -51,7 +51,7 @@ class BaseChampion:
             return base_value + bonus_value
         return total_stat_getter
     
-    # TODO: currently the setter is not supporter 
+    # TODO: currently the setter is not supported
     health = property(fget=getter_wrapper("health"))
     mana = property(fget=getter_wrapper("mana"))
     movespeed = property(fget=getter_wrapper("movespeed"))
