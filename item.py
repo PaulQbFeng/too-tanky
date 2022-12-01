@@ -179,8 +179,8 @@ class Galeforce(BaseItem):
             pre_mitigation_damage=pre_mtg_dmg,
             base_resistance=enemy_champion.base_magic_resist,
             bonus_resistance=enemy_champion.bonus_magic_resist,
-            flat_resistance_pen=self.holder.magic_resist_pen_flat,
-            resistance_pen=self.holder.magic_resist_pen_percent,
+            flat_resistance_pen=self.holder.magic_pen_flat,
+            resistance_pen=self.holder.magic_pen_percent,
             bonus_resistance_pen=0
         )
 

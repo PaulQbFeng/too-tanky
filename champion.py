@@ -37,11 +37,15 @@ class BaseChampion:
             self.inventory = inventory
         self.unique_item_passives = set()
         for item in self.inventory:
+            item.holder = self
             self.apply_unique_item_passive(item)
 
         self.item_stats = sc.get_items_total_stats(self.inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
         self.add_bonus_stats_to_champion()
+
+        for stat_name in DEFAULT_STAT_LIST:
+            setattr(self, "_" + stat_name, getattr(self, "base_" + stat_name) + getattr(self, "bonus_" + stat_name))
     
     def getter_wrapper(stat_name: str) -> Callable:
         """Wrapper to use a single getter for all total stat attributes"""
@@ -50,9 +54,17 @@ class BaseChampion:
             bonus_value = getattr(self, "bonus_" + stat_name)
             return base_value + bonus_value
         return total_stat_getter
-    
-    # TODO: currently the setter is not supported
-    health = property(fget=getter_wrapper("health"))
+
+    # TODO: define specific setters for stats that are handled differently
+    #       for example: armor with flat and percent armor reduction
+    @property
+    def health(self):
+        return self._health
+
+    @health.setter
+    def health(self, value):
+        self._health = value
+
     mana = property(fget=getter_wrapper("mana"))
     movespeed = property(fget=getter_wrapper("movespeed"))
     armor = property(fget=getter_wrapper("armor"))
@@ -76,6 +88,14 @@ class BaseChampion:
             item.apply_passive()
             if item.passive.unique is True:
                 self.unique_item_passives |= {item.passive.name}
+
+    def apply_item_active(self, item_name, enemy_champion):
+        assert item_name in [item.item_name for item in self.inventory], "The item {} is not in the champion's inventory.".format(item_name)
+        selected_item = next(item for item in self.inventory if item.item_name == item_name)
+        assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
+        active_damage = selected_item.apply_active(enemy_champion)
+        enemy_champion.take_damage(active_damage)
+        return active_damage
 
     def add_bonus_stats_to_champion(self):
         for name, value in self.orig_bonus_stats._dict.items():
@@ -115,30 +135,31 @@ class BaseChampion:
     def take_damage(self, damage):
         """Takes damage from an enemy champion"""
 
-        self.health -= damage
+        self._health -= damage
 
     def do_auto_attack(self, enemy_champion, is_crit: bool = False):
         """Deals damage to an enemy champion with an autoattack"""
 
         damage = self.auto_attack_damage(enemy_champion, is_crit)
+        print(damage)
         enemy_champion.take_damage(damage)
 
 
 # Dummy class for tests in practice tool.
-class Dummy:
+class Dummy(BaseChampion):
+    champion_name = "Dummy"
+
     def __init__(self, health: float, bonus_resistance: int):
+        super().__init__(champion_name=__class__.champion_name, inventory=None, level=1)
         """Dummy champion have the same armor and mr"""
         assert bonus_resistance % 10 == 0
         assert health % 100 == 0
         assert health <= 10000
-        
-        self.base_armor = 0
-        self.base_magic_resist = 0 
+        self.orig_bonus_stats.armor = bonus_resistance
+        self.orig_bonus_stats.magic_resist = bonus_resistance
+        self.orig_bonus_stats.health = health - 1000
         self.bonus_armor = bonus_resistance
         self.bonus_magic_resist = bonus_resistance
-        self.health = health
-
-    def take_damage(self, damage):
-        """Takes damage from an enemy champion"""
-
-        self.health -= damage
+        self.base_health = 1000
+        self.bonus_health = health - 1000
+        self._health = self.base_health + self.bonus_health
