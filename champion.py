@@ -118,7 +118,7 @@ class BaseChampion:
         )
         return damage
 
-    def stat_ratio_damage(self, spell: BaseSpell, enemy_champion: "BaseChampion") -> float:
+    def spell_ratio_damage(self, spell: BaseSpell, enemy_champion: "BaseChampion") -> float:
         """Get the damage dealt by the ratio part of a spell, taking into account multiple ratios"""
         if len(spell.ratios) == 0:
             return 0 
@@ -138,7 +138,7 @@ class BaseChampion:
     ) -> float:
         """Calculates the damage dealt to a champion with a spell"""
 
-        ratio_damage = self.stat_ratio_damage(spell, enemy_champion)
+        ratio_damage = self.spell_ratio_damage(spell, enemy_champion)
         
         pre_mtg_dmg = pre_mitigation_spell_damage(
             spell.base_spell_damage, 
