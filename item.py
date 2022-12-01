@@ -166,23 +166,64 @@ class Galeforce(BaseItem):
         super().__init__(item_name=__class__.item_name, item_type="Mythic", **kwargs)
 
     def apply_active(self, enemy_champion):
+        print(self.holder.level)
         if self.holder.level < 10:
-            base_active_damage = 180
+            base_active_damage = 60
         elif self.holder.level >= 10:
-            base_active_damage = 195 + (self.holder.level - 10) * 15
-        percent_missing_health = 1 - enemy_champion.health/(enemy_champion.orig_base_stats.health + enemy_champion.orig_bonus_stats.health)
-        if percent_missing_health <= 0.7:
-            pre_mtg_dmg = base_active_damage + 0.45 * self.holder.bonus_attack_damage * (1 + percent_missing_health * 5 / 7)
+            base_active_damage = 65 + (self.holder.level - 10) * 5
+        max_health = enemy_champion.orig_base_stats.health + enemy_champion.orig_bonus_stats.health
+        base_mr = enemy_champion.base_magic_resist
+        bonus_mr = enemy_champion.bonus_magic_resist
+        bonus_ad = self.holder.bonus_attack_damage
+        magic_pen_flat = self.holder.magic_pen_flat
+        magic_pen_percent = self.holder.magic_pen_percent
+
+        percent_missing_health1 = 1 - enemy_champion.health/max_health
+        if percent_missing_health1 <= 0.7:
+            pre_mtg_dmg1 = (base_active_damage + 0.15 * bonus_ad) * (1 + percent_missing_health1 * 5 / 7)
         else:
-            pre_mtg_dmg = base_active_damage + 0.45 * self.holder.bonus_attack_damage * 1.5
-        return damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.base_magic_resist,
-            bonus_resistance=enemy_champion.bonus_magic_resist,
-            flat_resistance_pen=self.holder.magic_pen_flat,
-            resistance_pen=self.holder.magic_pen_percent,
+            pre_mtg_dmg1 = (base_active_damage + 0.15 * bonus_ad) * 1.5
+        damage1 = damage_after_resistance(
+            pre_mitigation_damage=pre_mtg_dmg1,
+            base_resistance=base_mr,
+            bonus_resistance=bonus_mr,
+            flat_resistance_pen=magic_pen_flat,
+            resistance_pen=magic_pen_percent,
             bonus_resistance_pen=0
         )
+        enemy_champion.take_damage(damage1)
+
+        percent_missing_health2 = 1 - enemy_champion.health / max_health
+        if percent_missing_health2 <= 0.7:
+            pre_mtg_dmg2 = (base_active_damage + 0.15 * bonus_ad) * (1 + percent_missing_health2 * 5 / 7)
+        else:
+            pre_mtg_dmg2 = (base_active_damage + 0.15 * bonus_ad) * 1.5
+        damage2 = damage_after_resistance(
+            pre_mitigation_damage=pre_mtg_dmg2,
+            base_resistance=base_mr,
+            bonus_resistance=bonus_mr,
+            flat_resistance_pen=magic_pen_flat,
+            resistance_pen=magic_pen_percent,
+            bonus_resistance_pen=0
+        )
+        enemy_champion.take_damage(damage2)
+
+        percent_missing_health3 = 1 - enemy_champion.health / max_health
+        if percent_missing_health3 <= 0.7:
+            pre_mtg_dmg3 = (base_active_damage + 0.15 * bonus_ad) * (1 + percent_missing_health3 * 5 / 7)
+        else:
+            pre_mtg_dmg3 = (base_active_damage + 0.15 * bonus_ad) * 1.5
+        damage3 = damage_after_resistance(
+            pre_mitigation_damage=pre_mtg_dmg3,
+            base_resistance=base_mr,
+            bonus_resistance=bonus_mr,
+            flat_resistance_pen=magic_pen_flat,
+            resistance_pen=magic_pen_percent,
+            bonus_resistance_pen=0
+        )
+        enemy_champion.take_damage(damage3)
+
+        return damage1 + damage2 + damage3
 
 
 ALL_ITEM_CLASSES = {cls.item_name: cls for cls in BaseItem.__subclasses__()}

@@ -47,9 +47,10 @@ def galeforce_default_run(item_names, enemy_champion, test_bonus_attack_damage: 
     # TODO: attack speed test is missing, we have to define how attack speed stacks before
 
     for champion_level in range(1, 19):
-        # TODO: test needs to include missing health
+        # TODO: include test with a series of galeforce actives for robustness with missing health scaling
         ahri = Ahri(level=champion_level, inventory=inventory)
         assert round(ahri.apply_item_active(item_name="Galeforce", enemy_champion=enemy_champion)) == test_active[champion_level-1]
+        enemy_champion._health = enemy_champion.base_health + enemy_champion.bonus_health
 
 
 def test_galeforce():
