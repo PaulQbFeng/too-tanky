@@ -51,9 +51,16 @@ class DoranBlade(BaseItem):
 
 
 # Basic items
-# TODO: Bami's Cinder, Catalyst of Aeons, Faerie Charm, Rejuvenation Bead
+# TODO: Catalyst of Aeons, Faerie Charm, Rejuvenation Bead
 class AmplifyingTome(BaseItem):
     item_name = "Amplifying Tome"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+
+
+class BamiCinder(BaseItem):  # missing passive
+    item_name = "Bami's Cinder"
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
