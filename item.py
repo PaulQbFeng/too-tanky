@@ -51,7 +51,7 @@ class DoranBlade(BaseItem):
 
 
 # Basic items
-# TODO: Bami's Cinder, Catalyst of Aeons, Dagger, Faerie Charm, Null-Magic Mantle, Rejuvenation Bead, Sapphire Crystal
+# TODO: Bami's Cinder, Catalyst of Aeons, Faerie Charm, Rejuvenation Bead
 class AmplifyingTome(BaseItem):
     item_name = "Amplifying Tome"
 
@@ -87,6 +87,13 @@ class ClothArmor(BaseItem):
         super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
 
 
+class Dagger(BaseItem):
+    item_name = "Dagger"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+
+
 class LongSword(BaseItem):
     item_name = "Long Sword"
 
@@ -101,6 +108,13 @@ class NeedlesslyLargeRod(BaseItem):
         super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
 
 
+class NullMagicMantle(BaseItem):
+    item_name = "Null-Magic Mantle"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+
+
 class PickAxe(BaseItem):
     item_name = "Pickaxe"
 
@@ -110,6 +124,13 @@ class PickAxe(BaseItem):
 
 class RubyCrystal(BaseItem):
     item_name = "Ruby Crystal"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+
+
+class SapphireCrystal(BaseItem):
+    item_name = "Sapphire Crystal"
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
