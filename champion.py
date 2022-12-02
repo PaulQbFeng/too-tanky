@@ -39,12 +39,6 @@ class BaseChampion:
             setattr(self, "base_" + name, value)
 
         self.inventory = Inventory(inventory)
-
-        self.unique_item_passives = set()
-        for item in self.inventory.items:
-            self.apply_unique_item_passive(item)
-
-        self.item_stats = self.inventory.get_stats()
         self.orig_bonus_stats = self.get_bonus_stats()
         self.add_bonus_stats_to_champion()
 
@@ -83,13 +77,7 @@ class BaseChampion:
 
     def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
-        return self.item_stats
-
-    def apply_unique_item_passive(self, item):
-        if item.passive.name not in self.unique_item_passives:
-            item.apply_passive()
-            if item.passive.unique is True:
-                self.unique_item_passives |= {item.passive.name}
+        return self.inventory.item_stats
 
     def apply_item_active(self, item_name, enemy_champion):
         assert item_name in [item.item_name for item in self.inventory.items], "The item {} is not in the champion's inventory.".format(item_name)
@@ -108,8 +96,12 @@ class BaseChampion:
 
     def equip_item(self, item: BaseItem):
         self.inventory.add_item(item)
-        self.apply_unique_item_passive(item)
-        self.item_stats = self.inventory.get_stats()
+        self.orig_bonus_stats = self.get_bonus_stats()
+        self.add_bonus_stats_to_champion()
+
+    def unequip_item(self, item_name: str):
+        # TODO: This has not been tested yet. Only inventory.remove_item has been tested
+        self.inventory.remove_item(item_name)
         self.orig_bonus_stats = self.get_bonus_stats()
         self.add_bonus_stats_to_champion()
 

@@ -381,6 +381,8 @@ class Galeforce(BaseItem):
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, item_type="Mythic", **kwargs)
+        self.mythic_passive_ratio = [0.2]
+        self.mythic_passive_type = ["bonus_move_speed"]
 
     def apply_active(self, holder, enemy_champion):
         max_health = enemy_champion.orig_base_stats.health + enemy_champion.orig_bonus_stats.health
@@ -414,9 +416,6 @@ class Galeforce(BaseItem):
 
         return total_damage
 
-    def mythic_passive_stats(self, holder):
-        return [holder.inventory.nb_legendary * 0.02, "bonus_move_speed"]
-        
 
 
 ALL_ITEM_CLASSES = {cls.item_name: cls for cls in BaseItem.__subclasses__()}
