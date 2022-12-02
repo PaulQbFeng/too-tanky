@@ -49,7 +49,7 @@ class Stats:
             if name not in self._dict:
                 subtraction[name] = -value
             elif name.endswith("_pen_percent"):
-                subtraction[name] = 100 * (1 - (1 - self._dict.get(name) / 100) * (1 + value / 100))
+                subtraction[name] = 100 * (1 - (1 - self._dict.get(name) / 100) / (1 - value / 100))
             else:
                 subtraction[name] = self._dict.get(name) - value
 
