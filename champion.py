@@ -38,15 +38,13 @@ class BaseChampion:
         for name, value in self.orig_base_stats._dict.items():
             setattr(self, "base_" + name, value)
 
-        if inventory is None:
-            self.inventory = []
-        else:
-            self.inventory = inventory
+        self.inventory = Inventory(inventory)
+
         self.unique_item_passives = set()
-        for item in self.inventory:
+        for item in self.inventory.items:
             self.apply_unique_item_passive(item)
 
-        self.item_stats = sc.get_items_total_stats(self.inventory)
+        self.item_stats = self.inventory.get_stats()
         self.orig_bonus_stats = self.get_bonus_stats()
         self.add_bonus_stats_to_champion()
 
@@ -85,8 +83,6 @@ class BaseChampion:
 
     def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
-        if len(self.inventory) == 0:
-            return Stats()
         return self.item_stats
 
     def apply_unique_item_passive(self, item):
@@ -96,8 +92,8 @@ class BaseChampion:
                 self.unique_item_passives |= {item.passive.name}
 
     def apply_item_active(self, item_name, enemy_champion):
-        assert item_name in [item.item_name for item in self.inventory], "The item {} is not in the champion's inventory.".format(item_name)
-        selected_item = next(item for item in self.inventory if item.item_name == item_name)
+        assert item_name in [item.item_name for item in self.inventory.items], "The item {} is not in the champion's inventory.".format(item_name)
+        selected_item = self.inventory.get_item(item_name)
         assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
         return selected_item.apply_active(holder=self, enemy_champion=enemy_champion)
 
@@ -111,10 +107,9 @@ class BaseChampion:
                 raise AttributeError(f"{name} stat name not recognized")
 
     def equip_item(self, item: BaseItem):
-        assert len(self.inventory) <= 5, "inventory can't contain more than 6 items"
+        self.inventory.add_item(item)
         self.apply_unique_item_passive(item)
-        self.inventory.append(item)
-        self.item_stats = sc.get_items_total_stats(self.inventory)
+        self.item_stats = self.inventory.get_stats()
         self.orig_bonus_stats = self.get_bonus_stats()
         self.add_bonus_stats_to_champion()
 
