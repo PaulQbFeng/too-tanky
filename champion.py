@@ -37,7 +37,6 @@ class BaseChampion:
             self.inventory = inventory
         self.unique_item_passives = set()
         for item in self.inventory:
-            item.holder = self
             self.apply_unique_item_passive(item)
 
         self.item_stats = sc.get_items_total_stats(self.inventory)
@@ -93,7 +92,7 @@ class BaseChampion:
         assert item_name in [item.item_name for item in self.inventory], "The item {} is not in the champion's inventory.".format(item_name)
         selected_item = next(item for item in self.inventory if item.item_name == item_name)
         assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
-        return selected_item.apply_active(enemy_champion)
+        return selected_item.apply_active(holder=self, enemy_champion=enemy_champion)
 
     def add_bonus_stats_to_champion(self):
         for name, value in self.orig_bonus_stats._dict.items():
@@ -108,7 +107,6 @@ class BaseChampion:
         assert len(self.inventory) <= 5, "inventory can't contain more than 6 items"
         self.apply_unique_item_passive(item)
         self.inventory.append(item)
-        item.holder = self
         self.item_stats = sc.get_items_total_stats(self.inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
         self.add_bonus_stats_to_champion()
