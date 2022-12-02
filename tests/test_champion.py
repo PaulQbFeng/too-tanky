@@ -2,7 +2,7 @@ import math
 
 from champions import Ahri, Annie, Darius
 from champion import Dummy
-from item import ALL_ITEM_CLASSES, BlastingWand
+from item import ALL_ITEM_CLASSES, BlastingWand, SerratedDirk
 from stats import Stats
 
 
