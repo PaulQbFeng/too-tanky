@@ -196,5 +196,9 @@ class Galeforce(BaseItem):
 
         return total_damage
 
+    def mythic_passive_stats(self, holder):
+        return [holder.inventory.nb_legendary * 0.02, "bonus_move_speed"]
+        
+
 
 ALL_ITEM_CLASSES = {cls.item_name: cls for cls in BaseItem.__subclasses__()}
