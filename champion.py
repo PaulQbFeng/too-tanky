@@ -12,6 +12,7 @@ from glossary import DEFAULT_STAT_LIST, EXTRA_STAT_LIST
 from item import BaseItem
 from stats import Stats
 from spell import BaseSpell
+from inventory import Inventory
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion
