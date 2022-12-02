@@ -40,11 +40,44 @@ class BaseItem:
         pass
 
 
+# Starter items
+# TODO: Cull, Dark Seal, Doran's Ring, Doran's Shield, Gustwalker Hatchling, Mosstomper Seedling, Relic Shield,
+#  Scorchclaw Pup, Spectral Sickle, Spellthief's Edge, Steel Shoulderguards, Tear of the Goddess
 class DoranBlade(BaseItem):
     item_name = "Doran's Blade"
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, item_type="Starter", **kwargs)
+
+
+# Basic items
+# TODO: Bami's Cinder, Catalyst of Aeons, Dagger, Faerie Charm, Null-Magic Mantle, Rejuvenation Bead, Sapphire Crystal
+class AmplifyingTome(BaseItem):
+    item_name = "Amplifying Tome"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+
+
+class BFSword(BaseItem):
+    item_name = "B. F. Sword"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+
+
+class BlastingWand(BaseItem):
+    item_name = "Blasting Wand"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+
+
+class CloakofAgility(BaseItem):
+    item_name = "Cloak of Agility"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
 
 
 class ClothArmor(BaseItem):
@@ -61,15 +94,8 @@ class LongSword(BaseItem):
         super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
 
 
-class CloakofAgility(BaseItem):
-    item_name = "Cloak of Agility"
-
-    def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
-
-
-class BFSword(BaseItem):
-    item_name = "B. F. Sword"
+class NeedlesslyLargeRod(BaseItem):
+    item_name = "Needlessly Large Rod"
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
@@ -80,6 +106,41 @@ class PickAxe(BaseItem):
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+
+
+class RubyCrystal(BaseItem):
+    item_name = "Ruby Crystal"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+
+
+class Sheen(BaseItem):
+    item_name = "Sheen"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+
+    def spellblade(self, owner_champion, enemy_champion):
+        """Calculates the bonus damage dealt with an autoattack : 100% of base AD"""
+        return damage_after_positive_resistance(
+            owner_champion.base_attack_damage, enemy_champion.bonus_armor
+        )
+
+
+# Epic items
+# TODO: Aegis of the Legion, Aether Wisp, Bandleglass Mirror, Blighting Jewel, Bramble Vest, Caulfield's Warhammer,
+#  Chain Vest, Crystalline Bracer, Executioner's Calling, Fiendish Codex, Forbidden Idol, Frostfang, Giant's Belt,
+#  Glacial Buckler, Harrowing Crescent, Hearthbound Axe, Hexdrinker, Hextech Alternator, Ironspike Whip, Kindlegem,
+#  Kircheis Shard, Leeching Leer, Lost Chapter, Negatron Cloak, Noonquiver, Oblivion Orb, Phage, Quicksilver Sash,
+#  Rageknife, Recurve Bow, Runesteel Spaulders, Seeker's Armguard, Spectre's Cowl, Targon's Buckler, Tiamat,
+#  Vampiric Scepter, Verdant Barrier, Warden's Mail, Watchful Wardstone, Winged Moonplate, Zeal
+class LastWhisper(BaseItem):
+    item_name = "Last Whisper"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        self.stats.add("armor_pen_percent", 18)
 
 
 class SerratedDirk(BaseItem):
@@ -93,43 +154,28 @@ class SerratedDirk(BaseItem):
         self.stats = self.stats + self.passive.stats
 
 
-class LastWhisper(BaseItem):
-    item_name = "Last Whisper"
-
-    def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
-        self.stats.add("armor_pen_percent", 18)
-
-
-class Sheen(BaseItem):
-    item_name = "Sheen"
-
-    def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
-
-    def spellblade(self, owner_champion, enemy_champion):
-        """Calculates the bonus damage dealt with an autoattack : 100% of base AD"""
-        return damage_after_positive_resistance(
-            owner_champion.base_attack_damage, enemy_champion.bonus_armor
-        )
-
-
-class RubyCrystal(BaseItem):
-    item_name = "Ruby Crystal"
-
-    def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
-
-        
-class SeryldaGrudge(BaseItem): #missing passive, ability haste
+# Legendary items
+# TODO: Abyssal Mask, Anathema's Chains, Archangel's Staff, Ardent Censer, Axiom Arc, Banshee's Veil, Black Cleaver,
+#  Black Mist Scythe, Blade of the Ruined King, Bloodthirster, Bulwark of the Mountain, Chempunk Chainsword,
+#  Chemtech Putrifier, Cosmic Drive, Dead Man's Plate, Death's Dance, Demonic Embrace, Edge of Night, Essence Reaver,
+#  Fimbulwinter, Force of Nature, Frozen Heart, Gargoyle Stoneplate, Guardian Angel, Guinsoo's Rageblade, Horizon Focus,
+#  Hullbreaker, Infinity Edge, Knight's Vow, Lich Bane, Lord Dominik's Regards, Manamune, Maw of Malmortius,
+#  Mejai's Soulstealer, Mercurial Scimitar, Mikael's Blessing, Morellonomicon, Mortal Reminder, Muramana,
+#  Nashor's Tooth, Navori Quickblades, Pauldrons of Whiterock, Phantom Dancer, Rabadon's Deathcap, Randuin's Omen,
+#  Rapid Firecannon, Ravenous Hydra, Redemption, Runaan's Hurricane, Rylai's Crystal Scepter, Seraph's Embrace,
+#  Serpent's Fang, Shadowflame, Shard of True Ice, Silvermere Dawn, Spear of Shojin, Spirit Visage,
+#  Staff of Flowing Water, Sterak's Gage, Stormrazor, Sunfire Aegis, The Collector, Thornmail, Titanic Hydra,
+#  Turbo Chemtank, Umbral Glaive, Vigilant Wardstone, Void Staff, Warmog's Armor, Winter's Approach, Wit's End,
+#  Zeke's Convergence, Zhonya's Hourglass
+class SeryldaGrudge(BaseItem):  # missing passive, ability haste
     item_name = "Serylda's Grudge"
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, item_type="Legendary", **kwargs)
         self.stats.add("armor_pen_percent", 30)
 
-        
-class YoumuuGhostblade(BaseItem): #missing passive, active, ability haste
+
+class YoumuuGhostblade(BaseItem):  # missing passive, active, ability haste
     item_name = "Youmuu's Ghostblade"
 
     def __init__(self, **kwargs):
@@ -137,27 +183,12 @@ class YoumuuGhostblade(BaseItem): #missing passive, active, ability haste
         self.stats.add("lethality", 18)
 
 
-class AmplifyingTome(BaseItem):
-    item_name = "Amplifying Tome"
-
-    def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
-
-
-class BlastingWand(BaseItem):
-    item_name = "Blasting Wand"
-
-    def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
-
-
-class NeedlesslyLargeRod(BaseItem):
-    item_name = "Needlessly Large Rod"
-
-    def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
-
-
+# Mythic items
+# TODO: Crown of the Shattered Queen, Divine Sunderer, Duskblade of Draktharr, Eclipse, Evenshroud, Everfrost,
+#  Goredrinker, Heartsteel, Hextech Rocketbelt, Iceborn Gauntlet, Immortal Shieldbow, Imperial Mandate,
+#  Jak'Sho, The Protean, Kraken Slayer, Liandry's Anguish, Locket of the Iron Solari, Luden's Tempest,
+#  Moonstone Renewer, Night Harvester, Prowler's Claw, Radiant Virtue, Riftmaker, Rod of Ages, Shurelya's Battlesong,
+#  Stridebreaker, Trinity Force
 class Galeforce(BaseItem):
     item_name = "Galeforce"
 
@@ -178,7 +209,7 @@ class Galeforce(BaseItem):
         total_damage = 0
 
         for _ in range(3):
-            percent_missing_health = 1 - enemy_champion.health/max_health
+            percent_missing_health = 1 - enemy_champion.health / max_health
             if percent_missing_health <= 0.7:
                 pre_mtg_dmg = (base_active_damage + 0.15 * bonus_ad) * (1 + percent_missing_health * 5 / 7)
             else:
