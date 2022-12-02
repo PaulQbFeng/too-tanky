@@ -12,6 +12,7 @@ from glossary import DEFAULT_STAT_LIST, EXTRA_STAT_LIST
 from item import BaseItem
 from stats import Stats
 from spell import BaseSpell
+from inventory import Inventory
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion
@@ -91,7 +92,6 @@ class BaseChampion:
                 setattr(self, "bonus_" + name, value)
             else:
                 raise AttributeError(f"{name} stat name not recognized")
-
 
     def equip_item(self, item: BaseItem):
         assert len(self.inventory) <= 5, "inventory can't contain more than 6 items"
