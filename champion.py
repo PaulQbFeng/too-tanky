@@ -1,11 +1,17 @@
 from typing import List, Optional, Callable
 
 import stats_calculator as sc
-from damage import damage_physical_auto_attack
+from damage import (
+    damage_physical_auto_attack, 
+    ratio_damage_from_list, 
+    damage_after_resistance, 
+    pre_mitigation_spell_damage
+)
 from data_parser import ALL_CHAMPION_BASE_STATS
 from glossary import DEFAULT_STAT_LIST, EXTRA_STAT_LIST
 from item import BaseItem
 from stats import Stats
+from spell import BaseSpell
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion
@@ -127,6 +133,52 @@ class BaseChampion:
             crit_damage=self.crit_damage,
         )
         return damage
+
+    def spell_ratio_damage(self, spell: BaseSpell, enemy_champion: "BaseChampion") -> float:
+        """Get the damage dealt by the ratio part of a spell, taking into account multiple ratios"""
+        if len(spell.ratios) == 0:
+            return 0 
+
+        stat_values = []
+        for stat_name in spell.ratio_stats:
+            if "target_" in stat_name:
+                target_value = getattr(enemy_champion, stat_name.replace("target_", ""))
+                stat_values.append(target_value)
+            else:
+                stat_values.append(getattr(self, stat_name))
+        
+        return ratio_damage_from_list(spell.ratios, stat_values)
+
+    def spell_damage(
+        self, spell, enemy_champion, damage_modifier_flat=0, damage_modifier_percent=0
+    ) -> float:
+        """Calculates the damage dealt to a champion with a spell"""
+
+        ratio_damage = self.spell_ratio_damage(spell, enemy_champion)
+        
+        pre_mtg_dmg = pre_mitigation_spell_damage(
+            spell.base_spell_damage, 
+            ratio_damage,
+            damage_modifier_flat=damage_modifier_flat,
+            damage_modifier_percent=damage_modifier_percent
+        )
+        
+        res_type = spell.target_res_type
+        if res_type == "armor":
+            bonus_resistance_pen = self.bonus_armor_pen_percent
+        else:
+            bonus_resistance_pen = 0
+        # TODO: Can be refactored once we know more about bonus res pen    
+        post_mtg_dmg = damage_after_resistance(
+            pre_mitigation_damage=pre_mtg_dmg,
+            base_resistance=getattr(enemy_champion, f"base_{res_type}"),
+            bonus_resistance=getattr(enemy_champion, f"bonus_{res_type}"),
+            flat_resistance_pen=getattr(self, f"{res_type}_pen_flat"),
+            resistance_pen=getattr(self, f"{res_type}_pen_percent"),
+            bonus_resistance_pen=bonus_resistance_pen
+        )
+
+        return post_mtg_dmg
 
     def take_damage(self, damage):
         """Takes damage from an enemy champion"""

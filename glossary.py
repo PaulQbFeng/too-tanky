@@ -55,8 +55,8 @@ DEFAULT_STAT_LIST = [
 EXTRA_STAT_LIST = [
     "lethality",
     "crit_damage", 
-    "magic_pen_flat",
-    "magic_pen_percent",
+    "magic_resist_pen_flat",
+    "magic_resist_pen_percent",
     "armor_pen_flat",
     "armor_pen_percent",
     "bonus_armor_pen_percent",

@@ -12,21 +12,7 @@ class Orianna(BaseChampion):
     def spell_r(self, level, enemy_champion):
         self.r = ROrianna(level=level)
 
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            base_spell_damage=self.r.base_spell_damage,
-            ratio=self.r.ratio,
-            base_offensive_stats=self.base_ability_power,
-            bonus_offensive_stats=self.bonus_ability_power,
-        )
-
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=enemy_champion.base_magic_resist,
-            bonus_resistance=enemy_champion.bonus_magic_resist,
-            flat_resistance_pen=self.magic_pen_flat,
-            resistance_pen=self.magic_pen_percent,
-        )
-        return post_mtg_dmg
+        return self.spell_damage(spell=self.r, enemy_champion=enemy_champion)
 
 
 class ROrianna(BaseSpell):
@@ -38,6 +24,8 @@ class ROrianna(BaseSpell):
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
+        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [200, 275, 350]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratio = 0.8
+        self.ratios = [0.8]
+        self.ratio_stats = ["ability_power"]
