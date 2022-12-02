@@ -169,8 +169,8 @@ class Galeforce(BaseItem):
         base_mr = enemy_champion.base_magic_resist
         bonus_mr = enemy_champion.bonus_magic_resist
         bonus_ad = holder.bonus_attack_damage
-        magic_pen_flat = holder.magic_pen_flat
-        magic_pen_percent = holder.magic_pen_percent
+        magic_resist_pen_flat = holder.magic_resist_pen_flat
+        magic_resist_pen_percent = holder.magic_resist_pen_percent
         if holder.level < 10:
             base_active_damage = 60
         elif holder.level >= 10:
@@ -187,8 +187,8 @@ class Galeforce(BaseItem):
                 pre_mitigation_damage=pre_mtg_dmg,
                 base_resistance=base_mr,
                 bonus_resistance=bonus_mr,
-                flat_resistance_pen=magic_pen_flat,
-                resistance_pen=magic_pen_percent,
+                flat_resistance_pen=magic_resist_pen_flat,
+                resistance_pen=magic_resist_pen_percent,
                 bonus_resistance_pen=0
             )
             enemy_champion.take_damage(damage)

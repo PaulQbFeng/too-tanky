@@ -39,8 +39,8 @@ def galeforce_default_run(item_names, enemy_champion, test_bonus_attack_damage: 
                           test_active: list):
     inventory = [ALL_ITEM_CLASSES[item_name]() for item_name in item_names]
     ahri = Ahri(level=1, inventory=inventory)
-    assert ahri.orig_bonus_stats.attack_damage == test_bonus_attack_damage
-    assert ahri.orig_bonus_stats.crit_chance == test_crit_chance
+    assert ahri.bonus_attack_damage == test_bonus_attack_damage
+    assert ahri.crit_chance == test_crit_chance
     # TODO: attack speed test is missing, we have to define how attack speed stacks before
 
     for champion_level in range(1, 19):
