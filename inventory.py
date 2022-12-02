@@ -6,19 +6,22 @@ from stats import Stats
 class Inventory:
 
     def __init__(self, items: Optional[List[BaseItem]] = None):
-        assert len(items) <= 6, "Inventory can't contain more than 6 items."
         if items is None:
             self.items = []
         else:
             self.items = items
+        assert len(self.items) <= 6, "Inventory can't contain more than 6 items."
         self.nb_legendary = 0
         self.nb_mythic = 0
-        for item in items:
+        for item in self.items:
             if item.type == "Legendary":
                 self.nb_legendary += 1
             if item.type == "Mythic":
                 self.nb_mythic += 1
         assert self.nb_mythic <= 1, "A champion can't have more than one mythic item."
+
+    def get_item(self, item_name):
+        return next(item for item in self.items if item.item_name == item_name)
 
     def get_stats(self):
         """Get total stats from all items (including passives that give stats)"""
