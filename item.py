@@ -41,13 +41,27 @@ class BaseItem:
 
 
 # Starter items
-# TODO: Cull, Dark Seal, Doran's Ring, Doran's Shield, Gustwalker Hatchling, Mosstomper Seedling, Relic Shield,
+# TODO: Cull, Dark Seal, Gustwalker Hatchling, Mosstomper Seedling, Relic Shield,
 #  Scorchclaw Pup, Spectral Sickle, Spellthief's Edge, Steel Shoulderguards, Tear of the Goddess
 class DoranBlade(BaseItem):
     item_name = "Doran's Blade"
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, item_type="Starter", **kwargs)
+
+
+class DoranRing(BaseItem):  # missing passive (mana_regen)
+    item_name = "Doran's Ring"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+
+
+class DoranShield(BaseItem):  # missing passive (health_regen after taking damage)
+    item_name = "Doran's Shield"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
 
 
 # Basic items
@@ -157,18 +171,149 @@ class Sheen(BaseItem):
 
 
 # Epic items
-# TODO: Aegis of the Legion, Aether Wisp, Bandleglass Mirror, Blighting Jewel, Bramble Vest, Caulfield's Warhammer,
-#  Chain Vest, Crystalline Bracer, Executioner's Calling, Fiendish Codex, Forbidden Idol, Frostfang, Giant's Belt,
-#  Glacial Buckler, Harrowing Crescent, Hearthbound Axe, Hexdrinker, Hextech Alternator, Ironspike Whip, Kindlegem,
-#  Kircheis Shard, Leeching Leer, Lost Chapter, Negatron Cloak, Noonquiver, Oblivion Orb, Phage, Quicksilver Sash,
-#  Rageknife, Recurve Bow, Runesteel Spaulders, Seeker's Armguard, Spectre's Cowl, Targon's Buckler, Tiamat,
-#  Vampiric Scepter, Verdant Barrier, Warden's Mail, Watchful Wardstone, Winged Moonplate, Zeal
+# TODO: Executioner's Calling, Forbidden Idol, Hexdrinker, Hextech Alternator, Ironspike Whip, Kircheis Shard,
+#  Leeching Leer, Oblivion Orb, Phage, Quicksilver Sash, Rageknife, Recurve Bow, Seeker's Armguard, Spectre's Cowl,
+#  Tiamat, Vampiric Scepter, Verdant Barrier, Warden's Mail, Winged Moonplate, Zeal
+class AegisLegion(BaseItem):  # missing ability haste
+    item_name = "Aegis of the Legion"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class AetherWisp(BaseItem):  # missing unique passive (bonus_move_speed)
+    item_name = "Aether Wisp"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class BandleglassMirror(BaseItem):  # missing ability haste and base_mana_regen
+    item_name = "Bandleglass Mirror"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class BlightingJewel(BaseItem):
+    item_name = "Blighting Jewel"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        self.stats.add("magic_resist_pen_percent", 13)
+
+
+class BrambleVest(BaseItem):  # missing passive
+    item_name = "Bramble Vest"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class CaulfieldWarhammer(BaseItem):  # missing ability haste
+    item_name = "Caulfield's Warhammer"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class ChainVest(BaseItem):
+    item_name = "Chain Vest"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class CrystallineBracer(BaseItem):  # missing base_health_regen
+    item_name = "Crystalline Bracer"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class FiendishCodex(BaseItem):  # missing ability haste
+    item_name = "Fiendish Codex"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class Frostfang(BaseItem):  # missing base_mana_regen
+    item_name = "Frostfang"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class GiantBelt(BaseItem):
+    item_name = "Giant's Belt"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class GlacialBuckler(BaseItem):  # missing ability haste
+    item_name = "Glacial Buckler"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class HarrowingCrescent(BaseItem):  # missing base_mana_regen
+    item_name = "Harrowing Crescent"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class HearthboundAxe(BaseItem):  # missing passive (bonus_move_speed when basic attacks)
+    item_name = "Hearthbound Axe"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class Kindlegem(BaseItem):  # missing ability haste
+    item_name = "Kindlegem"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
 class LastWhisper(BaseItem):
     item_name = "Last Whisper"
 
     def __init__(self, **kwargs):
         super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
         self.stats.add("armor_pen_percent", 18)
+
+
+class LostChapter(BaseItem):  # missing ability haste
+    item_name = "Lost Chapter"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class NegatronCloak(BaseItem):
+    item_name = "Negatron Cloak"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class Noonquiver(BaseItem):
+    item_name = "Noonquiver"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class RunesteelSpaulders(BaseItem):  # missing base_health_regen
+    item_name = "Runesteel Spaulders"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
 
 
 class SerratedDirk(BaseItem):
@@ -180,6 +325,20 @@ class SerratedDirk(BaseItem):
 
     def apply_passive(self):
         self.stats = self.stats + self.passive.stats
+
+
+class TargonBuckler(BaseItem):  # missing base_health_regen
+    item_name = "Targon's Buckler"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+
+
+class WatchfulWardstone(BaseItem):  # missing ability haste
+    item_name = "Watchful Wardstone"
+
+    def __init__(self, **kwargs):
+        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
 
 
 # Legendary items
