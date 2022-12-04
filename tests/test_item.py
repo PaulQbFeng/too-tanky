@@ -1,8 +1,8 @@
-from champion import Dummy
-from champions import Ahri, Annie
-from damage import damage_after_positive_resistance
-from item import ALL_ITEM_CLASSES, DoranBlade, Sheen
-from stats import Stats
+from tootanky.champion import Dummy
+from tootanky.champions import Ahri, Annie
+from tootanky.damage import damage_after_positive_resistance
+from tootanky.item import ALL_ITEM_CLASSES, DoranBlade, Sheen
+from tootanky.stats import Stats
 
 
 def test_doranblade():
