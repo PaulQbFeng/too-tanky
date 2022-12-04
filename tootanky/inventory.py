@@ -4,8 +4,7 @@ from tootanky.stats import Stats
 
 
 class Inventory:
-
-    def __init__(self, items: Optional[List[BaseItem]] = None):
+    def __init__(self, items: Optional[List[BaseItem]] = None, champion=None):
         if items is None:
             self.items = []
         else:
@@ -14,6 +13,7 @@ class Inventory:
         self.nb_legendary = 0
         self.nb_mythic = 0
         for item in self.items:
+            item.champion = champion
             if item.type == "Legendary":
                 self.nb_legendary += 1
             if item.type == "Mythic":
