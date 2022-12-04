@@ -3,12 +3,16 @@ from tootanky.champions import Caitlyn
 from tootanky.item import LongSword, CloakofAgility
 
 
-def auto_attack_default_run(inventory, enemy_champion, test_values):
+def auto_attack_default_run(inventory, target_champion, test_values):
     for i in range(1, 4):
-        caitlyn = Caitlyn(level=6*(i-1)+1, inventory=inventory)  # for levels 1, 7, 13
-        assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values[2*i-2]  # No headshot no crit
+        caitlyn = Caitlyn(level=6 * (i - 1) + 1, inventory=inventory)  # for levels 1, 7, 13
+        assert (
+            round(caitlyn.auto_attack_damage(target_champion, False)) == test_values[2 * i - 2]
+        )  # No headshot no crit
         caitlyn.auto_attack_count = 6
-        assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values[2*i-1]  # Headshot and no crit
+        assert (
+            round(caitlyn.auto_attack_damage(target_champion, False)) == test_values[2 * i - 1]
+        )  # Headshot and no crit
 
 
 def test_auto_attack():
@@ -31,14 +35,17 @@ def test_auto_attack():
     auto_attack_default_run([LongSword()], Dummy(1000, 60), [45, 72, 57, 107, 71, 156])
 
 
-def q_default_run(inventory, enemy_champion, test_values):
+def q_default_run(inventory, target_champion, test_values):
     for spell_level in range(1, 6):
-        caitlyn = Caitlyn(level=2*spell_level-1, inventory=inventory, spell_levels=[spell_level,1,1,1])  # for levels 1, 3, 5, 7, 9
-        assert round(caitlyn.spell_q.hit_damage(enemy_champion)) == test_values[spell_level-1]
+        caitlyn = Caitlyn(
+            level=2 * spell_level - 1, inventory=inventory, spell_levels=[spell_level, 1, 1, 1]
+        )  # for levels 1, 3, 5, 7, 9
+        assert round(caitlyn.spell_q.hit_damage(target_champion)) == test_values[spell_level - 1]
 
 
 def test_q():
     q_default_run([LongSword()], Dummy(1000, 30), [108, 156, 206, 259, 315])
+
 
 def test_w_level_1():
     # W has no damage, but we call hit_damage to trigger the on-hit effect
@@ -48,42 +55,60 @@ def test_w_level_1():
     caitlyn.spell_w.hit_damage(dummy)
     assert round(caitlyn.auto_attack_damage(dummy, False)) == 107
 
-def w_default_run(inventory, enemy_champion, test_values):
+
+def w_default_run(inventory, target_champion, test_values):
     for spell_level in range(1, 5):
-        caitlyn = Caitlyn(level=2*spell_level-1, spell_levels=[1,spell_level,1,1], inventory=inventory)  # for levels 1, 3, 5, 7, 9
-        caitlyn.spell_w.hit_damage(enemy_champion)
-        assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values[2*spell_level-2]
-        caitlyn.spell_w.hit_damage(enemy_champion)
-        assert round(caitlyn.auto_attack_damage(enemy_champion, True)) == test_values[2*spell_level-1]
+        caitlyn = Caitlyn(
+            level=2 * spell_level - 1, spell_levels=[1, spell_level, 1, 1], inventory=inventory
+        )  # for levels 1, 3, 5, 7, 9
+        caitlyn.spell_w.hit_damage(target_champion)
+        assert round(caitlyn.auto_attack_damage(target_champion, False)) == test_values[2 * spell_level - 2]
+        caitlyn.spell_w.hit_damage(target_champion)
+        assert round(caitlyn.auto_attack_damage(target_champion, True)) == test_values[2 * spell_level - 1]
     # last test with lvl 13 for robustness with headshot dmg lvl scaling
-    caitlyn = Caitlyn(level=13, spell_levels=[1,5,1,1], inventory=inventory)
-    caitlyn.spell_w.hit_damage(enemy_champion)
-    assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values[8]
-    caitlyn.spell_w.hit_damage(enemy_champion)
-    assert round(caitlyn.auto_attack_damage(enemy_champion, True)) == test_values[9]
+    caitlyn = Caitlyn(level=13, spell_levels=[1, 5, 1, 1], inventory=inventory)
+    caitlyn.spell_w.hit_damage(target_champion)
+    assert round(caitlyn.auto_attack_damage(target_champion, False)) == test_values[8]
+    caitlyn.spell_w.hit_damage(target_champion)
+    assert round(caitlyn.auto_attack_damage(target_champion, True)) == test_values[9]
 
 
 def test_w():
     w_default_run([LongSword(), CloakofAgility()], Dummy(1000, 30), [133, 175, 176, 221, 220, 269, 286, 338, 385, 450])
 
 
-def e_default_run(inventory, enemy_champion, test_values_e, test_values_empowered_auto_attack):
+def e_default_run(inventory, target_champion, test_values_e, test_values_empowered_auto_attack):
     for spell_level in range(1, 6):
-        caitlyn = Caitlyn(level=2*spell_level-1, inventory=inventory, spell_levels=[1,1,spell_level,1])  # for levels 1, 3, 5, 7, 9
-        assert round(caitlyn.spell_e.hit_damage(enemy_champion)) == test_values_e[spell_level-1]
-        assert round(caitlyn.auto_attack_damage(enemy_champion, False)) == test_values_empowered_auto_attack[2*spell_level-2]
-        caitlyn.spell_e.hit_damage(enemy_champion)
-        assert round(caitlyn.auto_attack_damage(enemy_champion, True)) == test_values_empowered_auto_attack[2*spell_level-1]
+        caitlyn = Caitlyn(
+            level=2 * spell_level - 1, inventory=inventory, spell_levels=[1, 1, spell_level, 1]
+        )  # for levels 1, 3, 5, 7, 9
+        assert round(caitlyn.spell_e.hit_damage(target_champion)) == test_values_e[spell_level - 1]
+        assert (
+            round(caitlyn.auto_attack_damage(target_champion, False))
+            == test_values_empowered_auto_attack[2 * spell_level - 2]
+        )
+        caitlyn.spell_e.hit_damage(target_champion)
+        assert (
+            round(caitlyn.auto_attack_damage(target_champion, True))
+            == test_values_empowered_auto_attack[2 * spell_level - 1]
+        )
 
 
 def test_e():
-    e_default_run([LongSword(), CloakofAgility()], Dummy(1000, 30), [62, 100, 138, 177, 215], [100, 141, 107, 152, 116, 164, 146, 198, 157, 214])
+    e_default_run(
+        [LongSword(), CloakofAgility()],
+        Dummy(1000, 30),
+        [62, 100, 138, 177, 215],
+        [100, 141, 107, 152, 116, 164, 146, 198, 157, 214],
+    )
 
 
-def r_default_run(inventory, enemy_champion, test_values):
+def r_default_run(inventory, target_champion, test_values):
     for spell_level in range(1, 4):
-        caitlyn = Caitlyn(level=spell_level*5+1, spell_levels=[1,1,1,spell_level], inventory=inventory)  # for levels 6, 11, 16
-        assert round(caitlyn.spell_r.hit_damage(enemy_champion)) == test_values[spell_level-1]
+        caitlyn = Caitlyn(
+            level=spell_level * 5 + 1, spell_levels=[1, 1, 1, spell_level], inventory=inventory
+        )  # for levels 6, 11, 16
+        assert round(caitlyn.spell_r.hit_damage(target_champion)) == test_values[spell_level - 1]
 
 
 def test_r():
@@ -91,8 +116,16 @@ def test_r():
     r_default_run([LongSword(), CloakofAgility()], Dummy(1000, 30), [255, 435, 615])
     r_default_run([LongSword(), CloakofAgility(), CloakofAgility()], Dummy(1000, 30), [265, 451, 637])
     r_default_run([LongSword(), CloakofAgility(), CloakofAgility(), CloakofAgility()], Dummy(1000, 30), [274, 466, 659])
-    r_default_run([LongSword(), CloakofAgility(), CloakofAgility(), CloakofAgility(), CloakofAgility()], Dummy(1000, 30), [283, 482, 681])
-    r_default_run([LongSword(), CloakofAgility(), CloakofAgility(), CloakofAgility(), CloakofAgility(), CloakofAgility()], Dummy(1000, 30), [292, 498, 703])
+    r_default_run(
+        [LongSword(), CloakofAgility(), CloakofAgility(), CloakofAgility(), CloakofAgility()],
+        Dummy(1000, 30),
+        [283, 482, 681],
+    )
+    r_default_run(
+        [LongSword(), CloakofAgility(), CloakofAgility(), CloakofAgility(), CloakofAgility(), CloakofAgility()],
+        Dummy(1000, 30),
+        [292, 498, 703],
+    )
 
 
 def test_passive_w_e_interaction():

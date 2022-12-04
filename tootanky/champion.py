@@ -90,13 +90,13 @@ class BaseChampion:
         """Get bonus stats from all sources of bonus stats (items, runes)"""
         return self.inventory.item_stats
 
-    def apply_item_active(self, item_name, enemy_champion):
+    def apply_item_active(self, item_name, target_champion):
         assert item_name in [
             item.item_name for item in self.inventory.items
         ], "The item {} is not in the champion's inventory.".format(item_name)
         selected_item = self.inventory.get_item(item_name)
         assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
-        return selected_item.apply_active(enemy_champion)
+        return selected_item.apply_active(target_champion)
 
     def add_bonus_stats_to_champion(self):
         for name, value in self.orig_bonus_stats._dict.items():
@@ -119,14 +119,14 @@ class BaseChampion:
         self.orig_bonus_stats = self.get_bonus_stats()
         self.add_bonus_stats_to_champion()
 
-    def auto_attack_damage(self, enemy_champion, is_crit: bool = False):
+    def auto_attack_damage(self, target_champion, is_crit: bool = False):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
         print(self.armor_pen_percent)
         damage = damage_physical_auto_attack(
             base_attack_damage=self.base_attack_damage,
-            base_armor=enemy_champion.base_armor,
+            base_armor=target_champion.base_armor,
             bonus_attack_damage=self.bonus_attack_damage,
-            bonus_armor=enemy_champion.bonus_armor,
+            bonus_armor=target_champion.bonus_armor,
             attacker_level=self.level,
             lethality=self.lethality,
             armor_pen=self.armor_pen_percent,
@@ -141,12 +141,12 @@ class BaseChampion:
 
         self._health -= damage
 
-    def do_auto_attack(self, enemy_champion, is_crit: bool = False):
+    def do_auto_attack(self, target_champion, is_crit: bool = False):
         """Deals damage to an enemy champion with an autoattack"""
 
-        damage = self.auto_attack_damage(enemy_champion, is_crit)
+        damage = self.auto_attack_damage(target_champion, is_crit)
         print(damage)
-        enemy_champion.take_damage(damage)
+        target_champion.take_damage(damage)
 
 
 # Dummy class for tests in practice tool.
