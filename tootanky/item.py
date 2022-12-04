@@ -160,7 +160,7 @@ class BlightingJewel(BaseItem):
 
     def __init__(self):
         super().__init__()
-        self.stats.add("magic_resist_pen_percent", 13)
+        self.stats.add("magic_resist_pen_percent", 0.13)
 
 
 class BrambleVest(BaseItem):  # missing passive
@@ -224,7 +224,7 @@ class LastWhisper(BaseItem):
 
     def __init__(self):
         super().__init__()
-        self.stats.armor_pen_percent = 18
+        self.stats.armor_pen_percent = 0.18
 
 
 class LostChapter(BaseItem):  # missing ability haste
@@ -288,7 +288,7 @@ class SeryldaGrudge(BaseItem):  # missing passive, ability haste
 
     def __init__(self):
         super().__init__()
-        self.stats.armor_pen_percent = 30
+        self.stats.armor_pen_percent = 0.3
 
 
 class YoumuuGhostblade(BaseItem):  # missing passive, active, ability haste

@@ -85,7 +85,7 @@ def test_get_stats():
 
 
 def test_annie_q():
-    annie = Annie(level=17, spell_levels=[5,5,5,5])
+    annie = Annie(level=17, spell_levels=[5, 5, 5, 5])
     dummy = Dummy(health=1000, bonus_resistance=30)
     annie.equip_item(item=BlastingWand())
     dmg = annie.spell_q.hit_damage(dummy)
@@ -112,7 +112,7 @@ def test_auto_attack_with_item_component_2():
 
     assert ahri.bonus_attack_damage == 80
     assert ahri.lethality == 10
-    assert ahri.armor_pen_percent == 18
+    assert ahri.armor_pen_percent == 0.18
 
     assert round(ahri.auto_attack_damage(dummy)) == 104
     assert round(ahri.auto_attack_damage(dummy, is_crit=True)) == 182
