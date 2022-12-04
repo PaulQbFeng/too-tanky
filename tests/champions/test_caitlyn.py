@@ -1,6 +1,6 @@
-from champion import Dummy
-from champions import Caitlyn
-from item import LongSword, CloakofAgility
+from tootanky.champion import Dummy
+from tootanky.champions import Caitlyn
+from tootanky.item import LongSword, CloakofAgility
 
 
 def auto_attack_default_run(inventory, enemy_champion, test_values):

@@ -1,4 +1,4 @@
-from stats import Stats
+from tootanky.stats import Stats
 
 
 def test_stat_add():

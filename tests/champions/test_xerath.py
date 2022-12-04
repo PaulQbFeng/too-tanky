@@ -1,6 +1,6 @@
-from champion import Dummy
-from champions.xerath import Xerath
-from item import BlastingWand
+from tootanky.champion import Dummy
+from tootanky.champions.xerath import Xerath
+from tootanky.item import BlastingWand
 
 
 def test_dummy_0_res():
