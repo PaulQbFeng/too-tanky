@@ -121,7 +121,7 @@ class BaseChampion:
 
     def auto_attack_damage(self, enemy_champion, is_crit: bool = False):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
-
+        print(self.armor_pen_percent)
         damage = damage_physical_auto_attack(
             base_attack_damage=self.base_attack_damage,
             base_armor=enemy_champion.base_armor,

@@ -20,7 +20,6 @@ def tests_normal_auto_attack_cait_dummy_60():
                 base_attack_damage=62,
                 bonus_attack_damage=13.4,
                 lethality=0,
-                attacker_level=1,
                 armor_pen=0,
                 bonus_armor_pen=0,
                 base_armor=dummy_60.base_armor,
@@ -83,7 +82,7 @@ def tests_normal_auto_attack_cait_dummy_60():
                 bonus_attack_damage=105.4,
                 lethality=0,
                 attacker_level=11,
-                armor_pen=30,
+                armor_pen=0.3,
                 bonus_armor_pen=0,
                 base_armor=dummy_60.base_armor,
                 bonus_armor=dummy_60.bonus_armor,
@@ -103,7 +102,7 @@ def tests_normal_auto_attack_cait_dummy_60():
                 bonus_attack_damage=105.4,
                 lethality=0,
                 attacker_level=11,
-                armor_pen=30,
+                armor_pen=0.30,
                 bonus_armor_pen=0,
                 base_armor=dummy_60.base_armor,
                 bonus_armor=dummy_60.bonus_armor,
@@ -165,7 +164,7 @@ def tests_normal_auto_attack_cait_dummy_60():
                 bonus_attack_damage=95.4,
                 lethality=18,
                 attacker_level=11,
-                armor_pen=30,
+                armor_pen=0.3,
                 bonus_armor_pen=0,
                 base_armor=dummy_60.base_armor,
                 bonus_armor=dummy_60.bonus_armor,
@@ -185,7 +184,7 @@ def tests_normal_auto_attack_cait_dummy_60():
                 bonus_attack_damage=95.4,
                 lethality=18,
                 attacker_level=11,
-                armor_pen=30,
+                armor_pen=0.30,
                 bonus_armor_pen=0,
                 base_armor=dummy_60.base_armor,
                 bonus_armor=dummy_60.bonus_armor,
@@ -276,7 +275,7 @@ def tests_normal_auto_attack_cait_dummy_10():
                 bonus_attack_damage=105.4,
                 lethality=0,
                 attacker_level=11,
-                armor_pen=30,
+                armor_pen=0.3,
                 bonus_armor_pen=0,
                 base_armor=dummy_10.base_armor,
                 bonus_armor=dummy_10.bonus_armor,
@@ -296,7 +295,7 @@ def tests_normal_auto_attack_cait_dummy_10():
                 bonus_attack_damage=105.4,
                 lethality=0,
                 attacker_level=11,
-                armor_pen=30,
+                armor_pen=0.3,
                 bonus_armor_pen=0,
                 base_armor=dummy_10.base_armor,
                 bonus_armor=dummy_10.bonus_armor,
@@ -358,7 +357,7 @@ def tests_normal_auto_attack_cait_dummy_10():
                 bonus_attack_damage=95.4,
                 lethality=18,
                 attacker_level=11,
-                armor_pen=30,
+                armor_pen=0.3,
                 bonus_armor_pen=0,
                 base_armor=dummy_10.base_armor,
                 bonus_armor=dummy_10.bonus_armor,
@@ -378,7 +377,7 @@ def tests_normal_auto_attack_cait_dummy_10():
                 bonus_attack_damage=95.4,
                 lethality=18,
                 attacker_level=11,
-                armor_pen=30,
+                armor_pen=0.3,
                 bonus_armor_pen=0,
                 base_armor=dummy_10.base_armor,
                 bonus_armor=dummy_10.bonus_armor,
@@ -391,7 +390,20 @@ def tests_normal_auto_attack_cait_dummy_10():
         == 334
     )
 
+
 def test_pre_mtg_damage():
     # mf with passive (damage flat modifier) + prowler's claw (damage percent modifier) and crit
     mf = MissFortune(level=1)
-    assert round(pre_mitigation_auto_attack_damage(mf.base_attack_damage, 60, 56, 15, True, 0)) == 290
+    assert (
+        round(
+            pre_mitigation_auto_attack_damage(
+                base_offensive_stats=mf.base_attack_damage,
+                bonus_offensive_stats=60,
+                damage_modifier_flat=56,
+                damage_modifier_percent=0.15,
+                crit=True,
+                crit_damage=0,
+            )
+        )
+        == 290
+    )

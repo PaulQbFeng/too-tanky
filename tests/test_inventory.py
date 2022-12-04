@@ -9,21 +9,21 @@ def test_inventory():
     assert inventory.item_stats.attack_damage == 125
     assert inventory.item_stats.crit_chance == 0.35
     assert inventory.item_stats.attack_speed == 0.2
-    assert inventory.item_stats.armor_pen_percent == 30
+    assert inventory.item_stats.armor_pen_percent == 0.3
     inventory.add_item(SeryldaGrudge())
     assert inventory.nb_legendary == 2
     assert inventory.nb_mythic == 1
     assert inventory.item_stats.attack_damage == 170
     assert inventory.item_stats.crit_chance == 0.35
     assert inventory.item_stats.attack_speed == 0.2
-    assert inventory.item_stats.armor_pen_percent == 51
+    assert inventory.item_stats.armor_pen_percent == 0.51
     inventory.remove_item("Serylda's Grudge")
     assert inventory.nb_legendary == 1
     assert inventory.nb_mythic == 1
     assert inventory.item_stats.attack_damage == 125
     assert inventory.item_stats.crit_chance == 0.35
     assert inventory.item_stats.attack_speed == 0.2
-    assert round(inventory.item_stats.armor_pen_percent) == 30
+    assert round(inventory.item_stats.armor_pen_percent, 2) == 0.3
     # Test of unique passive feature
     inventory.remove_item("Long Sword")
     inventory.add_item(SerratedDirk())
@@ -40,5 +40,3 @@ def test_inventory():
     inventory.remove_item("Serrated Dirk")
     assert inventory.item_stats.attack_damage == 115
     assert inventory.item_stats.lethality == 0
-
-
