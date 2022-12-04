@@ -157,4 +157,5 @@ class RCaitlyn(BaseSpell):
         self.base_damage_per_level = [300, 525, 750]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.bonus_attack_damage_ratio = 2
+        self.ratios = []
         self.ratio_stats = []
