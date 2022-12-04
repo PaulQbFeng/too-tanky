@@ -18,6 +18,13 @@ class Stats:
         """Get attribute from underlying dict, default at 0"""
         return self._dict.get(attribute, 0)
 
+    def __setattr__(self, __name: str, __value: Any) -> None:
+        """Set attribute to the underlying dict"""
+        if __name == "_dict":
+            super().__setattr__("_dict", __value)
+        else:
+            self._dict[__name] = __value
+
     def __add__(self, stats: "Stats"):
         """
         Magic method to add to Stats object s1 + s2
