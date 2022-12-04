@@ -15,14 +15,14 @@ def pre_mitigation_auto_attack_damage(
     from both the attacker AND the defender
     """
     tot_off_stats = base_offensive_stats + bonus_offensive_stats
-    dmg_mod_perc_multiplier = 1 + damage_modifier_percent
+    dmg_mod_ratio = 1 + damage_modifier_percent
 
     if crit:
         crit_multiplier = 1.75 + crit_damage
     else:
         crit_multiplier = 1
 
-    return (tot_off_stats * crit_multiplier + damage_modifier_flat) * dmg_mod_perc_multiplier
+    return (tot_off_stats * crit_multiplier + damage_modifier_flat) * dmg_mod_ratio
 
 
 def pre_mitigation_spell_damage(
@@ -55,9 +55,9 @@ def avg_pre_mitigation_auto_attack_damage(
     from both the attacker AND the defender
     """
     tot_off_stats = base_attack_damage + bonus_attack_damage
-    dmg_mod_perc_multiplier = 1 - damage_modifier_percent
+    dmg_mod_ratio = 1 - damage_modifier_percent
 
-    return tot_off_stats * dmg_mod_perc_multiplier * (1 + crit_chance * (0.75 + crit_damage)) + damage_modifier_flat
+    return tot_off_stats * dmg_mod_ratio * (1 + crit_chance * (0.75 + crit_damage)) + damage_modifier_flat
 
 
 def damage_after_positive_resistance(pre_mitigation_auto_attack_damage: float, resistance: float):
