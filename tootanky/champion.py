@@ -1,9 +1,9 @@
 from typing import List, Optional, Callable
+import numpy as np
 
 import tootanky.stats_calculator as sc
 from tootanky.damage import (
-    damage_physical_auto_attack, 
-    ratio_damage_from_list, 
+    damage_physical_auto_attack,
     damage_after_resistance, 
     pre_mitigation_spell_damage
 )
@@ -135,7 +135,7 @@ class BaseChampion:
             else:
                 stat_values.append(getattr(self, stat_name))
         
-        return ratio_damage_from_list(spell.ratios, stat_values)
+        return np.dot(spell.ratios, stat_values)
 
     def spell_damage(
         self, spell, enemy_champion, damage_modifier_flat=0, damage_modifier_percent=0

@@ -24,15 +24,6 @@ def pre_mitigation_auto_attack_damage(
 
     return (tot_off_stats * crit_multiplier + damage_modifier_flat) * dmg_mod_perc_multiplier
 
-def ratio_damage_from_list(
-    ratios: list,
-    stat_values: list
-):  
-    """Basically a cartesian product for ratio damages"""
-    dmg = 0
-    for (ratio, stat_value) in zip(ratios, stat_values):
-         dmg += ratio * stat_value
-    return dmg
 
 def pre_mitigation_spell_damage(
     base_spell_damage: float,
