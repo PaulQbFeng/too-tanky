@@ -1,5 +1,4 @@
 from typing import List, Optional, Callable
-import numpy as np
 
 import tootanky.stats_calculator as sc
 from tootanky.damage import (
@@ -24,7 +23,7 @@ class BaseChampion:
         - auto attack
     """
 
-    def __init__(self, champion_name: str, inventory: Optional[List[BaseItem]] = None, level: int = 1):
+    def __init__(self, champion_name: str, inventory: Optional[List[BaseItem]] = None, level: int = 1, spell_levels: Optional[List[int]] = None):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
         self.orig_base_stats = sc.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level)
@@ -38,6 +37,10 @@ class BaseChampion:
         for name, value in self.orig_base_stats._dict.items():
             setattr(self, "base_" + name, value)
 
+        if spell_levels is None:
+            spell_levels = [1, 1, 1, 1]
+        self.init_spells(spell_levels)
+
         self.inventory = Inventory(inventory)
         self.orig_bonus_stats = self.get_bonus_stats()
         self.add_bonus_stats_to_champion()
@@ -45,6 +48,10 @@ class BaseChampion:
         for stat_name in DEFAULT_STAT_LIST:
             setattr(self, "_" + stat_name, getattr(self, "base_" + stat_name) + getattr(self, "bonus_" + stat_name))
     
+    def init_spells(self, spell_levels):
+        """Initialize spells for the champion"""
+        pass
+
     def getter_wrapper(stat_name: str) -> Callable:
         """Wrapper to use a single getter for all total stat attributes"""
         def total_stat_getter(self):
@@ -121,52 +128,6 @@ class BaseChampion:
             crit_damage=self.crit_damage,
         )
         return damage
-
-    def spell_ratio_damage(self, spell: BaseSpell, enemy_champion: "BaseChampion") -> float:
-        """Get the damage dealt by the ratio part of a spell, taking into account multiple ratios"""
-        if len(spell.ratios) == 0:
-            return 0 
-
-        stat_values = []
-        for stat_name in spell.ratio_stats:
-            if "target_" in stat_name:
-                target_value = getattr(enemy_champion, stat_name.replace("target_", ""))
-                stat_values.append(target_value)
-            else:
-                stat_values.append(getattr(self, stat_name))
-        
-        return np.dot(spell.ratios, stat_values)
-
-    def spell_damage(
-        self, spell, enemy_champion, damage_modifier_flat=0, damage_modifier_percent=0
-    ) -> float:
-        """Calculates the damage dealt to a champion with a spell"""
-
-        ratio_damage = self.spell_ratio_damage(spell, enemy_champion)
-        
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            spell.base_spell_damage, 
-            ratio_damage,
-            damage_modifier_flat=damage_modifier_flat,
-            damage_modifier_percent=damage_modifier_percent
-        )
-        
-        res_type = spell.target_res_type
-        if res_type == "armor":
-            bonus_resistance_pen = self.bonus_armor_pen_percent
-        else:
-            bonus_resistance_pen = 0
-        # TODO: Can be refactored once we know more about bonus res pen    
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=getattr(enemy_champion, f"base_{res_type}"),
-            bonus_resistance=getattr(enemy_champion, f"bonus_{res_type}"),
-            flat_resistance_pen=getattr(self, f"{res_type}_pen_flat"),
-            resistance_pen=getattr(self, f"{res_type}_pen_percent"),
-            bonus_resistance_pen=bonus_resistance_pen
-        )
-
-        return post_mtg_dmg
 
     def take_damage(self, damage):
         """Takes damage from an enemy champion"""
