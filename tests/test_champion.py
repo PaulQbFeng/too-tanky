@@ -1,9 +1,9 @@
 import math
 
-from champions import Ahri, Annie, Darius
-from champion import Dummy
-from item import ALL_ITEM_CLASSES, BlastingWand, SerratedDirk
-from stats import Stats
+from tootanky.champions import Ahri, Annie, Darius
+from tootanky.champion import Dummy
+from tootanky.item import ALL_ITEM_CLASSES, BlastingWand, SerratedDirk
+from tootanky.stats import Stats
 
 
 def test_auto_attack_lvl1():

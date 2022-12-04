@@ -1,9 +1,9 @@
 import math
 
-from champions import Malphite
-from champion import Dummy
-from item import ALL_ITEM_CLASSES, BlastingWand, AmplifyingTome, NeedlesslyLargeRod
-from stats import Stats
+from tootanky.champions import Malphite
+from tootanky.champion import Dummy
+from tootanky.item import ALL_ITEM_CLASSES, BlastingWand, AmplifyingTome, NeedlesslyLargeRod
+from tootanky.stats import Stats
 
 def test_malphite_q():
     malph = Malphite(level=13)
