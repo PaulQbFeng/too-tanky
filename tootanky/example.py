@@ -1,5 +1,5 @@
-from champion import Ahri, Annie, Irelia, Jax
-from data_parser import SCALING_STAT_NAMES
+from tootanky.champion import Ahri, Annie, Irelia, Jax
+from tootanky.data_parser import SCALING_STAT_NAMES
 
 annie = Annie()
 ahri = Ahri()
