@@ -17,7 +17,7 @@ class Caitlyn(BaseChampion):
             self.passive_multiplier = 0.9
         if 13 <= self.level <= 18:
             self.passive_multiplier = 1.2
-    
+
     def init_spells(self, spell_levels):
         [level_q, level_w, level_e, level_r] = spell_levels
         self.spell_q = QCaitlyn(self, level_q)
@@ -25,14 +25,14 @@ class Caitlyn(BaseChampion):
         self.spell_e = ECaitlyn(self, level_e)
         self.spell_r = RCaitlyn(self, level_r)
 
-    def auto_attack_damage(self, enemy_champion, is_crit: bool = False):
+    def auto_attack_damage(self, target_champion, is_crit: bool = False):
         base_attack_damage = self.base_attack_damage
         bonus_attack_damage = self.bonus_attack_damage
         attack_damage = base_attack_damage + bonus_attack_damage
         crit_chance = self.bonus_crit_chance
         crit_damage = self.crit_damage
-        base_armor = enemy_champion.base_armor
-        bonus_armor = enemy_champion.bonus_armor
+        base_armor = target_champion.base_armor
+        bonus_armor = target_champion.bonus_armor
         lethality = self.lethality
         armor_pen = self.armor_pen_percent
         bonus_armor_pen = self.bonus_armor_pen_percent
@@ -87,6 +87,7 @@ class QCaitlyn(BaseSpell):
     def get_ratio_per_level(self):
         return self.ratio_per_level[self.level - 1]
 
+
 class WCaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "w"
@@ -126,6 +127,7 @@ class ECaitlyn(BaseSpell):
     def on_hit_effect(self, target):
         self.champion.e_hit = True
 
+
 class RCaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "r"
@@ -133,7 +135,7 @@ class RCaitlyn(BaseSpell):
     def __init__(self, champion, level):
         super().__init__(champion, spell_key=__class__.spell_key, level=level)
 
-        self.nature = self.get_spell_nature(self.spell_key)        
+        self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "physical"
         self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [300, 525, 750]
