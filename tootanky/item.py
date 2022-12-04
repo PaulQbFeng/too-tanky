@@ -35,6 +35,7 @@ class BaseItem:
         self.gold = item_stats.pop("gold")
         self.stats = Stats(item_stats)
         self.passive = ItemPassive()
+        self.champion = None
 
     def apply_passive(self):
         pass
@@ -314,17 +315,17 @@ class Galeforce(BaseItem):
         self.mythic_passive_ratio = [0.2]
         self.mythic_passive_type = ["bonus_move_speed"]
 
-    def apply_active(self, holder, enemy_champion):
+    def apply_active(self, enemy_champion):
         max_health = enemy_champion.orig_base_stats.health + enemy_champion.orig_bonus_stats.health
         base_mr = enemy_champion.base_magic_resist
         bonus_mr = enemy_champion.bonus_magic_resist
-        bonus_ad = holder.bonus_attack_damage
-        magic_resist_pen_flat = holder.magic_resist_pen_flat
-        magic_resist_pen_percent = holder.magic_resist_pen_percent
-        if holder.level < 10:
+        bonus_ad = self.champion.bonus_attack_damage
+        magic_resist_pen_flat = self.champion.magic_resist_pen_flat
+        magic_resist_pen_percent = self.champion.magic_resist_pen_percent
+        if self.champion.level < 10:
             base_active_damage = 60
-        elif holder.level >= 10:
-            base_active_damage = 65 + (holder.level - 10) * 5
+        elif self.champion.level >= 10:
+            base_active_damage = 65 + (self.champion.level - 10) * 5
         total_damage = 0
 
         for _ in range(3):

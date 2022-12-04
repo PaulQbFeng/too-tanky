@@ -1,11 +1,7 @@
 from typing import List, Optional, Callable
 
 import tootanky.stats_calculator as sc
-from tootanky.damage import (
-    damage_physical_auto_attack,
-    damage_after_resistance, 
-    pre_mitigation_spell_damage
-)
+from tootanky.damage import damage_physical_auto_attack, damage_after_resistance, pre_mitigation_spell_damage
 from tootanky.data_parser import ALL_CHAMPION_BASE_STATS
 from tootanky.glossary import DEFAULT_STAT_LIST, EXTRA_STAT_LIST
 from tootanky.item import BaseItem
@@ -23,14 +19,20 @@ class BaseChampion:
         - auto attack
     """
 
-    def __init__(self, champion_name: str, inventory: Optional[List[BaseItem]] = None, level: int = 1, spell_levels: Optional[List[int]] = None):
+    def __init__(
+        self,
+        champion_name: str,
+        inventory: Optional[List[BaseItem]] = None,
+        level: int = 1,
+        spell_levels: Optional[List[int]] = None,
+    ):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
         self.orig_base_stats = sc.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level)
         for stat_name in DEFAULT_STAT_LIST:
             setattr(self, "base_" + stat_name, 0)
             setattr(self, "bonus_" + stat_name, 0)
-        
+
         for stat_name in EXTRA_STAT_LIST:
             setattr(self, stat_name, 0)
 
@@ -41,23 +43,25 @@ class BaseChampion:
             spell_levels = [1, 1, 1, 1]
         self.init_spells(spell_levels)
 
-        self.inventory = Inventory(inventory)
+        self.inventory = Inventory(inventory, champion=self)
         self.orig_bonus_stats = self.get_bonus_stats()
         self.add_bonus_stats_to_champion()
 
         for stat_name in DEFAULT_STAT_LIST:
             setattr(self, "_" + stat_name, getattr(self, "base_" + stat_name) + getattr(self, "bonus_" + stat_name))
-    
+
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
         pass
 
     def getter_wrapper(stat_name: str) -> Callable:
         """Wrapper to use a single getter for all total stat attributes"""
+
         def total_stat_getter(self):
             base_value = getattr(self, "base_" + stat_name)
             bonus_value = getattr(self, "bonus_" + stat_name)
             return base_value + bonus_value
+
         return total_stat_getter
 
     # TODO: define specific setters for stats that are handled differently
@@ -87,10 +91,12 @@ class BaseChampion:
         return self.inventory.item_stats
 
     def apply_item_active(self, item_name, enemy_champion):
-        assert item_name in [item.item_name for item in self.inventory.items], "The item {} is not in the champion's inventory.".format(item_name)
+        assert item_name in [
+            item.item_name for item in self.inventory.items
+        ], "The item {} is not in the champion's inventory.".format(item_name)
         selected_item = self.inventory.get_item(item_name)
         assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
-        return selected_item.apply_active(holder=self, enemy_champion=enemy_champion)
+        return selected_item.apply_active(enemy_champion)
 
     def add_bonus_stats_to_champion(self):
         for name, value in self.orig_bonus_stats._dict.items():
@@ -102,6 +108,7 @@ class BaseChampion:
                 raise AttributeError(f"{name} stat name not recognized")
 
     def equip_item(self, item: BaseItem):
+        item.champion = self
         self.inventory.add_item(item)
         self.orig_bonus_stats = self.get_bonus_stats()
         self.add_bonus_stats_to_champion()
