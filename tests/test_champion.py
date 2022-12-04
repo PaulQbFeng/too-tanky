@@ -85,10 +85,10 @@ def test_get_stats():
 
 
 def test_annie_q():
-    annie = Annie(level=17)
+    annie = Annie(level=17, spell_levels=[5,5,5,5])
     dummy = Dummy(health=1000, bonus_resistance=30)
     annie.equip_item(item=BlastingWand())
-    dmg = annie.spell_q(level=5, enemy_champion=dummy)
+    dmg = annie.spell_q.hit_damage(dummy)
 
     assert round(dmg, 2) == 193.85
 

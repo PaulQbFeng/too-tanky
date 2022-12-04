@@ -29,18 +29,15 @@ def pre_mitigation_spell_damage(
     base_spell_damage: float,
     ratio_damage: float, 
     damage_modifier_flat: float = 0,
-    damage_modifier_percent: float = 0,
+    damage_modifier_ratio: float = 0,
 ):
     """
     Calculates the pre-mitigation damage of a spell or an autoattack
     All values regarding damage modifiers should include the buffs/debuffs coming from spells, summoner spells, or items
     from both the attacker AND the defender.
-    :param: ratio_damage is calculated using ratio_damage_from_list
+    :param: ratio_damage is damage that scales with the champion's or target's stat
     """
-
-    dmg_mod_perc_multiplier = 1 - damage_modifier_percent / 100
-
-    return (base_spell_damage + ratio_damage + damage_modifier_flat) * dmg_mod_perc_multiplier
+    return (base_spell_damage + ratio_damage + damage_modifier_flat) * damage_modifier_ratio
 
 def avg_pre_mitigation_auto_attack_damage(
     base_attack_damage: float,
