@@ -130,9 +130,9 @@ class Sheen(BaseItem):
     item_name = "Sheen"
     type = "Basic"
 
-    def spellblade(self, owner_champion, target_champion):
+    def spellblade(self, owner_champion, target):
         """Calculates the bonus damage dealt with an autoattack : 100% of base AD"""
-        return damage_after_positive_resistance(owner_champion.base_attack_damage, target_champion.bonus_armor)
+        return damage_after_positive_resistance(owner_champion.base_attack_damage, target.bonus_armor)
 
 
 # Epic items
@@ -315,10 +315,10 @@ class Galeforce(BaseItem):
         self.mythic_passive_ratio = [0.2]
         self.mythic_passive_type = ["bonus_move_speed"]
 
-    def apply_active(self, target_champion):
-        max_health = target_champion.orig_base_stats.health + target_champion.orig_bonus_stats.health
-        base_mr = target_champion.base_magic_resist
-        bonus_mr = target_champion.bonus_magic_resist
+    def apply_active(self, target):
+        max_health = target.orig_base_stats.health + target.orig_bonus_stats.health
+        base_mr = target.base_magic_resist
+        bonus_mr = target.bonus_magic_resist
         bonus_ad = self.champion.bonus_attack_damage
         magic_resist_pen_flat = self.champion.magic_resist_pen_flat
         magic_resist_pen_percent = self.champion.magic_resist_pen_percent
@@ -329,7 +329,7 @@ class Galeforce(BaseItem):
         total_damage = 0
 
         for _ in range(3):
-            percent_missing_health = 1 - target_champion.health / max_health
+            percent_missing_health = 1 - target.health / max_health
             if percent_missing_health <= 0.7:
                 pre_mtg_dmg = (base_active_damage + 0.15 * bonus_ad) * (1 + percent_missing_health * 5 / 7)
             else:
@@ -342,7 +342,7 @@ class Galeforce(BaseItem):
                 resistance_pen=magic_resist_pen_percent,
                 bonus_resistance_pen=0,
             )
-            target_champion.take_damage(damage)
+            target.take_damage(damage)
             total_damage += damage
 
         return total_damage

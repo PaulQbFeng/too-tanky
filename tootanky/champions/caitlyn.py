@@ -25,14 +25,14 @@ class Caitlyn(BaseChampion):
         self.spell_e = ECaitlyn(self, level_e)
         self.spell_r = RCaitlyn(self, level_r)
 
-    def auto_attack_damage(self, target_champion, is_crit: bool = False):
+    def auto_attack_damage(self, target, is_crit: bool = False):
         base_attack_damage = self.base_attack_damage
         bonus_attack_damage = self.bonus_attack_damage
         attack_damage = base_attack_damage + bonus_attack_damage
         crit_chance = self.bonus_crit_chance
         crit_damage = self.crit_damage
-        base_armor = target_champion.base_armor
-        bonus_armor = target_champion.bonus_armor
+        base_armor = target.base_armor
+        bonus_armor = target.bonus_armor
         lethality = self.lethality
         armor_pen = self.armor_pen_percent
         bonus_armor_pen = self.bonus_armor_pen_percent
