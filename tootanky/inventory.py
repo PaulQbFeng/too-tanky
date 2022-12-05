@@ -11,15 +11,11 @@ class Inventory:
         else:
             self.items = items
         assert len(self.items) <= 6, "Inventory can't contain more than 6 items."
-        self.nb_legendary = 0
-        self.nb_mythic = 0
+        self.item_type_count = {"Starter": 0, "Basic": 0, "Epic": 0, "Legendary": 0, "Mythic": 0}
         for item in self.items:
             item.champion = champion
-            if item.type == "Legendary":
-                self.nb_legendary += 1
-            if item.type == "Mythic":
-                self.nb_mythic += 1
-        assert self.nb_mythic <= 1, "A champion can't have more than one mythic item."
+            assert self.item_type_count["Mythic"] <= 1, "A champion can't have more than one mythic item."
+            self.item_type_count[item.type] += 1
 
         self.unique_item_passives = []
         self.item_stats = self.get_stats()
@@ -62,12 +58,9 @@ class Inventory:
 
     def add_item(self, item):
         assert len(self.items) <= 5, "Inventory can't contain more than 6 items."
-        if item.type == "Mythic":
-            assert self.nb_mythic == 0, "A champion can't have more than one mythic item."
-            self.nb_mythic += 1
-        if item.type == "Legendary":
-            self.nb_legendary += 1
+        assert self.item_type_count["Mythic"] <= 1, "A champion can't have more than one mythic item."
         self.items.append(item)
+        self.item_type_count[item.type] += 1
         if item.passive.unique:
             if item.passive.name not in self.unique_item_passives:
                 self.unique_item_passives.append(item.passive.name)
@@ -78,16 +71,12 @@ class Inventory:
         indexes = self.get_all_indexes(item_name)
         assert len(indexes) != 0, "The item {} is not in the inventory.".format(item_name)
         # by default, we remove the last occurence to remove an item that did not apply its unique passive
-        item = self.items[indexes[-1]]
-        if item.type == "Legendary":
-            self.nb_legendary -= 1
-        if item.type == "Mythic":
-            self.nb_mythic -= 1
+        item = self.items.pop(indexes[-1])
+        self.item_type_count[item.type] -= 1
         if item.passive.unique:
             if len(indexes) == 1:
                 self.unique_item_passives.remove(item.passive.name)
         self.item_stats = self.item_stats - item.stats
-        del self.items[indexes[-1]]
 
     def mythic_passive_stats(self):
         # TODO
