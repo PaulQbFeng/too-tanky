@@ -35,12 +35,12 @@ class Inventory:
 
     def is_unique_limitation(self, limitations):
         nb_copy = 0
-        for item in self.items:
-            if item.limitation in limitations:
+        i = 0
+        while nb_copy <= 1 and i < len(self.items):
+            if self.items[i].limitation in limitations:
                 nb_copy += 1
-            if nb_copy > 2:
-                return False
-        return True
+            i += 1
+        return nb_copy <= 1
 
     def get_all_indexes(self, name):
         indexes = []
@@ -57,11 +57,11 @@ class Inventory:
         if item.limitation in ["Immolate", "Lifeline", "Mana Charge", "Last Whisper", "Void Pen", "Sightstone",
                                "Ability Haste Capstone", "Quicksilver", "Hydra", "Glory", "Eternity",
                                "Mythic Component"]:
-            assert self.is_unique_limitation([item.limitation])
+            assert self.is_unique_limitation([item.limitation]), "A champion can have only one {} item".format(item.limitation)
         if item.limitation in ["Support", "Jungle"]:
-            assert self.is_unique_limitation(["Support", "Jungle"])
+            assert self.is_unique_limitation(["Support", "Jungle"]), "A champion can have only one Support/Jungle item"
         if item.limitation in ["Crit Modifier", "Marksman Capstone"]:
-            assert self.is_unique_limitation(["Crit Modifier", "Marksman Capstone"])
+            assert self.is_unique_limitation(["Crit Modifier", "Marksman Capstone"]), "A champion can have only one Crit Modifier/Marksman Capstone item"
 
     def apply_item_passive(self, item):
         # TODO: some items have unique passives AND passives that are not unique
@@ -82,10 +82,10 @@ class Inventory:
     def add_item(self, item):
         assert len(self.items) <= 5, "Inventory can't contain more than 6 items."
         self.item_type_count[item.type] += 1
+        self.items.append(item)
         self.check_item(item)
         self.apply_item_passive(item)
         self.item_stats = self.item_stats + item.stats
-        self.items.append(item)
 
     def remove_item(self, name):
         indexes = self.get_all_indexes(name)

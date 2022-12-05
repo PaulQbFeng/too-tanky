@@ -68,6 +68,10 @@ class BamiCinder(BaseItem):  # missing passive
     name = "Bami's Cinder"
     type = "Basic"
 
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Immolate"
+
 
 class BFSword(BaseItem):
     name = "B. F. Sword"
@@ -159,6 +163,7 @@ class BlightingJewel(BaseItem):
 
     def __init__(self):
         super().__init__()
+        self.limitation = "Void Pen"
         self.stats.add("magic_resist_pen_percent", 0.13)
 
 
@@ -191,6 +196,10 @@ class Frostfang(BaseItem):  # missing base_mana_regen
     name = "Frostfang"
     type = "Epic"
 
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Support"
+
 
 class GiantBelt(BaseItem):
     name = "Giant's Belt"
@@ -205,6 +214,10 @@ class GlacialBuckler(BaseItem):  # missing ability haste
 class HarrowingCrescent(BaseItem):  # missing base_mana_regen
     name = "Harrowing Crescent"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Support"
 
 
 class HearthboundAxe(BaseItem):  # missing passive (bonus_move_speed when basic attacks)
@@ -223,12 +236,17 @@ class LastWhisper(BaseItem):
 
     def __init__(self):
         super().__init__()
+        self.limitation = "Last Whisper"
         self.stats.armor_pen_percent = 0.18
 
 
 class LostChapter(BaseItem):  # missing ability haste
     name = "Lost Chapter"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Mythic Component"
 
 
 class NegatronCloak(BaseItem):
@@ -240,10 +258,18 @@ class Noonquiver(BaseItem):
     name = "Noonquiver"
     type = "Epic"
 
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Mythic Component"
+
 
 class RunesteelSpaulders(BaseItem):  # missing base_health_regen
     name = "Runesteel Spaulders"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Support"
 
 
 class SerratedDirk(BaseItem):
@@ -262,10 +288,18 @@ class TargonBuckler(BaseItem):  # missing base_health_regen
     name = "Targon's Buckler"
     type = "Epic"
 
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Support"
+
 
 class WatchfulWardstone(BaseItem):  # missing ability haste
     name = "Watchful Wardstone"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Sightstone"
 
 
 # Legendary items
@@ -287,6 +321,7 @@ class SeryldaGrudge(BaseItem):  # missing passive, ability haste
 
     def __init__(self):
         super().__init__()
+        self.limitation = "Last Whisper"
         self.stats.armor_pen_percent = 0.3
 
 
