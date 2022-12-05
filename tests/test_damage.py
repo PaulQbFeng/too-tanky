@@ -1,5 +1,3 @@
-import math
-
 from tootanky.champion import Dummy
 from tootanky.champions import MissFortune
 from tootanky.damage import damage_physical_auto_attack, pre_mitigation_auto_attack_damage

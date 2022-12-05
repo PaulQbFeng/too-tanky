@@ -1,5 +1,8 @@
-import json, os
+import json
+import os
+
 import matplotlib.pyplot as plt
+
 from tootanky.data_parser import get_json_files
 
 

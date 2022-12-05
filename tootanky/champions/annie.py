@@ -1,6 +1,7 @@
 from tootanky.champion import BaseChampion
 from tootanky.spell import BaseSpell
 
+
 class Annie(BaseChampion):
     champion_name = "Annie"
 

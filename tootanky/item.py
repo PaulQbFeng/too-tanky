@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from tootanky.damage import damage_after_resistance, damage_after_positive_resistance
+from tootanky.damage import damage_after_positive_resistance, damage_after_resistance
 from tootanky.data_parser import ALL_ITEM_STATS
 from tootanky.stats import Stats
 

@@ -1,5 +1,6 @@
+from tootanky.damage import damage_after_resistance, pre_mitigation_spell_damage
 from tootanky.data_parser import ALL_CHAMPION_SPELLS
-from tootanky.damage import pre_mitigation_spell_damage, damage_after_resistance
+
 
 class BaseSpell:
     """
@@ -15,6 +16,7 @@ class BaseSpell:
     Not all spell specifications are included in the data file which means there is a need to double check
     the current specs + add the missing ones inside the subclass of BaseSpell.
     """
+
     def __init__(self, champion, spell_key, level=1):
         self.champion = champion
         self.spell_key = spell_key
@@ -31,11 +33,11 @@ class BaseSpell:
         if spell_key in ["q", "w", "e"]:
             return "basic"
         return "ulti"
-    
+
     def get_resistance_type(self) -> str:
         """Get resistance type based on spell damage type"""
         # TODO: Might be changed into a dict
-        
+
         if self.damage_type == "magical":
             res_type = "magic_resist"
         elif self.damage_type == "physical":
@@ -43,7 +45,7 @@ class BaseSpell:
         else:
             raise AttributeError(f"spell_damage type {self.damage_type} not taken into account")
 
-        return res_type 
+        return res_type
 
     def print_specs(self):
         """pretty print the stats"""
@@ -78,12 +80,12 @@ class BaseSpell:
         """Calculates the damage dealt to a champion with a spell"""
 
         ratio_damage = self.ratio_damage(target)
-        
+
         pre_mtg_dmg = pre_mitigation_spell_damage(
             self.get_base_damage(),
             ratio_damage,
             damage_modifier_flat=damage_modifier_flat,
-            damage_modifier_ratio=damage_modifier_ratio
+            damage_modifier_ratio=damage_modifier_ratio,
         )
 
         res_type = self.target_res_type
@@ -91,14 +93,14 @@ class BaseSpell:
             bonus_resistance_pen = self.champion.bonus_armor_pen_percent
         else:
             bonus_resistance_pen = 0
-        # TODO: Can be refactored once we know more about bonus res pen    
+        # TODO: Can be refactored once we know more about bonus res pen
         post_mtg_dmg = damage_after_resistance(
             pre_mitigation_damage=pre_mtg_dmg,
             base_resistance=getattr(target, f"base_{res_type}"),
             bonus_resistance=getattr(target, f"bonus_{res_type}"),
             flat_resistance_pen=getattr(self.champion, f"{res_type}_pen_flat"),
             resistance_pen=getattr(self.champion, f"{res_type}_pen_percent"),
-            bonus_resistance_pen=bonus_resistance_pen
+            bonus_resistance_pen=bonus_resistance_pen,
         )
 
         return post_mtg_dmg
@@ -117,5 +119,5 @@ class BaseSpell:
         damage_modifier_flat = self.get_damage_modifier_flat(**kwargs)
         damage_modifier_ratio = self.get_damage_modifier_ratio(**kwargs)
         damage = self.damage(target, damage_modifier_flat, damage_modifier_ratio)
-        self.on_hit_effect(target, **kwargs) # Be sure to compute the damage before the effect
+        self.on_hit_effect(target, **kwargs)  # Be sure to compute the damage before the effect
         return damage

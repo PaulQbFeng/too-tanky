@@ -1,5 +1,6 @@
 from tootanky.champion import BaseChampion
 
+
 class Azir(BaseChampion):
     champion_name = "Azir"
 
