@@ -1,13 +1,11 @@
-from typing import List, Optional, Callable
+from typing import Callable, List, Optional
 
 import tootanky.stats_calculator as sc
-from tootanky.damage import damage_physical_auto_attack, damage_after_resistance, pre_mitigation_spell_damage
+from tootanky.damage import damage_physical_auto_attack
 from tootanky.data_parser import ALL_CHAMPION_BASE_STATS
 from tootanky.glossary import DEFAULT_STAT_LIST, EXTRA_STAT_LIST
-from tootanky.item import BaseItem
-from tootanky.stats import Stats
-from tootanky.spell import BaseSpell
 from tootanky.inventory import Inventory
+from tootanky.item import BaseItem
 
 
 # TODO: Might be a good opportunity to use abstract class for base champion

@@ -1,5 +1,6 @@
 from tootanky.champion import BaseChampion
-from tootanky.damage import damage_after_resistance, pre_mitigation_spell_damage
+from tootanky.damage import (damage_after_resistance,
+                             pre_mitigation_spell_damage)
 from tootanky.spell import BaseSpell
 
 

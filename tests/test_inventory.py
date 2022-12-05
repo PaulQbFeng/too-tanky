@@ -1,5 +1,5 @@
 from tootanky.inventory import Inventory
-from tootanky.item import LongSword, CloakofAgility, SeryldaGrudge, Galeforce, SerratedDirk
+from tootanky.item import CloakofAgility, Galeforce, LongSword, SerratedDirk, SeryldaGrudge
 
 
 def test_inventory():
