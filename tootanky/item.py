@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Optional
 
 from tootanky.damage import damage_after_resistance, damage_after_positive_resistance
 from tootanky.data_parser import ALL_ITEM_STATS
@@ -29,11 +30,12 @@ class BaseItem:
     Additional effects passive/active are handled in the children Champion specific classes.
     """
 
-    def __init__(self, item_name: str, item_type: str):
-        item_stats = ALL_ITEM_STATS[item_name].copy()
+    def __init__(self, name: str, type: str, limitation: Optional[str] = None):
+        item_stats = ALL_ITEM_STATS[name].copy()
         self.gold = item_stats.pop("gold")
         self.stats = Stats(item_stats)
-        self.type = item_type
+        self.type = type
+        self.limitation = limitation
         self.passive = ItemPassive()
 
     def apply_passive(self):
@@ -44,126 +46,127 @@ class BaseItem:
 # TODO: Cull, Dark Seal, Gustwalker Hatchling, Mosstomper Seedling, Relic Shield,
 #  Scorchclaw Pup, Spectral Sickle, Spellthief's Edge, Steel Shoulderguards, Tear of the Goddess
 class DoranBlade(BaseItem):
-    item_name = "Doran's Blade"
+    name = "Doran's Blade"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Starter", **kwargs)
+        super().__init__(name=__class__.name, type="Starter", **kwargs)
 
 
 class DoranRing(BaseItem):  # missing passive (mana_regen)
-    item_name = "Doran's Ring"
+    name = "Doran's Ring"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 class DoranShield(BaseItem):  # missing passive (health_regen after taking damage)
-    item_name = "Doran's Shield"
+    name = "Doran's Shield"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 # Basic items
 # TODO: Catalyst of Aeons, Faerie Charm, Rejuvenation Bead
 class AmplifyingTome(BaseItem):
-    item_name = "Amplifying Tome"
+    name = "Amplifying Tome"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 class BamiCinder(BaseItem):  # missing passive
-    item_name = "Bami's Cinder"
+    name = "Bami's Cinder"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", limitation="Immolate", **kwargs)
 
 
 class BFSword(BaseItem):
-    item_name = "B. F. Sword"
+    name = "B. F. Sword"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 class BlastingWand(BaseItem):
-    item_name = "Blasting Wand"
+    name = "Blasting Wand"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 class CloakofAgility(BaseItem):
-    item_name = "Cloak of Agility"
+    name = "Cloak of Agility"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 class ClothArmor(BaseItem):
-    item_name = "Cloth Armor"
+    name = "Cloth Armor"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 class Dagger(BaseItem):
-    item_name = "Dagger"
+    name = "Dagger"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 class LongSword(BaseItem):
-    item_name = "Long Sword"
+    name = "Long Sword"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 class NeedlesslyLargeRod(BaseItem):
-    item_name = "Needlessly Large Rod"
+    name = "Needlessly Large Rod"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 class NullMagicMantle(BaseItem):
-    item_name = "Null-Magic Mantle"
+    name = "Null-Magic Mantle"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 class PickAxe(BaseItem):
-    item_name = "Pickaxe"
+    name = "Pickaxe"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 class RubyCrystal(BaseItem):
-    item_name = "Ruby Crystal"
+    name = "Ruby Crystal"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 class SapphireCrystal(BaseItem):
-    item_name = "Sapphire Crystal"
+    name = "Sapphire Crystal"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
 
 class Sheen(BaseItem):
-    item_name = "Sheen"
+    name = "Sheen"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Basic", **kwargs)
+        super().__init__(name=__class__.name, type="Basic", **kwargs)
 
     def spellblade(self, owner_champion, enemy_champion):
+        # TODO: this should be a unique passive
         """Calculates the bonus damage dealt with an autoattack : 100% of base AD"""
         return damage_after_positive_resistance(
             owner_champion.base_attack_damage, enemy_champion.bonus_armor
@@ -175,152 +178,152 @@ class Sheen(BaseItem):
 #  Leeching Leer, Oblivion Orb, Phage, Quicksilver Sash, Rageknife, Recurve Bow, Seeker's Armguard, Spectre's Cowl,
 #  Tiamat, Vampiric Scepter, Verdant Barrier, Warden's Mail, Winged Moonplate, Zeal
 class AegisLegion(BaseItem):  # missing ability haste
-    item_name = "Aegis of the Legion"
+    name = "Aegis of the Legion"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
 
 
 class AetherWisp(BaseItem):  # missing unique passive (bonus_move_speed)
-    item_name = "Aether Wisp"
+    name = "Aether Wisp"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
 
 
 class BandleglassMirror(BaseItem):  # missing ability haste and base_mana_regen
-    item_name = "Bandleglass Mirror"
+    name = "Bandleglass Mirror"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
 
 
 class BlightingJewel(BaseItem):
-    item_name = "Blighting Jewel"
+    name = "Blighting Jewel"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", limitation="Void Pen", **kwargs)
         self.stats.add("magic_resist_pen_percent", 13)
 
 
 class BrambleVest(BaseItem):  # missing passive
-    item_name = "Bramble Vest"
+    name = "Bramble Vest"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
 
 
 class CaulfieldWarhammer(BaseItem):  # missing ability haste
-    item_name = "Caulfield's Warhammer"
+    name = "Caulfield's Warhammer"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
 
 
 class ChainVest(BaseItem):
-    item_name = "Chain Vest"
+    name = "Chain Vest"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
 
 
 class CrystallineBracer(BaseItem):  # missing base_health_regen
-    item_name = "Crystalline Bracer"
+    name = "Crystalline Bracer"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
 
 
 class FiendishCodex(BaseItem):  # missing ability haste
-    item_name = "Fiendish Codex"
+    name = "Fiendish Codex"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
 
 
 class Frostfang(BaseItem):  # missing base_mana_regen
-    item_name = "Frostfang"
+    name = "Frostfang"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", limitation="Support", **kwargs)
 
 
 class GiantBelt(BaseItem):
-    item_name = "Giant's Belt"
+    name = "Giant's Belt"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
 
 
 class GlacialBuckler(BaseItem):  # missing ability haste
-    item_name = "Glacial Buckler"
+    name = "Glacial Buckler"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
 
 
 class HarrowingCrescent(BaseItem):  # missing base_mana_regen
-    item_name = "Harrowing Crescent"
+    name = "Harrowing Crescent"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", limitation="Support", **kwargs)
 
 
 class HearthboundAxe(BaseItem):  # missing passive (bonus_move_speed when basic attacks)
-    item_name = "Hearthbound Axe"
+    name = "Hearthbound Axe"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
 
 
 class Kindlegem(BaseItem):  # missing ability haste
-    item_name = "Kindlegem"
+    name = "Kindlegem"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
 
 
 class LastWhisper(BaseItem):
-    item_name = "Last Whisper"
+    name = "Last Whisper"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", limitation="Last Whisper", **kwargs)
         self.stats.add("armor_pen_percent", 18)
 
 
 class LostChapter(BaseItem):  # missing ability haste
-    item_name = "Lost Chapter"
+    name = "Lost Chapter"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", limitation="Mythic Component", **kwargs)
 
 
 class NegatronCloak(BaseItem):
-    item_name = "Negatron Cloak"
+    name = "Negatron Cloak"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
 
 
 class Noonquiver(BaseItem):
-    item_name = "Noonquiver"
+    name = "Noonquiver"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", limitation="Mythic Component", **kwargs)
 
 
 class RunesteelSpaulders(BaseItem):  # missing base_health_regen
-    item_name = "Runesteel Spaulders"
+    name = "Runesteel Spaulders"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", limitation="Support", **kwargs)
 
 
 class SerratedDirk(BaseItem):
-    item_name = "Serrated Dirk"
+    name = "Serrated Dirk"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", **kwargs)
         self.passive = ItemPassive(name="Gouge", unique=True, stats=Stats({"lethality": 10}))
 
     def apply_passive(self):
@@ -328,17 +331,17 @@ class SerratedDirk(BaseItem):
 
 
 class TargonBuckler(BaseItem):  # missing base_health_regen
-    item_name = "Targon's Buckler"
+    name = "Targon's Buckler"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", limitation="Support", **kwargs)
 
 
 class WatchfulWardstone(BaseItem):  # missing ability haste
-    item_name = "Watchful Wardstone"
+    name = "Watchful Wardstone"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Epic", **kwargs)
+        super().__init__(name=__class__.name, type="Epic", limitation="Sightstone", **kwargs)
 
 
 # Legendary items
@@ -355,18 +358,18 @@ class WatchfulWardstone(BaseItem):  # missing ability haste
 #  Turbo Chemtank, Umbral Glaive, Vigilant Wardstone, Void Staff, Warmog's Armor, Winter's Approach, Wit's End,
 #  Zeke's Convergence, Zhonya's Hourglass
 class SeryldaGrudge(BaseItem):  # missing passive, ability haste
-    item_name = "Serylda's Grudge"
+    name = "Serylda's Grudge"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Legendary", **kwargs)
+        super().__init__(name=__class__.name, type="Legendary", limitation="Last Whisper", **kwargs)
         self.stats.add("armor_pen_percent", 30)
 
 
 class YoumuuGhostblade(BaseItem):  # missing passive, active, ability haste
-    item_name = "Youmuu's Ghostblade"
+    name = "Youmuu's Ghostblade"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Legendary", **kwargs)
+        super().__init__(name=__class__.name, type="Legendary", **kwargs)
         self.stats.add("lethality", 18)
 
 
@@ -377,10 +380,10 @@ class YoumuuGhostblade(BaseItem):  # missing passive, active, ability haste
 #  Moonstone Renewer, Night Harvester, Prowler's Claw, Radiant Virtue, Riftmaker, Rod of Ages, Shurelya's Battlesong,
 #  Stridebreaker, Trinity Force
 class Galeforce(BaseItem):
-    item_name = "Galeforce"
+    name = "Galeforce"
 
     def __init__(self, **kwargs):
-        super().__init__(item_name=__class__.item_name, item_type="Mythic", **kwargs)
+        super().__init__(name=__class__.name, type="Mythic", **kwargs)
         self.mythic_passive_ratio = [0.2]
         self.mythic_passive_type = ["bonus_move_speed"]
 
@@ -418,4 +421,4 @@ class Galeforce(BaseItem):
 
 
 
-ALL_ITEM_CLASSES = {cls.item_name: cls for cls in BaseItem.__subclasses__()}
+ALL_ITEM_CLASSES = {cls.name: cls for cls in BaseItem.__subclasses__()}

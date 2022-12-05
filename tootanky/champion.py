@@ -80,7 +80,7 @@ class BaseChampion:
         return self.inventory.item_stats
 
     def apply_item_active(self, item_name, enemy_champion):
-        assert item_name in [item.item_name for item in self.inventory.items], "The item {} is not in the champion's inventory.".format(item_name)
+        assert item_name in [item.name for item in self.inventory.items], "The item {} is not in the champion's inventory.".format(item_name)
         selected_item = self.inventory.get_item(item_name)
         assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
         return selected_item.apply_active(holder=self, enemy_champion=enemy_champion)
