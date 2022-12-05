@@ -18,14 +18,21 @@ class Caitlyn(BaseChampion):
         if 13 <= self.level <= 18:
             self.passive_multiplier = 1.2
 
-    def auto_attack_damage(self, enemy_champion, is_crit: bool = False):
+    def init_spells(self, spell_levels):
+        [level_q, level_w, level_e, level_r] = spell_levels
+        self.spell_q = QCaitlyn(self, level_q)
+        self.spell_w = WCaitlyn(self, level_w)
+        self.spell_e = ECaitlyn(self, level_e)
+        self.spell_r = RCaitlyn(self, level_r)
+
+    def auto_attack_damage(self, target, is_crit: bool = False):
         base_attack_damage = self.base_attack_damage
         bonus_attack_damage = self.bonus_attack_damage
         attack_damage = base_attack_damage + bonus_attack_damage
         crit_chance = self.bonus_crit_chance
         crit_damage = self.crit_damage
-        base_armor = enemy_champion.base_armor
-        bonus_armor = enemy_champion.bonus_armor
+        base_armor = target.base_armor
+        bonus_armor = target.bonus_armor
         lethality = self.lethality
         armor_pen = self.armor_pen_percent
         bonus_armor_pen = self.bonus_armor_pen_percent
@@ -33,10 +40,8 @@ class Caitlyn(BaseChampion):
         std_headshot_dmg = attack_damage * (self.passive_multiplier + 1.3125 * crit_chance)
 
         if self.w_hit:
-            damage_modifier_flat = (
-                std_headshot_dmg + self.w.base_spell_damage + 
-                self.w.bonus_attack_damage_ratio * bonus_attack_damage
-            )
+            bonus_flat, bonus_ratio = self.spell_w.get_headshot_bonus_damage()
+            damage_modifier_flat = std_headshot_dmg + bonus_flat + bonus_ratio * bonus_attack_damage
             self.w_hit = False
         else:
             if self.e_hit:
@@ -64,98 +69,77 @@ class Caitlyn(BaseChampion):
         )
         return damage
 
-    def spell_q(self, level, enemy_champion):
-        self.q = QCaitlyn(level=level)
-
-        return self.spell_damage(spell=self.q, enemy_champion=enemy_champion)
-
-
-    def spell_w(self, level):
-        self.w = WCaitlyn(level=level)
-        self.w_hit = True
-
-    def spell_e(self, level, enemy_champion):
-        self.e = ECaitlyn(level=level)
-        self.e_hit = True
-
-        return self.spell_damage(spell=self.e, enemy_champion=enemy_champion)
-
-
-    def spell_r(self, level, enemy_champion):
-        self.r = RCaitlyn(level=level)
-
-        damage_modifier_flat = self.r.bonus_attack_damage_ratio * self.bonus_attack_damage
-
-        post_mtg_dmg = self.spell_damage(
-            spell=self.r, 
-            enemy_champion=enemy_champion, 
-            damage_modifier_flat=damage_modifier_flat
-        )
-
-        return post_mtg_dmg * (1 + self.bonus_crit_chance * 0.25)
-
 
 class QCaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "q"
 
-    def __init__(self, level):
-        super().__init__(champion_name=__class__.champion_name, spell_key=__class__.spell_key, level=level)
+    def __init__(self, champion, level):
+        super().__init__(champion, spell_key=__class__.spell_key, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "physical"
         self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [50, 90, 130, 170, 210]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratio_per_level = [1.25, 1.45, 1.65, 1.85, 2.05]
-        self.ratios = [self.ratio_per_level[level - 1]]
-        self.ratio_stats = ["attack_damage"]
+        self.ratios = [("attack_damage", [1.25, 1.45, 1.65, 1.85, 2.05])]
+
+    def get_ratio_per_level(self):
+        return self.ratio_per_level[self.level - 1]
 
 
 class WCaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "w"
 
-    def __init__(self, level):
-        super().__init__(champion_name=__class__.champion_name, spell_key=__class__.spell_key, level=level)
+    def __init__(self, champion, level):
+        super().__init__(champion, spell_key=__class__.spell_key, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "physical"
         self.target_res_type = self.get_resistance_type()
-        self.base_damage_per_level = [40, 85, 130, 175, 220]
-        self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratio_per_level = [0.4, 0.5, 0.6, 0.7, 0.8]
-        self.bonus_attack_damage_ratio = self.ratio_per_level[level-1]
+        self.base_damage_per_level = [0, 0, 0, 0, 0]
+        self.headshot_bonus_damage_flat = [40, 85, 130, 175, 220]
+        self.headshot_bonus_damage_ratio = [0.4, 0.5, 0.6, 0.7, 0.8]
+
+    def get_headshot_bonus_damage(self):
+        flat = self.headshot_bonus_damage_flat[self.level - 1]
+        ratio = self.headshot_bonus_damage_ratio[self.level - 1]
+        return flat, ratio
+
+    def on_hit_effect(self, target):
+        self.champion.w_hit = True
 
 
 class ECaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "e"
 
-    def __init__(self, level):
-        super().__init__(champion_name=__class__.champion_name, spell_key=__class__.spell_key, level=level)
+    def __init__(self, champion, level):
+        super().__init__(champion, spell_key=__class__.spell_key, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
         self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [80, 130, 180, 230, 280]
-        self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.ratios = [0.8]
-        self.ratio_stats = ["ability_power"]
+        self.ratios = [("ability_power", 0.8)]
+
+    def on_hit_effect(self, target):
+        self.champion.e_hit = True
 
 
 class RCaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "r"
 
-    def __init__(self, level):
-        super().__init__(champion_name=__class__.champion_name, spell_key=__class__.spell_key, level=level)
+    def __init__(self, champion, level):
+        super().__init__(champion, spell_key=__class__.spell_key, level=level)
 
-        self.nature = self.get_spell_nature(self.spell_key)        
+        self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "physical"
         self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [300, 525, 750]
-        self.base_spell_damage = self.base_damage_per_level[level - 1]
-        self.bonus_attack_damage_ratio = 2
-        self.ratios = []
-        self.ratio_stats = []
+        self.ratios = [("bonus_attack_damage", 2)]
+
+    def get_damage_modifier_ratio(self):
+        return 1 + self.champion.bonus_crit_chance / 4

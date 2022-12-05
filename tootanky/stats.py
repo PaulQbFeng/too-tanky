@@ -1,4 +1,5 @@
-from typing import Optional
+import copy
+from typing import Any, Optional
 
 
 class Stats:
@@ -11,13 +12,20 @@ class Stats:
         if stat_dict is None:
             self._dict = {}
         else:
-            self._dict = stat_dict.copy()
+            self._dict = copy.deepcopy(stat_dict)
 
     def __getattr__(self, attribute):
         """Get attribute from underlying dict, default at 0"""
         return self._dict.get(attribute, 0)
 
-    def __add__(self, stats):
+    def __setattr__(self, __name: str, __value: Any) -> None:
+        """Set attribute to the underlying dict"""
+        if __name == "_dict":
+            super().__setattr__("_dict", __value)
+        else:
+            self._dict[__name] = __value
+
+    def __add__(self, stats: "Stats"):
         """
         Magic method to add to Stats object s1 + s2
         There are 3 cases to separate:
@@ -30,7 +38,7 @@ class Stats:
             if name not in self._dict:
                 addition[name] = value
             elif name.endswith("_pen_percent"):
-                addition[name] = 100 * (1 - (1 - self._dict.get(name) / 100) * (1 - value / 100))
+                addition[name] = 1 - (1 - self._dict.get(name)) * (1 - value)
             else:
                 addition[name] = self._dict.get(name) + value
 
@@ -49,7 +57,7 @@ class Stats:
             if name not in self._dict:
                 subtraction[name] = -value
             elif name.endswith("_pen_percent"):
-                subtraction[name] = 100 * (1 - (1 - self._dict.get(name) / 100) / (1 - value / 100))
+                subtraction[name] = 1 - (1 - self._dict.get(name)) / (1 - value)
             else:
                 subtraction[name] = self._dict.get(name) - value
 

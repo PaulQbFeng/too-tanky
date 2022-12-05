@@ -1,4 +1,5 @@
 from tootanky.champion import BaseChampion
+
 from .aatrox import Aatrox
 from .ahri import Ahri
 from .akali import Akali

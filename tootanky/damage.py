@@ -15,32 +15,30 @@ def pre_mitigation_auto_attack_damage(
     from both the attacker AND the defender
     """
     tot_off_stats = base_offensive_stats + bonus_offensive_stats
-    dmg_mod_perc_multiplier = 1 + damage_modifier_percent / 100
+    dmg_mod_ratio = 1 + damage_modifier_percent
 
     if crit:
-        crit_multiplier = (1.75 + crit_damage)
+        crit_multiplier = 1.75 + crit_damage
     else:
         crit_multiplier = 1
 
-    return (tot_off_stats * crit_multiplier + damage_modifier_flat) * dmg_mod_perc_multiplier
+    return (tot_off_stats * crit_multiplier + damage_modifier_flat) * dmg_mod_ratio
 
 
 def pre_mitigation_spell_damage(
     base_spell_damage: float,
-    ratio_damage: float, 
+    ratio_damage: float,
     damage_modifier_flat: float = 0,
-    damage_modifier_percent: float = 0,
+    damage_modifier_ratio: float = 0,
 ):
     """
     Calculates the pre-mitigation damage of a spell or an autoattack
     All values regarding damage modifiers should include the buffs/debuffs coming from spells, summoner spells, or items
     from both the attacker AND the defender.
-    :param: ratio_damage is calculated using ratio_damage_from_list
+    :param: ratio_damage is damage that scales with the champion's or target's stat
     """
+    return (base_spell_damage + ratio_damage + damage_modifier_flat) * damage_modifier_ratio
 
-    dmg_mod_perc_multiplier = 1 - damage_modifier_percent / 100
-
-    return (base_spell_damage + ratio_damage + damage_modifier_flat) * dmg_mod_perc_multiplier
 
 
 def avg_pre_mitigation_auto_attack_damage(
@@ -58,9 +56,9 @@ def avg_pre_mitigation_auto_attack_damage(
     from both the attacker AND the defender
     """
     tot_off_stats = base_attack_damage + bonus_attack_damage
-    dmg_mod_perc_multiplier = 1 - damage_modifier_percent / 100
+    dmg_mod_ratio = 1 - damage_modifier_percent
 
-    return  tot_off_stats * dmg_mod_perc_multiplier * (1 + crit_chance * (0.75 + crit_damage)) + damage_modifier_flat
+    return tot_off_stats * dmg_mod_ratio * (1 + crit_chance * (0.75 + crit_damage)) + damage_modifier_flat
 
 
 def damage_after_positive_resistance(pre_mitigation_auto_attack_damage: float, resistance: float):
@@ -96,15 +94,14 @@ def damage_after_resistance(
     Calculates the output damage if X amount of pre-mitigation damage is dealt to a champion with Y amount of resistance.
     """
     defense_resistance = base_resistance + bonus_resistance
-    res_pen_multiplier = 1 - resistance_pen / 100
-    bonus_res_pen_multiplier = 1 - bonus_resistance_pen / 100
+    res_pen_multiplier = 1 - resistance_pen
+    bonus_res_pen_multiplier = 1 - bonus_resistance_pen
 
     if defense_resistance < 0:
         return damage_after_negative_resistance(pre_mitigation_damage, defense_resistance)
     else:
         resistance_eq = (
-            base_resistance * res_pen_multiplier
-            + bonus_resistance * res_pen_multiplier * bonus_res_pen_multiplier
+            base_resistance * res_pen_multiplier + bonus_resistance * res_pen_multiplier * bonus_res_pen_multiplier
         )
         resistance_eq -= flat_resistance_pen
         resistance_eq = max(resistance_eq, 0)

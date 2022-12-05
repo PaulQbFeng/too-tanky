@@ -26,17 +26,18 @@ def test_serrated_unique_passive():
 
     assert ahri.orig_bonus_stats.attack_damage == 50
     assert ahri.orig_bonus_stats.lethality == 10
-    assert ahri.orig_bonus_stats.armor_pen_percent == 18
+    assert ahri.orig_bonus_stats.armor_pen_percent == 0.18
 
     ahri.equip_item(ALL_ITEM_CLASSES["Serrated Dirk"]())
 
     assert ahri.orig_bonus_stats.attack_damage == 80
     assert ahri.orig_bonus_stats.lethality == 10
-    assert ahri.orig_bonus_stats.armor_pen_percent == 18
+    assert ahri.orig_bonus_stats.armor_pen_percent == 0.18
 
 
-def galeforce_default_run(item_names, enemy_champion, test_bonus_attack_damage: float, test_crit_chance: float,
-                          test_active: list):
+def galeforce_default_run(
+    item_names, target, test_bonus_attack_damage: float, test_crit_chance: float, test_active: list
+):
     inventory = [ALL_ITEM_CLASSES[item_name]() for item_name in item_names]
     ahri = Ahri(level=1, inventory=inventory)
     assert ahri.bonus_attack_damage == test_bonus_attack_damage
@@ -45,15 +46,15 @@ def galeforce_default_run(item_names, enemy_champion, test_bonus_attack_damage: 
 
     for champion_level in range(1, 19):
         ahri = Ahri(level=champion_level, inventory=inventory)
-        assert round(ahri.apply_item_active(item_name="Galeforce", enemy_champion=enemy_champion)) == test_active[champion_level-1]
-        enemy_champion._health = enemy_champion.base_health + enemy_champion.bonus_health
+        assert round(ahri.apply_item_active(item_name="Galeforce", target=target)) == test_active[champion_level - 1]
+        target._health = target.base_health + target.bonus_health
 
     ahri = Ahri(level=1, inventory=inventory)
     dummy = Dummy(2000, 60)
     test_active_2 = [134, 275, 422, 577, 739, 909, 1087, 1273, 1468, 1666]
     total_damage = 0
     for i in range(10):
-        total_damage += ahri.apply_item_active(item_name="Galeforce", enemy_champion=dummy)
+        total_damage += ahri.apply_item_active(item_name="Galeforce", target=dummy)
         assert round(total_damage) == test_active_2[i]
 
 
@@ -61,8 +62,8 @@ def test_galeforce():
     item_names = ["Galeforce", "Long Sword", "Cloak of Agility"]
     galeforce_default_run(
         item_names=item_names,
-        enemy_champion=Dummy(1000, 60),
+        target=Dummy(1000, 60),
         test_bonus_attack_damage=70,
         test_crit_chance=0.35,
-        test_active=[136, 136, 136, 136, 136, 136, 136, 136, 136, 146, 156, 167, 177, 187, 197, 207, 218, 228]
+        test_active=[136, 136, 136, 136, 136, 136, 136, 136, 136, 146, 156, 167, 177, 187, 197, 207, 218, 228],
     )

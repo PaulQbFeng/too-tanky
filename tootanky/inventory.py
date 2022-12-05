@@ -1,19 +1,20 @@
-from typing import Optional, List
+from typing import List, Optional
+
 from tootanky.item import BaseItem
 from tootanky.stats import Stats
 
 
 class Inventory:
 
-    def __init__(self, items: Optional[List[BaseItem]] = None):
+    def __init__(self, items: Optional[List[BaseItem]] = None, champion=None):
         self.items = []
         self.unique_item_passives = []
-        self.nb_legendary = 0
-        self.nb_mythic = 0
+        self.item_type_count = {"Starter": 0, "Basic": 0, "Epic": 0, "Legendary": 0, "Mythic": 0}
         self.item_stats = Stats()
         if items is not None:
             assert len(items) <= 6, "Inventory can't contain more than 6 items."
             for item in items:
+                item.champion = champion
                 self.add_item(item)
 
     def get_item(self, name):
@@ -52,7 +53,7 @@ class Inventory:
         if item.type == "Legendary":
             assert self.is_unique_copy(item.name), "A champion can't have more than one copy of {}".format(item.name)
         if item.type == "Mythic":
-            assert self.nb_mythic <= 1, "A champion can't have more than one mythic item."
+            assert self.item_type_count["Mythic"] <= 1, "A champion can't have more than one mythic item."
         if item.limitation in ["Immolate", "Lifeline", "Mana Charge", "Last Whisper", "Void Pen", "Sightstone",
                                "Ability Haste Capstone", "Quicksilver", "Hydra", "Glory", "Eternity",
                                "Mythic Component"]:
@@ -64,12 +65,13 @@ class Inventory:
 
     def apply_item_passive(self, item):
         # TODO: some items have unique passives AND passives that are not unique
-        if item.passive.unique:
-            if item.passive.name not in self.unique_item_passives:
-                self.unique_item_passives.append(item.passive.name)
+        if hasattr(item, "passive"):
+            if item.passive.unique:
+                if item.passive.name not in self.unique_item_passives:
+                    self.unique_item_passives.append(item.passive.name)
+                    item.apply_passive()
+            else:
                 item.apply_passive()
-        else:
-            item.apply_passive()
 
     def get_price(self):
         price = 0
@@ -79,10 +81,7 @@ class Inventory:
 
     def add_item(self, item):
         assert len(self.items) <= 5, "Inventory can't contain more than 6 items."
-        if item.type == "Legendary":
-            self.nb_legendary += 1
-        if item.type == "Mythic":
-            self.nb_mythic += 1
+        self.item_type_count[item.type] += 1
         self.check_item(item)
         self.apply_item_passive(item)
         self.item_stats = self.item_stats + item.stats
@@ -92,16 +91,13 @@ class Inventory:
         indexes = self.get_all_indexes(name)
         assert len(indexes) != 0, "The item {} is not in the inventory.".format(name)
         # by default, we remove the last occurence to remove an item that did not apply its unique passive
-        item = self.items[indexes[-1]]
-        if item.type == "Legendary":
-            self.nb_legendary -= 1
-        if item.type == "Mythic":
-            self.nb_mythic -= 1
-        if item.passive.unique:
-            if len(indexes) == 1:
-                self.unique_item_passives.remove(item.passive.name)
+        item = self.items.pop(indexes[-1])
+        self.item_type_count[item.type] -= 1
+        if hasattr(item, "passive"):
+            if item.passive.unique:
+                if len(indexes) == 1:
+                    self.unique_item_passives.remove(item.passive.name)
         self.item_stats = self.item_stats - item.stats
-        del self.items[indexes[-1]]
 
     def mythic_passive_stats(self):
         # TODO
