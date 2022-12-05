@@ -36,7 +36,7 @@ def test_serrated_unique_passive():
 
 
 def galeforce_default_run(
-    item_names, target_champion, test_bonus_attack_damage: float, test_crit_chance: float, test_active: list
+    item_names, target, test_bonus_attack_damage: float, test_crit_chance: float, test_active: list
 ):
     inventory = [ALL_ITEM_CLASSES[item_name]() for item_name in item_names]
     ahri = Ahri(level=1, inventory=inventory)
@@ -46,18 +46,15 @@ def galeforce_default_run(
 
     for champion_level in range(1, 19):
         ahri = Ahri(level=champion_level, inventory=inventory)
-        assert (
-            round(ahri.apply_item_active(item_name="Galeforce", target_champion=target_champion))
-            == test_active[champion_level - 1]
-        )
-        target_champion._health = target_champion.base_health + target_champion.bonus_health
+        assert round(ahri.apply_item_active(item_name="Galeforce", target=target)) == test_active[champion_level - 1]
+        target._health = target.base_health + target.bonus_health
 
     ahri = Ahri(level=1, inventory=inventory)
     dummy = Dummy(2000, 60)
     test_active_2 = [134, 275, 422, 577, 739, 909, 1087, 1273, 1468, 1666]
     total_damage = 0
     for i in range(10):
-        total_damage += ahri.apply_item_active(item_name="Galeforce", target_champion=dummy)
+        total_damage += ahri.apply_item_active(item_name="Galeforce", target=dummy)
         assert round(total_damage) == test_active_2[i]
 
 
@@ -65,7 +62,7 @@ def test_galeforce():
     item_names = ["Galeforce", "Long Sword", "Cloak of Agility"]
     galeforce_default_run(
         item_names=item_names,
-        target_champion=Dummy(1000, 60),
+        target=Dummy(1000, 60),
         test_bonus_attack_damage=70,
         test_crit_chance=0.35,
         test_active=[136, 136, 136, 136, 136, 136, 136, 136, 136, 146, 156, 167, 177, 187, 197, 207, 218, 228],
