@@ -141,5 +141,5 @@ class RCaitlyn(BaseSpell):
         self.base_damage_per_level = [300, 525, 750]
         self.ratios = [("bonus_attack_damage", 2)]
 
-    def get_damage_modifier_ratio(self):
+    def get_damage_modifier_coeff(self):
         return 1 + self.champion.bonus_crit_chance / 4
