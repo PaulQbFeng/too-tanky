@@ -3,7 +3,7 @@ from typing import Callable, List, Optional
 import tootanky.stats_calculator as sc
 from tootanky.damage import damage_physical_auto_attack
 from tootanky.data_parser import ALL_CHAMPION_BASE_STATS
-from tootanky.glossary import DEFAULT_STAT_LIST, EXTRA_STAT_LIST
+from tootanky.glossary import STAT_BASE_BONUS_ONLY_INIT, STAT_BASE_BONUS_FOR_PROPERTY, STAT_STANDALONE_FROM_BONUS
 from tootanky.inventory import Inventory
 from tootanky.item import BaseItem
 
@@ -27,15 +27,7 @@ class BaseChampion:
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
         self.orig_base_stats = sc.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level)
-        for stat_name in DEFAULT_STAT_LIST:
-            setattr(self, "base_" + stat_name, 0)
-            setattr(self, "bonus_" + stat_name, 0)
-
-        for stat_name in EXTRA_STAT_LIST:
-            setattr(self, stat_name, 0)
-
-        for name, value in self.orig_base_stats._dict.items():
-            setattr(self, "base_" + name, value)
+        self.initialize_champion_stats_by_default()
 
         if spell_levels is None:
             spell_levels = [1, 1, 1, 1]
@@ -43,10 +35,33 @@ class BaseChampion:
 
         self.inventory = Inventory(inventory, champion=self)
         self.orig_bonus_stats = self.get_bonus_stats()
-        self.add_bonus_stats_to_champion()
+        self.update_champion_stats()
 
-        for stat_name in DEFAULT_STAT_LIST:
-            setattr(self, "_" + stat_name, getattr(self, "base_" + stat_name) + getattr(self, "bonus_" + stat_name))
+    def initialize_champion_stats_by_default(self):
+        """Set all stats to 0"""
+        for stat_name in STAT_BASE_BONUS_FOR_PROPERTY:
+            setattr(self, "base_" + stat_name, 0)
+            setattr(self, "bonus_" + stat_name, 0)
+
+        for stat_name in STAT_BASE_BONUS_ONLY_INIT + STAT_STANDALONE_FROM_BONUS:
+            setattr(self, stat_name, 0)
+
+    def update_champion_stats(self):
+        """
+        Updates the stat depending on the stat type.
+            - STAT_BASE_BONUS_ONLY_INIT: set the stat as the sum of orig_base and orig_bonus stat.
+            - STAT_BASE_BONUS_FOR_PROPERTY: set base_stat, bonus_stat. the attribute stat is a property.
+            - STAT_STANDALONE_FROM_BONUS: set the stat taken from orig_bonus stat (without the bonus_prefix).
+        """
+        for name in STAT_BASE_BONUS_ONLY_INIT:
+            setattr(self, name, self.orig_base_stats.__getattr__(name) + self.orig_bonus_stats.__getattr__(name))
+
+        for name in STAT_BASE_BONUS_FOR_PROPERTY:
+            setattr(self, "base_" + name, self.orig_base_stats.__getattr__(name))
+            setattr(self, "bonus_" + name, self.orig_bonus_stats.__getattr__(name))
+
+        for name in STAT_STANDALONE_FROM_BONUS:
+            setattr(self, name, self.orig_bonus_stats.__getattr__(name))
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
@@ -56,33 +71,19 @@ class BaseChampion:
         """Wrapper to use a single getter for all total stat attributes"""
 
         def total_stat_getter(self):
+            """
+            The getter uses the the sum of base and bonus stat.
+            Items and spells directly impact the base and bonus stat, hence no need for a setter.
+            """
             base_value = getattr(self, "base_" + stat_name)
             bonus_value = getattr(self, "bonus_" + stat_name)
             return base_value + bonus_value
 
         return total_stat_getter
 
-    # TODO: define specific setters for stats that are handled differently
-    #       for example: armor with flat and percent armor reduction
-    @property
-    def health(self):
-        return self._health
-
-    @health.setter
-    def health(self, value):
-        self._health = value
-
-    mana = property(fget=getter_wrapper("mana"))
-    movespeed = property(fget=getter_wrapper("movespeed"))
     armor = property(fget=getter_wrapper("armor"))
     magic_resist = property(fget=getter_wrapper("magic_resist"))
-    attack_range = property(fget=getter_wrapper("attack_range"))
-    health_regen = property(fget=getter_wrapper("health_regen"))
-    mana_regen = property(fget=getter_wrapper("mana_regen"))
     attack_damage = property(fget=getter_wrapper("attack_damage"))
-    ability_power = property(fget=getter_wrapper("ability_power"))
-    attack_speed = property(fget=getter_wrapper("attack_speed"))
-    crit_chance = property(fget=getter_wrapper("crit_chance"))
 
     def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
@@ -96,26 +97,17 @@ class BaseChampion:
         assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
         return selected_item.apply_active(target)
 
-    def add_bonus_stats_to_champion(self):
-        for name, value in self.orig_bonus_stats._dict.items():
-            if name in EXTRA_STAT_LIST:
-                setattr(self, name, value)
-            elif name in DEFAULT_STAT_LIST:
-                setattr(self, "bonus_" + name, value)
-            else:
-                raise AttributeError(f"{name} stat name not recognized")
-
     def equip_item(self, item: BaseItem):
         item.champion = self
         self.inventory.add_item(item)
         self.orig_bonus_stats = self.get_bonus_stats()
-        self.add_bonus_stats_to_champion()
+        self.update_champion_stats()
 
     def unequip_item(self, item_name: str):
         # TODO: This has not been tested yet. Only inventory.remove_item has been tested
         self.inventory.remove_item(item_name)
         self.orig_bonus_stats = self.get_bonus_stats()
-        self.add_bonus_stats_to_champion()
+        self.update_champion_stats()
 
     def auto_attack_damage(self, target, is_crit: bool = False):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
@@ -136,13 +128,16 @@ class BaseChampion:
     def take_damage(self, damage):
         """Takes damage from an enemy champion"""
 
-        self._health -= damage
+        self.health -= damage
 
     def do_auto_attack(self, target, is_crit: bool = False):
         """Deals damage to an enemy champion with an autoattack"""
 
         damage = self.auto_attack_damage(target, is_crit)
         target.take_damage(damage)
+
+    def reset_health(self):
+        self.health = self.orig_base_stats.health + self.orig_bonus_stats.health
 
 
 # Dummy class for tests in practice tool.
@@ -158,8 +153,5 @@ class Dummy(BaseChampion):
         self.orig_bonus_stats.armor = bonus_resistance
         self.orig_bonus_stats.magic_resist = bonus_resistance
         self.orig_bonus_stats.health = health - 1000
-        self.bonus_armor = bonus_resistance
-        self.bonus_magic_resist = bonus_resistance
-        self.base_health = 1000
-        self.bonus_health = health - 1000
-        self._health = self.base_health + self.bonus_health
+
+        self.update_champion_stats()

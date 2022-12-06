@@ -2,7 +2,6 @@ from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie
 from tootanky.damage import damage_after_positive_resistance
 from tootanky.item import ALL_ITEM_CLASSES, DoranBlade, Sheen
-from tootanky.stats import Stats
 
 
 def test_doranblade():
@@ -47,7 +46,7 @@ def galeforce_default_run(
     for champion_level in range(1, 19):
         ahri = Ahri(level=champion_level, inventory=inventory)
         assert round(ahri.apply_item_active(item_name="Galeforce", target=target)) == test_active[champion_level - 1]
-        target._health = target.base_health + target.bonus_health
+        target.reset_health()
 
     ahri = Ahri(level=1, inventory=inventory)
     dummy = Dummy(2000, 60)

@@ -124,3 +124,10 @@ def test_darius_auto_attack():
     dummy = Dummy(health=1000, bonus_resistance=100)
     darius.do_auto_attack(dummy)
     assert round(dummy.health) == 926
+
+
+def test_equip_item_health():
+    ahri = Ahri(level=17, spell_levels=[5, 5, 5, 5])
+    assert math.ceil(ahri.health) == 2080
+    ahri.equip_item(ALL_ITEM_CLASSES["Ruby Crystal"]())
+    assert math.ceil(ahri.health) == 2230
