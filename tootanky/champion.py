@@ -13,7 +13,6 @@ class BaseChampion:
     """
     Base class to represent a champion. It is initialized with the stats of a champion at a given level.
     Some mechanisms are shared accross all champions:
-        - equip_item
         - auto attack
     """
 
@@ -96,18 +95,6 @@ class BaseChampion:
         selected_item = self.inventory.get_item(item_name)
         assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
         return selected_item.apply_active(target)
-
-    def equip_item(self, item: BaseItem):
-        item.champion = self
-        self.inventory.add_item(item)
-        self.orig_bonus_stats = self.get_bonus_stats()
-        self.update_champion_stats()
-
-    def unequip_item(self, item_name: str):
-        # TODO: This has not been tested yet. Only inventory.remove_item has been tested
-        self.inventory.remove_item(item_name)
-        self.orig_bonus_stats = self.get_bonus_stats()
-        self.update_champion_stats()
 
     def auto_attack_damage(self, target, is_crit: bool = False):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
