@@ -309,12 +309,29 @@ class WatchfulWardstone(BaseItem):  # missing ability haste
 #  Fimbulwinter, Force of Nature, Frozen Heart, Gargoyle Stoneplate, Guardian Angel, Guinsoo's Rageblade, Horizon Focus,
 #  Hullbreaker, Infinity Edge, Knight's Vow, Lich Bane, Lord Dominik's Regards, Manamune, Maw of Malmortius,
 #  Mejai's Soulstealer, Mercurial Scimitar, Mikael's Blessing, Morellonomicon, Mortal Reminder, Muramana,
-#  Nashor's Tooth, Navori Quickblades, Pauldrons of Whiterock, Phantom Dancer, Rabadon's Deathcap, Randuin's Omen,
-#  Rapid Firecannon, Ravenous Hydra, Redemption, Runaan's Hurricane, Rylai's Crystal Scepter, Seraph's Embrace,
-#  Serpent's Fang, Shadowflame, Shard of True Ice, Silvermere Dawn, Spear of Shojin, Spirit Visage,
-#  Staff of Flowing Water, Sterak's Gage, Stormrazor, Sunfire Aegis, The Collector, Thornmail, Titanic Hydra,
-#  Turbo Chemtank, Umbral Glaive, Vigilant Wardstone, Void Staff, Warmog's Armor, Winter's Approach, Wit's End,
-#  Zeke's Convergence, Zhonya's Hourglass
+#  Nashor's Tooth, Pauldrons of Whiterock, Phantom Dancer, Rabadon's Deathcap, Randuin's Omen, Rapid Firecannon,
+#  Ravenous Hydra, Redemption, Runaan's Hurricane, Rylai's Crystal Scepter, Seraph's Embrace, Serpent's Fang,
+#  Shadowflame, Shard of True Ice, Silvermere Dawn, Spear of Shojin, Spirit Visage, Staff of Flowing Water,
+#  Sterak's Gage, Stormrazor, Sunfire Aegis, The Collector, Thornmail, Titanic Hydra, Turbo Chemtank, Umbral Glaive,
+#  Vigilant Wardstone, Void Staff, Warmog's Armor, Winter's Approach, Wit's End, Zeke's Convergence, Zhonya's Hourglass
+class InfinityEdge(BaseItem):  # missing passive
+    name = "Infinity Edge"
+    type = "Legendary"
+
+    def __init__(self):
+        super().__init__()
+        self.limitations = ["Crit Modifier"]
+
+
+class NavoriQuickblades(BaseItem):  # missing passive, ability haste
+    name = "Navori Quickblades"
+    type = "Legendary"
+
+    def __init__(self):
+        super().__init__()
+        self.limitations = ["Marksman Capstone", "Ability Haste Capstone"]
+
+
 class SeryldaGrudge(BaseItem):  # missing passive, ability haste
     name = "Serylda's Grudge"
     type = "Legendary"
