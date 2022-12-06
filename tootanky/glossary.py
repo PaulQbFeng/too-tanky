@@ -18,43 +18,43 @@ MAPPING_CHAMPION_STANDARD = {
     "attackdamage": "attack_damage",
     "attackdamageperlevel": "attack_damage_perlevel",
     "attackspeedperlevel": "attack_speed_perlevel",
-    "attackspeed": "attack_speed"
+    "attackspeed": "attack_speed",
 }
 
 MAPPING_ITEM_STANDARD = {
-    'FlatMovementSpeedMod': 'move_speed',
-    'FlatHPPoolMod':'health',
-    'FlatCritChanceMod':'crit_chance',
-    'FlatMagicDamageMod':'ability_power',
-    'FlatMPPoolMod':'mana',
-    'FlatArmorMod':'armor',
-    'FlatSpellBlockMod': 'magic_resist',
-    'FlatPhysicalDamageMod':  'attack_damage',
-    'PercentAttackSpeedMod': 'attack_speed',
-    'PercentLifeStealMod':'life_steal',
-    'FlatHPRegenMod':  'health_regen',
-    'PercentMovementSpeedMod':  'move_speed_percent',
-    "gold": "gold"
+    "FlatMovementSpeedMod": "move_speed",
+    "FlatHPPoolMod": "health",
+    "FlatCritChanceMod": "crit_chance",
+    "FlatMagicDamageMod": "ability_power",
+    "FlatMPPoolMod": "mana",
+    "FlatArmorMod": "armor",
+    "FlatSpellBlockMod": "magic_resist",
+    "FlatPhysicalDamageMod": "attack_damage",
+    "PercentAttackSpeedMod": "attack_speed",
+    "PercentLifeStealMod": "life_steal",
+    "FlatHPRegenMod": "health_regen",
+    "PercentMovementSpeedMod": "move_speed_percent",
+    "gold": "gold",
 }
 
-DEFAULT_STAT_LIST = [
+
+STAT_BASE_BONUS_ONLY_INIT = [
     "health",
     "mana",
     "movespeed",
-    "armor",
-    "magic_resist",
     "attack_range",
     "health_regen",
     "mana_regen",
-    "attack_damage",
     "ability_power",
     "attack_speed",
-    "crit_chance",
 ]
 
-EXTRA_STAT_LIST = [
+STAT_BASE_BONUS_FOR_PROPERTY = ["armor", "magic_resist", "attack_damage"]
+
+STAT_STANDALONE_FROM_BONUS = [
+    "crit_chance",
     "lethality",
-    "crit_damage", 
+    "crit_damage",
     "magic_resist_pen_flat",
     "magic_resist_pen_percent",
     "armor_pen_flat",
