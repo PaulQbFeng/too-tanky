@@ -33,7 +33,7 @@ class BaseItem:
         item_stats = ALL_ITEM_STATS[self.name].copy()
         self.gold = item_stats.pop("gold")
         self.stats = Stats(item_stats)
-        self.limitation = None
+        self.limitations = None
 
     def apply_passive(self):
         pass
@@ -70,7 +70,7 @@ class BamiCinder(BaseItem):  # missing passive
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Immolate"
+        self.limitations = ["Immolate"]
 
 
 class BFSword(BaseItem):
@@ -163,7 +163,7 @@ class BlightingJewel(BaseItem):
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Void Pen"
+        self.limitations = ["Void Pen"]
         self.stats.add("magic_resist_pen_percent", 0.13)
 
 
@@ -198,7 +198,7 @@ class Frostfang(BaseItem):  # missing base_mana_regen
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Support"
+        self.limitations = ["Support"]
 
 
 class GiantBelt(BaseItem):
@@ -217,7 +217,7 @@ class HarrowingCrescent(BaseItem):  # missing base_mana_regen
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Support"
+        self.limitations = ["Support"]
 
 
 class HearthboundAxe(BaseItem):  # missing passive (bonus_move_speed when basic attacks)
@@ -236,7 +236,7 @@ class LastWhisper(BaseItem):
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Last Whisper"
+        self.limitations = ["Last Whisper"]
         self.stats.armor_pen_percent = 0.18
 
 
@@ -246,7 +246,7 @@ class LostChapter(BaseItem):  # missing ability haste
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Mythic Component"
+        self.limitations = ["Mythic Component"]
 
 
 class NegatronCloak(BaseItem):
@@ -260,7 +260,7 @@ class Noonquiver(BaseItem):
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Mythic Component"
+        self.limitations = ["Mythic Component"]
 
 
 class RunesteelSpaulders(BaseItem):  # missing base_health_regen
@@ -269,7 +269,7 @@ class RunesteelSpaulders(BaseItem):  # missing base_health_regen
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Support"
+        self.limitations = ["Support"]
 
 
 class SerratedDirk(BaseItem):
@@ -290,7 +290,7 @@ class TargonBuckler(BaseItem):  # missing base_health_regen
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Support"
+        self.limitations = ["Support"]
 
 
 class WatchfulWardstone(BaseItem):  # missing ability haste
@@ -299,7 +299,7 @@ class WatchfulWardstone(BaseItem):  # missing ability haste
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Sightstone"
+        self.limitations = ["Sightstone"]
 
 
 # Legendary items
@@ -321,7 +321,7 @@ class SeryldaGrudge(BaseItem):  # missing passive, ability haste
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Last Whisper"
+        self.limitations = ["Last Whisper"]
         self.stats.armor_pen_percent = 0.3
 
 
