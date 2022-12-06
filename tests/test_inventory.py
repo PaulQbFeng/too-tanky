@@ -11,6 +11,8 @@ def test_inventory():
     assert inventory.item_stats.attack_speed == 0.2
     assert inventory.item_stats.armor_pen_percent == 0
     inventory.add_item(SeryldaGrudge())
+    serylda = inventory.get_item("Serylda's Grudge")
+    assert serylda.stats.bonus_move_speed == 0.2
     assert inventory.item_type_count["Legendary"] == 1
     assert inventory.item_type_count["Mythic"] == 1
     assert inventory.item_stats.attack_damage == 125
