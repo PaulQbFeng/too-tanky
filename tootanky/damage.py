@@ -40,6 +40,7 @@ def pre_mitigation_spell_damage(
     return (base_spell_damage + ratio_damage + damage_modifier_flat) * damage_modifier_ratio
 
 
+
 def avg_pre_mitigation_auto_attack_damage(
     base_attack_damage: float,
     bonus_attack_damage: float,

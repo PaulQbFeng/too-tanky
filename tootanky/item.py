@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Optional
 
 from tootanky.damage import damage_after_positive_resistance, damage_after_resistance
 from tootanky.data_parser import ALL_ITEM_STATS
@@ -28,14 +29,11 @@ class BaseItem:
     Additional effects passive/active are handled in the children Item specific classes.
     """
 
-    item_name = None
-
     def __init__(self):
-        item_stats = ALL_ITEM_STATS[self.item_name].copy()
+        item_stats = ALL_ITEM_STATS[self.name].copy()
         self.gold = item_stats.pop("gold")
         self.stats = Stats(item_stats)
-        self.passive = ItemPassive()
-        self.champion = None
+        self.limitation = None
 
     def apply_passive(self):
         pass
@@ -45,92 +43,97 @@ class BaseItem:
 # TODO: Cull, Dark Seal, Gustwalker Hatchling, Mosstomper Seedling, Relic Shield,
 #  Scorchclaw Pup, Spectral Sickle, Spellthief's Edge, Steel Shoulderguards, Tear of the Goddess
 class DoranBlade(BaseItem):
-    item_name = "Doran's Blade"
+    name = "Doran's Blade"
     type = "Starter"
 
 
 class DoranRing(BaseItem):  # missing passive (mana_regen)
-    item_name = "Doran's Ring"
+    name = "Doran's Ring"
     type = "Starter"
 
 
 class DoranShield(BaseItem):  # missing passive (health_regen after taking damage)
-    item_name = "Doran's Shield"
+    name = "Doran's Shield"
     type = "Starter"
 
 
 # Basic items
 # TODO: Catalyst of Aeons, Faerie Charm, Rejuvenation Bead
 class AmplifyingTome(BaseItem):
-    item_name = "Amplifying Tome"
+    name = "Amplifying Tome"
     type = "Basic"
 
 
 class BamiCinder(BaseItem):  # missing passive
-    item_name = "Bami's Cinder"
+    name = "Bami's Cinder"
     type = "Basic"
+
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Immolate"
 
 
 class BFSword(BaseItem):
-    item_name = "B. F. Sword"
+    name = "B. F. Sword"
     type = "Basic"
 
 
 class BlastingWand(BaseItem):
-    item_name = "Blasting Wand"
+    name = "Blasting Wand"
     type = "Basic"
 
 
 class CloakofAgility(BaseItem):
-    item_name = "Cloak of Agility"
+    name = "Cloak of Agility"
     type = "Basic"
 
 
 class ClothArmor(BaseItem):
-    item_name = "Cloth Armor"
+    name = "Cloth Armor"
     type = "Basic"
 
 
 class Dagger(BaseItem):
-    item_name = "Dagger"
+    name = "Dagger"
     type = "Basic"
 
 
 class LongSword(BaseItem):
-    item_name = "Long Sword"
+    name = "Long Sword"
     type = "Basic"
 
 
 class NeedlesslyLargeRod(BaseItem):
-    item_name = "Needlessly Large Rod"
+    name = "Needlessly Large Rod"
     type = "Basic"
 
 
 class NullMagicMantle(BaseItem):
-    item_name = "Null-Magic Mantle"
+    name = "Null-Magic Mantle"
     type = "Basic"
 
 
 class PickAxe(BaseItem):
-    item_name = "Pickaxe"
+    name = "Pickaxe"
     type = "Basic"
 
 
 class RubyCrystal(BaseItem):
-    item_name = "Ruby Crystal"
+    name = "Ruby Crystal"
     type = "Basic"
 
 
 class SapphireCrystal(BaseItem):
-    item_name = "Sapphire Crystal"
+    name = "Sapphire Crystal"
     type = "Basic"
 
 
 class Sheen(BaseItem):
-    item_name = "Sheen"
+    name = "Sheen"
     type = "Basic"
 
     def spellblade(self, owner_champion, target):
+        #TODO: this must be unique passive
         """Calculates the bonus damage dealt with an autoattack : 100% of base AD"""
         return damage_after_positive_resistance(owner_champion.base_attack_damage, target.bonus_armor)
 
@@ -140,115 +143,137 @@ class Sheen(BaseItem):
 #  Leeching Leer, Oblivion Orb, Phage, Quicksilver Sash, Rageknife, Recurve Bow, Seeker's Armguard, Spectre's Cowl,
 #  Tiamat, Vampiric Scepter, Verdant Barrier, Warden's Mail, Winged Moonplate, Zeal
 class AegisLegion(BaseItem):  # missing ability haste
-    item_name = "Aegis of the Legion"
+    name = "Aegis of the Legion"
     type = "Epic"
 
 
 class AetherWisp(BaseItem):  # missing unique passive (bonus_move_speed)
-    item_name = "Aether Wisp"
+    name = "Aether Wisp"
     type = "Epic"
 
 
 class BandleglassMirror(BaseItem):  # missing ability haste and base_mana_regen
-    item_name = "Bandleglass Mirror"
+    name = "Bandleglass Mirror"
     type = "Epic"
 
 
 class BlightingJewel(BaseItem):
-    item_name = "Blighting Jewel"
+    name = "Blighting Jewel"
     type = "Epic"
 
     def __init__(self):
         super().__init__()
+        self.limitation = "Void Pen"
         self.stats.add("magic_resist_pen_percent", 0.13)
 
 
 class BrambleVest(BaseItem):  # missing passive
-    item_name = "Bramble Vest"
+    name = "Bramble Vest"
     type = "Epic"
 
 
 class CaulfieldWarhammer(BaseItem):  # missing ability haste
-    item_name = "Caulfield's Warhammer"
+    name = "Caulfield's Warhammer"
     type = "Epic"
 
 
 class ChainVest(BaseItem):
-    item_name = "Chain Vest"
+    name = "Chain Vest"
     type = "Epic"
 
 
 class CrystallineBracer(BaseItem):  # missing base_health_regen
-    item_name = "Crystalline Bracer"
+    name = "Crystalline Bracer"
     type = "Epic"
 
 
 class FiendishCodex(BaseItem):  # missing ability haste
-    item_name = "Fiendish Codex"
+    name = "Fiendish Codex"
     type = "Epic"
 
 
 class Frostfang(BaseItem):  # missing base_mana_regen
-    item_name = "Frostfang"
-    type = "Epic"
-
-
-class GiantBelt(BaseItem):
-    item_name = "Giant's Belt"
-    type = "Epic"
-
-
-class GlacialBuckler(BaseItem):  # missing ability haste
-    item_name = "Glacial Buckler"
-    type = "Epic"
-
-
-class HarrowingCrescent(BaseItem):  # missing base_mana_regen
-    item_name = "Harrowing Crescent"
-    type = "Epic"
-
-
-class HearthboundAxe(BaseItem):  # missing passive (bonus_move_speed when basic attacks)
-    item_name = "Hearthbound Axe"
-    type = "Epic"
-
-
-class Kindlegem(BaseItem):  # missing ability haste
-    item_name = "Kindlegem"
-    type = "Epic"
-
-
-class LastWhisper(BaseItem):
-    item_name = "Last Whisper"
+    name = "Frostfang"
     type = "Epic"
 
     def __init__(self):
         super().__init__()
+        self.limitation = "Support"
+
+
+class GiantBelt(BaseItem):
+    name = "Giant's Belt"
+    type = "Epic"
+
+
+class GlacialBuckler(BaseItem):  # missing ability haste
+    name = "Glacial Buckler"
+    type = "Epic"
+
+
+class HarrowingCrescent(BaseItem):  # missing base_mana_regen
+    name = "Harrowing Crescent"
+    type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Support"
+
+
+class HearthboundAxe(BaseItem):  # missing passive (bonus_move_speed when basic attacks)
+    name = "Hearthbound Axe"
+    type = "Epic"
+
+
+class Kindlegem(BaseItem):  # missing ability haste
+    name = "Kindlegem"
+    type = "Epic"
+
+
+class LastWhisper(BaseItem):
+    name = "Last Whisper"
+    type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Last Whisper"
         self.stats.armor_pen_percent = 0.18
 
 
 class LostChapter(BaseItem):  # missing ability haste
-    item_name = "Lost Chapter"
+    name = "Lost Chapter"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Mythic Component"
 
 
 class NegatronCloak(BaseItem):
-    item_name = "Negatron Cloak"
+    name = "Negatron Cloak"
     type = "Epic"
 
 
 class Noonquiver(BaseItem):
-    item_name = "Noonquiver"
+    name = "Noonquiver"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Mythic Component"
 
 
 class RunesteelSpaulders(BaseItem):  # missing base_health_regen
-    item_name = "Runesteel Spaulders"
+    name = "Runesteel Spaulders"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Support"
 
 
 class SerratedDirk(BaseItem):
-    item_name = "Serrated Dirk"
+    name = "Serrated Dirk"
     type = "Epic"
 
     def __init__(self):
@@ -260,13 +285,21 @@ class SerratedDirk(BaseItem):
 
 
 class TargonBuckler(BaseItem):  # missing base_health_regen
-    item_name = "Targon's Buckler"
+    name = "Targon's Buckler"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Support"
 
 
 class WatchfulWardstone(BaseItem):  # missing ability haste
-    item_name = "Watchful Wardstone"
+    name = "Watchful Wardstone"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.limitation = "Sightstone"
 
 
 # Legendary items
@@ -283,16 +316,17 @@ class WatchfulWardstone(BaseItem):  # missing ability haste
 #  Turbo Chemtank, Umbral Glaive, Vigilant Wardstone, Void Staff, Warmog's Armor, Winter's Approach, Wit's End,
 #  Zeke's Convergence, Zhonya's Hourglass
 class SeryldaGrudge(BaseItem):  # missing passive, ability haste
-    item_name = "Serylda's Grudge"
+    name = "Serylda's Grudge"
     type = "Legendary"
 
     def __init__(self):
         super().__init__()
+        self.limitation = "Last Whisper"
         self.stats.armor_pen_percent = 0.3
 
 
 class YoumuuGhostblade(BaseItem):  # missing passive, active, ability haste
-    item_name = "Youmuu's Ghostblade"
+    name = "Youmuu's Ghostblade"
     type = "Legendary"
 
     def __init__(self):
@@ -307,7 +341,7 @@ class YoumuuGhostblade(BaseItem):  # missing passive, active, ability haste
 #  Moonstone Renewer, Night Harvester, Prowler's Claw, Radiant Virtue, Riftmaker, Rod of Ages, Shurelya's Battlesong,
 #  Stridebreaker, Trinity Force
 class Galeforce(BaseItem):
-    item_name = "Galeforce"
+    name = "Galeforce"
     type = "Mythic"
 
     def __init__(self):
@@ -348,4 +382,4 @@ class Galeforce(BaseItem):
         return total_damage
 
 
-ALL_ITEM_CLASSES = {cls.item_name: cls for cls in BaseItem.__subclasses__()}
+ALL_ITEM_CLASSES = {cls.name: cls for cls in BaseItem.__subclasses__()}
