@@ -8,6 +8,26 @@ from tootanky.inventory import Inventory
 from tootanky.item import BaseItem
 
 
+class SpellFactory:
+    _SPELLS = {}
+
+    @classmethod
+    def register_spell(cls, spell_cls):
+        champion_name = spell_cls.champion_name.lower()
+        if champion_name in cls._SPELLS:
+            spell_key = spell_cls.__name__[0].lower()
+            cls._SPELLS[champion_name][spell_key] = spell_cls
+        else:
+            cls._SPELLS[champion_name] = dict()
+        return spell_cls
+
+    @classmethod
+    def get_spells_for_champion(cls, champion_name):
+        if champion_name in cls._SPELLS:
+            return cls._SPELLS[champion_name]
+        raise KeyError(f"Could not find spells for champion {champion_name}")
+
+
 # TODO: Might be a good opportunity to use abstract class for base champion
 class BaseChampion:
     """
@@ -50,7 +70,8 @@ class BaseChampion:
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
-        pass
+        for letter in ["q", "w", "e", "r"]:
+            pass
 
     def getter_wrapper(stat_name: str) -> Callable:
         """Wrapper to use a single getter for all total stat attributes"""

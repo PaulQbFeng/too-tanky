@@ -1,4 +1,4 @@
-from tootanky.champion import BaseChampion
+from tootanky.champion import BaseChampion, SpellFactory
 from tootanky.spell import BaseSpell
 
 
@@ -16,6 +16,7 @@ class Xerath(BaseChampion):
         self.spell_r = RXerath(self, level_r)
 
 
+@SpellFactory.register_spell
 class QXerath(BaseSpell):
     champion_name = "Xerath"
     spell_key = "q"
@@ -32,6 +33,7 @@ class QXerath(BaseSpell):
     def init_per_level(self, level):
         self.base_spell_damage = self.base_damage_per_level[level - 1]
 
+
 class WXerath(BaseSpell):
     champion_name = "Xerath"
     spell_key = "w"
@@ -46,8 +48,9 @@ class WXerath(BaseSpell):
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("ability_power", 0.6)]
 
-    def get_damage_modifier_ratio(self, is_empowered = True):
+    def get_damage_modifier_ratio(self, is_empowered=True):
         return 1.667 if is_empowered else 1
+
 
 class EXerath(BaseSpell):
     champion_name = "Xerath"
@@ -62,6 +65,7 @@ class EXerath(BaseSpell):
         self.base_damage_per_level = [80, 110, 140, 170, 200]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("ability_power", 0.45)]
+
 
 class RXerath(BaseSpell):
     champion_name = "Xerath"
@@ -78,8 +82,8 @@ class RXerath(BaseSpell):
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("ability_power", 0.45)]
 
-    def get_damage_modifer_ratio(self, target: BaseChampion, nb_hit = None):
+    def get_damage_modifer_ratio(self, target: BaseChampion, nb_hit=None):
         if nb_hit is None:
             raise ValueError("nb_hit must be specified for Xerath R")
-        assert 0 <= nb_hit <= self.r.recast_per_level[self.level-1]
+        assert 0 <= nb_hit <= self.r.recast_per_level[self.level - 1]
         return nb_hit
