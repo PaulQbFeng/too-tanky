@@ -38,6 +38,7 @@ class Inventory:
         return indexes
 
     def check_item(self, item):
+        # TODO: test this method with one Support limitation item and one Jungle limitation item when jungle items are done
         if item.type == "Legendary":
             assert self.is_unique_copy(item.name), "A champion can't have more than one copy of {}".format(item.name)
         if item.type == "Mythic":
