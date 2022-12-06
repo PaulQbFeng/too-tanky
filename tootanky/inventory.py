@@ -25,22 +25,10 @@ class Inventory:
         return next((item for item in self.items if item.type == "Mythic"), None)
 
     def is_unique_copy(self, name):
-        nb_copy = 0
-        for item in self.items:
-            if item.name == name:
-                nb_copy += 1
-            if nb_copy > 2:
-                return False
-        return True
+        return [item.name for item in self.items].count(name) <= 1
 
     def is_unique_limitation(self, limitations):
-        nb_copy = 0
-        i = 0
-        while nb_copy <= 1 and i < len(self.items):
-            if self.items[i].limitation in limitations:
-                nb_copy += 1
-            i += 1
-        return nb_copy <= 1
+        return sum([item.limitation for item in self.items].count(limitation) for limitation in limitations) <= 1
 
     def get_all_indexes(self, name):
         indexes = []
