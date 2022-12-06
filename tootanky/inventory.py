@@ -38,8 +38,7 @@ class Inventory:
         return indexes
 
     def check_item(self, item):
-        # TODO: test this method with one Support limitation item and one Jungle limitation item when jungle items are done
-        # TODO: test navori quickblades (2 limitations) with Spear of Shojin when the data is updated
+        # TODO: test, navori quickblades with spear of shojin (must download new patch) should raise AssertionError
         if item.type == "Legendary":
             assert self.is_unique_copy(item.name), "A champion can't have more than one copy of {}".format(item.name)
         if item.type == "Mythic":
