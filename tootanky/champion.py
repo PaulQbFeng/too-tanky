@@ -1,14 +1,20 @@
 from typing import Callable, List, Optional
 
 import tootanky.stats_calculator as sc
+
 from tootanky.damage import damage_physical_auto_attack
 from tootanky.data_parser import ALL_CHAMPION_BASE_STATS
-from tootanky.glossary import STAT_BASE_BONUS_ONLY_INIT, STAT_BASE_BONUS_FOR_PROPERTY, STAT_STANDALONE_FROM_BONUS
+from tootanky.glossary import (
+    STAT_BASE_BONUS_ONLY_INIT,
+    STAT_BASE_BONUS_FOR_PROPERTY,
+    STAT_STANDALONE_FROM_BONUS,
+    normalize_champion_name,
+)
 from tootanky.inventory import Inventory
 from tootanky.item import BaseItem
+from tootanky.spell_factory import SpellFactory
 
 
-# TODO: Might be a good opportunity to use abstract class for base champion
 class BaseChampion:
     """
     Base class to represent a champion. It is initialized with the stats of a champion at a given level.
@@ -25,11 +31,13 @@ class BaseChampion:
     ):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
+        champion_name = normalize_champion_name(champion_name)
         self.orig_base_stats = sc.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level)
         self.initialize_champion_stats_by_default()
 
         if spell_levels is None:
             spell_levels = [1, 1, 1, 1]
+
         self.init_spells(spell_levels)
 
         self.inventory = Inventory(inventory, champion=self)
@@ -64,7 +72,15 @@ class BaseChampion:
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
-        pass
+        if self.champion_name not in SpellFactory()._SPELLS:
+            return None
+
+        spells = SpellFactory().get_spells_for_champion(self.champion_name)
+        level_q, level_w, level_e, level_r = spell_levels
+        self.spell_q = spells["q"](champion=self, level=level_q)
+        self.spell_w = spells["w"](champion=self, level=level_w)
+        self.spell_e = spells["e"](champion=self, level=level_e)
+        self.spell_r = spells["r"](champion=self, level=level_r)
 
     def getter_wrapper(stat_name: str) -> Callable:
         """Wrapper to use a single getter for all total stat attributes"""

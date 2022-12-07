@@ -17,10 +17,11 @@ class BaseSpell:
     the current specs + add the missing ones inside the subclass of BaseSpell.
     """
 
-    def __init__(self, champion, spell_key, level=1):
+    spell_key = None
+
+    def __init__(self, champion, level=1):
         self.champion = champion
-        self.spell_key = spell_key
-        self.spell_specs = ALL_CHAMPION_SPELLS[champion.champion_name][spell_key].copy()
+        self.spell_specs = ALL_CHAMPION_SPELLS[champion.champion_name][self.spell_key].copy()
         for name, value in self.spell_specs.items():
             setattr(self, name, value)
         self.ratios = []

@@ -62,3 +62,9 @@ STAT_STANDALONE_FROM_BONUS = [
     "bonus_armor_pen_percent",
     "life_steal",
 ]
+
+
+def normalize_champion_name(name):
+    """Champion name are different in champion / spell / item json files"""
+    # TODO: normalize everything
+    return name.replace(" ", "")

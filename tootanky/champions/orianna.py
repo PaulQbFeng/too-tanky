@@ -1,7 +1,6 @@
 from tootanky.champion import BaseChampion
-from tootanky.damage import (damage_after_resistance,
-                             pre_mitigation_spell_damage)
 from tootanky.spell import BaseSpell
+from tootanky.spell_factory import SpellFactory
 
 
 class Orianna(BaseChampion):
@@ -10,17 +9,32 @@ class Orianna(BaseChampion):
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
 
-    def init_spells(self, spell_levels):
-        level_q, level_w, level_e, level_r = spell_levels
-        self.spell_r = ROrianna(self, level_r)
+
+@SpellFactory.register_spell
+class QOrianna(BaseSpell):
+    champion_name = "Orianna"
+    spell_key = "q"
 
 
+@SpellFactory.register_spell
+class WOrianna(BaseSpell):
+    champion_name = "Orianna"
+    spell_key = "w"
+
+
+@SpellFactory.register_spell
+class EOrianna(BaseSpell):
+    champion_name = "Orianna"
+    spell_key = "e"
+
+
+@SpellFactory.register_spell
 class ROrianna(BaseSpell):
     champion_name = "Orianna"
     spell_key = "r"
 
     def __init__(self, champion, level):
-        super().__init__(champion, spell_key=__class__.spell_key, level=level)
+        super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
