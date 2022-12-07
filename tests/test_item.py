@@ -2,7 +2,6 @@ from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie
 from tootanky.damage import damage_after_positive_resistance
 from tootanky.item import ALL_ITEM_CLASSES, DoranBlade, Sheen
-from tootanky.stats import Stats
 
 
 def test_doranblade():
@@ -28,7 +27,9 @@ def test_serrated_unique_passive():
     assert ahri.orig_bonus_stats.lethality == 10
     assert ahri.orig_bonus_stats.armor_pen_percent == 0.18
 
-    ahri.equip_item(ALL_ITEM_CLASSES["Serrated Dirk"]())
+    item_names = ["Serrated Dirk", "Last Whisper", "Serrated Dirk"]
+    inventory = [ALL_ITEM_CLASSES[item_name]() for item_name in item_names]
+    ahri = Ahri(level=7, inventory=inventory)
 
     assert ahri.orig_bonus_stats.attack_damage == 80
     assert ahri.orig_bonus_stats.lethality == 10
@@ -47,7 +48,7 @@ def galeforce_default_run(
     for champion_level in range(1, 19):
         ahri = Ahri(level=champion_level, inventory=inventory)
         assert round(ahri.apply_item_active(item_name="Galeforce", target=target)) == test_active[champion_level - 1]
-        target._health = target.base_health + target.bonus_health
+        target.reset_health()
 
     ahri = Ahri(level=1, inventory=inventory)
     dummy = Dummy(2000, 60)

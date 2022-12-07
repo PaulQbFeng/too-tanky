@@ -46,7 +46,7 @@ class WXerath(BaseSpell):
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("ability_power", 0.6)]
 
-    def get_damage_modifier_ratio(self, is_empowered = True):
+    def get_damage_modifier_coeff(self, is_empowered = True):
         return 1.667 if is_empowered else 1
 
 class EXerath(BaseSpell):

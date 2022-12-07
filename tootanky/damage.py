@@ -4,8 +4,8 @@
 def pre_mitigation_auto_attack_damage(
     base_offensive_stats: float,
     bonus_offensive_stats: float,
-    damage_modifier_flat: float,
-    damage_modifier_percent: float,
+    damage_modifier_flat: float = 0,
+    damage_modifier_coeff: float = 1,
     crit: bool = False,
     crit_damage: float = 0,
 ):
@@ -15,21 +15,20 @@ def pre_mitigation_auto_attack_damage(
     from both the attacker AND the defender
     """
     tot_off_stats = base_offensive_stats + bonus_offensive_stats
-    dmg_mod_ratio = 1 + damage_modifier_percent
 
     if crit:
         crit_multiplier = 1.75 + crit_damage
     else:
         crit_multiplier = 1
 
-    return (tot_off_stats * crit_multiplier + damage_modifier_flat) * dmg_mod_ratio
+    return (tot_off_stats * crit_multiplier + damage_modifier_flat) * damage_modifier_coeff
 
 
 def pre_mitigation_spell_damage(
     base_spell_damage: float,
     ratio_damage: float,
     damage_modifier_flat: float = 0,
-    damage_modifier_ratio: float = 0,
+    damage_modifier_coeff: float = 1,
 ):
     """
     Calculates the pre-mitigation damage of a spell or an autoattack
@@ -37,17 +36,17 @@ def pre_mitigation_spell_damage(
     from both the attacker AND the defender.
     :param: ratio_damage is damage that scales with the champion's or target's stat
     """
-    return (base_spell_damage + ratio_damage + damage_modifier_flat) * damage_modifier_ratio
+    return (base_spell_damage + ratio_damage + damage_modifier_flat) * damage_modifier_coeff
 
 
 
 def avg_pre_mitigation_auto_attack_damage(
     base_attack_damage: float,
     bonus_attack_damage: float,
-    damage_modifier_flat: float,
-    damage_modifier_percent: float,
-    crit_chance: float,
-    crit_damage: float,
+    damage_modifier_flat: float = 0,
+    damage_modifier_coeff: float = 1,
+    crit_chance: float = 0,
+    crit_damage: float = 0,
 ):
     """
     Calculates the pre-mitigation autoattack damage AVERAGE (based on crit chance) of a spell or an autoattack.
@@ -56,9 +55,8 @@ def avg_pre_mitigation_auto_attack_damage(
     from both the attacker AND the defender
     """
     tot_off_stats = base_attack_damage + bonus_attack_damage
-    dmg_mod_ratio = 1 - damage_modifier_percent
 
-    return tot_off_stats * dmg_mod_ratio * (1 + crit_chance * (0.75 + crit_damage)) + damage_modifier_flat
+    return tot_off_stats * damage_modifier_coeff * (1 + crit_chance * (0.75 + crit_damage)) + damage_modifier_flat
 
 
 def damage_after_positive_resistance(pre_mitigation_auto_attack_damage: float, resistance: float):
@@ -118,7 +116,7 @@ def damage_physical_auto_attack(
     armor_pen: float = 0,
     bonus_armor_pen: float = 0,
     damage_modifier_flat: float = 0,
-    damage_modifier_percent: float = 0,
+    damage_modifier_coeff: float = 1,
     crit: bool = False,
     crit_damage: float = 0,
 ):
@@ -131,7 +129,7 @@ def damage_physical_auto_attack(
         base_attack_damage,
         bonus_attack_damage,
         damage_modifier_flat,
-        damage_modifier_percent,
+        damage_modifier_coeff,
         crit,
         crit_damage,
     )
@@ -157,7 +155,7 @@ def avg_damage_physical_auto_attack(
     base_armor: float,
     bonus_armor: float,
     damage_modifier_flat: float,
-    damage_modifier_percent: float,
+    damage_modifier_coeff: float,
     crit_chance: float,
     crit_damage: float,
 ):
@@ -170,7 +168,7 @@ def avg_damage_physical_auto_attack(
         base_attack_damage,
         bonus_attack_damage,
         damage_modifier_flat,
-        damage_modifier_percent,
+        damage_modifier_coeff,
         crit_chance,
         crit_damage,
     )

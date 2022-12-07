@@ -76,7 +76,7 @@ class BaseSpell:
             damage += stat_value * ratio
         return damage
 
-    def damage(self, target, damage_modifier_flat=0, damage_modifier_ratio=1) -> float:
+    def damage(self, target, damage_modifier_flat=0, damage_modifier_coeff=1) -> float:
         """Calculates the damage dealt to a champion with a spell"""
 
         ratio_damage = self.ratio_damage(target)
@@ -85,7 +85,7 @@ class BaseSpell:
             self.get_base_damage(),
             ratio_damage,
             damage_modifier_flat=damage_modifier_flat,
-            damage_modifier_ratio=damage_modifier_ratio,
+            damage_modifier_coeff=damage_modifier_coeff,
         )
 
         res_type = self.target_res_type
@@ -108,7 +108,7 @@ class BaseSpell:
     def get_damage_modifier_flat(self, **kwargs):
         return 0
 
-    def get_damage_modifier_ratio(self, **kwargs):
+    def get_damage_modifier_coeff(self, **kwargs):
         return 1
 
     def on_hit_effect(self, target, **kwargs):
@@ -117,7 +117,7 @@ class BaseSpell:
 
     def hit_damage(self, target, **kwargs):
         damage_modifier_flat = self.get_damage_modifier_flat(**kwargs)
-        damage_modifier_ratio = self.get_damage_modifier_ratio(**kwargs)
-        damage = self.damage(target, damage_modifier_flat, damage_modifier_ratio)
+        damage_modifier_coeff = self.get_damage_modifier_coeff(**kwargs)
+        damage = self.damage(target, damage_modifier_flat, damage_modifier_coeff)
         self.on_hit_effect(target, **kwargs)  # Be sure to compute the damage before the effect
         return damage

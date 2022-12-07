@@ -2,7 +2,7 @@ import math
 
 from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie, Darius
-from tootanky.item import ALL_ITEM_CLASSES, BlastingWand
+from tootanky.item import ALL_ITEM_CLASSES, BlastingWand, RubyCrystal
 
 
 def test_auto_attack_lvl1():
@@ -84,9 +84,8 @@ def test_get_stats():
 
 
 def test_annie_q():
-    annie = Annie(level=17, spell_levels=[5, 5, 5, 5])
+    annie = Annie(level=17, inventory=[BlastingWand()], spell_levels=[5, 5, 5, 5])
     dummy = Dummy(health=1000, bonus_resistance=30)
-    annie.equip_item(item=BlastingWand())
     dmg = annie.spell_q.hit_damage(dummy)
 
     assert round(dmg, 2) == 193.85
@@ -124,3 +123,10 @@ def test_darius_auto_attack():
     dummy = Dummy(health=1000, bonus_resistance=100)
     darius.do_auto_attack(dummy)
     assert round(dummy.health) == 926
+
+
+def test_equip_item_health():
+    ahri = Ahri(level=17, spell_levels=[5, 5, 5, 5])
+    assert math.ceil(ahri.health) == 2080
+    ahri = Ahri(level=17, inventory=[RubyCrystal()], spell_levels=[5, 5, 5, 5])
+    assert math.ceil(ahri.health) == 2230

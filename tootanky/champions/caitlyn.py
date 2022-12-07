@@ -29,7 +29,7 @@ class Caitlyn(BaseChampion):
         base_attack_damage = self.base_attack_damage
         bonus_attack_damage = self.bonus_attack_damage
         attack_damage = base_attack_damage + bonus_attack_damage
-        crit_chance = self.bonus_crit_chance
+        crit_chance = self.crit_chance
         crit_damage = self.crit_damage
         base_armor = target.base_armor
         bonus_armor = target.bonus_armor
@@ -141,5 +141,5 @@ class RCaitlyn(BaseSpell):
         self.base_damage_per_level = [300, 525, 750]
         self.ratios = [("bonus_attack_damage", 2)]
 
-    def get_damage_modifier_ratio(self):
-        return 1 + self.champion.bonus_crit_chance / 4
+    def get_damage_modifier_coeff(self):
+        return 1 + self.champion.crit_chance / 4
