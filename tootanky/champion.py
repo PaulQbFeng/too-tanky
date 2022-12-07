@@ -4,11 +4,12 @@ import tootanky.stats_calculator as sc
 
 from tootanky.damage import damage_physical_auto_attack
 from tootanky.data_parser import ALL_CHAMPION_BASE_STATS
-<<<<<<< add-spell-factory
-from tootanky.glossary import DEFAULT_STAT_LIST, EXTRA_STAT_LIST, normalize_champion_name
-=======
-from tootanky.glossary import STAT_BASE_BONUS_ONLY_INIT, STAT_BASE_BONUS_FOR_PROPERTY, STAT_STANDALONE_FROM_BONUS
->>>>>>> main
+from tootanky.glossary import (
+    STAT_BASE_BONUS_ONLY_INIT,
+    STAT_BASE_BONUS_FOR_PROPERTY,
+    STAT_STANDALONE_FROM_BONUS,
+    normalize_champion_name,
+)
 from tootanky.inventory import Inventory
 from tootanky.item import BaseItem
 from tootanky.spell_factory import SpellFactory
