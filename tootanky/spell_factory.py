@@ -15,3 +15,7 @@ class SpellFactory:
         if champion_name in cls._SPELLS:
             return cls._SPELLS[champion_name]
         raise KeyError(f"Could not find spells for champion {champion_name}")
+
+    @classmethod
+    def contains_champion_spells(cls, champion_name):
+        return champion_name in cls._SPELLS

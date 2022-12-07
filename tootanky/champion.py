@@ -41,8 +41,8 @@ class BaseChampion:
 
         if spell_levels is None:
             spell_levels = [1, 1, 1, 1]
-        if not champion_name == "Dummy":  # TODO: add dummy spells for Dummy champion
-            self.init_spells(spell_levels)
+
+        self.init_spells(spell_levels)
 
         self.inventory = Inventory(inventory, champion=self)
         self.orig_bonus_stats = self.get_bonus_stats()
@@ -53,6 +53,9 @@ class BaseChampion:
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
+        if self.champion_name not in SpellFactory()._SPELLS:
+            return None
+
         spells = SpellFactory().get_spells_for_champion(self.champion_name)
         level_q, level_w, level_e, level_r = spell_levels
         self.spell_q = spells["q"](champion=self, level=level_q)
