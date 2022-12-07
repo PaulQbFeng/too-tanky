@@ -27,7 +27,9 @@ def test_serrated_unique_passive():
     assert ahri.orig_bonus_stats.lethality == 10
     assert ahri.orig_bonus_stats.armor_pen_percent == 0.18
 
-    ahri.equip_item(ALL_ITEM_CLASSES["Serrated Dirk"]())
+    item_names = ["Serrated Dirk", "Last Whisper", "Serrated Dirk"]
+    inventory = [ALL_ITEM_CLASSES[item_name]() for item_name in item_names]
+    ahri = Ahri(level=7, inventory=inventory)
 
     assert ahri.orig_bonus_stats.attack_damage == 80
     assert ahri.orig_bonus_stats.lethality == 10

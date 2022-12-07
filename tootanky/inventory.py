@@ -15,7 +15,11 @@ class Inventory:
             assert len(items) <= 6, "Inventory can't contain more than 6 items."
             for item in items:
                 item.champion = champion
-                self.add_item(item)
+                self.item_type_count[item.type] += 1
+                self.items.append(item)
+                self.check_item(item)
+                self.apply_item_passive(item)
+                self.item_stats = self.item_stats + item.stats
 
     def get_item(self, name):
         # TODO: what happens with this method when there are several copies of the same item in the inventory
@@ -67,26 +71,6 @@ class Inventory:
         for item in self.items:
             price += item.gold
         return price
-
-    def add_item(self, item):
-        assert len(self.items) <= 5, "Inventory can't contain more than 6 items."
-        self.item_type_count[item.type] += 1
-        self.items.append(item)
-        self.check_item(item)
-        self.apply_item_passive(item)
-        self.item_stats = self.item_stats + item.stats
-
-    def remove_item(self, name):
-        indexes = self.get_all_indexes(name)
-        assert len(indexes) != 0, "The item {} is not in the inventory.".format(name)
-        # by default, we remove the last occurence to remove an item that did not apply its unique passive
-        item = self.items.pop(indexes[-1])
-        self.item_type_count[item.type] -= 1
-        if hasattr(item, "passive"):
-            if item.passive.unique:
-                if len(indexes) == 1:
-                    self.unique_item_passives.remove(item.passive.name)
-        self.item_stats = self.item_stats - item.stats
 
     def mythic_passive_stats(self):
         # TODO
