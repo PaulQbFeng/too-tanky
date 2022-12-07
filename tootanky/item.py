@@ -332,6 +332,11 @@ class NavoriQuickblades(BaseItem):  # missing passive, ability haste
         self.limitations = ["Marksman Capstone", "Ability Haste Capstone"]
 
 
+class RabadonDeathcap(BaseItem):
+    name = "Rabadon's Deathcap"
+    type = "Legendary"
+
+
 class SeryldaGrudge(BaseItem):  # missing passive, ability haste
     name = "Serylda's Grudge"
     type = "Legendary"
@@ -340,6 +345,11 @@ class SeryldaGrudge(BaseItem):  # missing passive, ability haste
         super().__init__()
         self.limitations = ["Last Whisper"]
         self.stats.armor_pen_percent = 0.3
+
+
+class VigilantWardstone(BaseItem):  # missing 12% ability haste increase in multiplier
+    name = "Vigilant Wardstone"
+    type = "Legendary"
 
 
 class YoumuuGhostblade(BaseItem):  # missing passive, active, ability haste

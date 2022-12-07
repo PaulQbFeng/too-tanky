@@ -11,6 +11,7 @@ class Inventory:
         self.unique_item_passives = []
         self.item_type_count = {"Starter": 0, "Basic": 0, "Epic": 0, "Legendary": 0, "Mythic": 0}
         self.item_stats = Stats()
+
         if items is not None:
             assert len(items) <= 6, "Inventory can't contain more than 6 items."
             for item in items:

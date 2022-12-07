@@ -34,6 +34,7 @@ class BaseChampion:
 
         self.inventory = Inventory(inventory, champion=self)
         self.orig_bonus_stats = self.get_bonus_stats()
+        self.apply_multipliers()
         self.update_champion_stats()
 
     def initialize_champion_stats_by_default(self):
@@ -44,6 +45,19 @@ class BaseChampion:
 
         for stat_name in STAT_BASE_BONUS_ONLY_INIT + STAT_STANDALONE_FROM_BONUS:
             setattr(self, stat_name, 0)
+
+    def apply_multipliers(self):
+        rabadon = next((item for item in self.inventory.items if item.name == "Rabadon's Deathcap"), None)
+        vigilantwardstone = next((item for item in self.inventory.items if item.name == "Vigilant Wardstone"), None)
+        if vigilantwardstone is None and rabadon is not None:
+            self.orig_base_stats.ability_power = self.orig_base_stats.ability_power * 1.35
+        if vigilantwardstone is not None:  # missing ability haste
+            self.orig_bonus_stats.attack_damage = self.orig_bonus_stats.attack_damage * 1.12
+            self.orig_bonus_stats.health = self.orig_bonus_stats.health * 1.12
+            if rabadon is None:
+                self.orig_bonus_stats.ability_power = self.orig_bonus_stats.ability_power * 1.12
+            else:
+                self.orig_bonus_stats.ability_power = self.orig_bonus_stats.ability_power * 1.47
 
     def update_champion_stats(self):
         """
