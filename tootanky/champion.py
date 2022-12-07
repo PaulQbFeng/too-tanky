@@ -51,12 +51,15 @@ class BaseChampion:
         vigilantwardstone = next((item for item in self.inventory.items if item.name == "Vigilant Wardstone"), None)
         if vigilantwardstone is None and rabadon is not None:
             self.orig_base_stats.ability_power = self.orig_base_stats.ability_power * 1.35
+            self.orig_bonus_stats.ability_power = self.orig_bonus_stats.ability_power * 1.35
         if vigilantwardstone is not None:  # missing ability haste
             self.orig_bonus_stats.attack_damage = self.orig_bonus_stats.attack_damage * 1.12
             self.orig_bonus_stats.health = self.orig_bonus_stats.health * 1.12
             if rabadon is None:
+                self.orig_base_stats.ability_power = self.orig_base_stats.ability_power * 1.12
                 self.orig_bonus_stats.ability_power = self.orig_bonus_stats.ability_power * 1.12
             else:
+                self.orig_base_stats.ability_power = self.orig_base_stats.ability_power * 1.47
                 self.orig_bonus_stats.ability_power = self.orig_bonus_stats.ability_power * 1.47
 
     def update_champion_stats(self):
