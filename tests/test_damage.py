@@ -23,7 +23,7 @@ def tests_normal_auto_attack_cait_dummy_60():
                 base_armor=dummy_60.base_armor,
                 bonus_armor=dummy_60.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=False,
                 crit_damage=0,
             )
@@ -44,7 +44,7 @@ def tests_normal_auto_attack_cait_dummy_60():
                 base_armor=dummy_60.base_armor,
                 bonus_armor=dummy_60.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=False,
                 crit_damage=0,
             )
@@ -64,7 +64,7 @@ def tests_normal_auto_attack_cait_dummy_60():
                 base_armor=dummy_60.base_armor,
                 bonus_armor=dummy_60.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=True,
                 crit_damage=0,
             )
@@ -85,7 +85,7 @@ def tests_normal_auto_attack_cait_dummy_60():
                 base_armor=dummy_60.base_armor,
                 bonus_armor=dummy_60.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=False,
                 crit_damage=0,
             )
@@ -105,7 +105,7 @@ def tests_normal_auto_attack_cait_dummy_60():
                 base_armor=dummy_60.base_armor,
                 bonus_armor=dummy_60.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=True,
                 crit_damage=0,
             )
@@ -126,7 +126,7 @@ def tests_normal_auto_attack_cait_dummy_60():
                 base_armor=dummy_60.base_armor,
                 bonus_armor=dummy_60.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=False,
                 crit_damage=0,
             )
@@ -146,7 +146,7 @@ def tests_normal_auto_attack_cait_dummy_60():
                 base_armor=dummy_60.base_armor,
                 bonus_armor=dummy_60.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=True,
                 crit_damage=0,
             )
@@ -167,7 +167,7 @@ def tests_normal_auto_attack_cait_dummy_60():
                 base_armor=dummy_60.base_armor,
                 bonus_armor=dummy_60.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=False,
                 crit_damage=0,
             )
@@ -187,7 +187,7 @@ def tests_normal_auto_attack_cait_dummy_60():
                 base_armor=dummy_60.base_armor,
                 bonus_armor=dummy_60.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=True,
                 crit_damage=0,
             )
@@ -216,7 +216,7 @@ def tests_normal_auto_attack_cait_dummy_10():
                 base_armor=dummy_10.base_armor,
                 bonus_armor=dummy_10.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=False,
                 crit_damage=0,
             )
@@ -237,7 +237,7 @@ def tests_normal_auto_attack_cait_dummy_10():
                 base_armor=dummy_10.base_armor,
                 bonus_armor=dummy_10.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=False,
                 crit_damage=0,
             )
@@ -257,7 +257,7 @@ def tests_normal_auto_attack_cait_dummy_10():
                 base_armor=dummy_10.base_armor,
                 bonus_armor=dummy_10.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=True,
                 crit_damage=0,
             )
@@ -278,7 +278,7 @@ def tests_normal_auto_attack_cait_dummy_10():
                 base_armor=dummy_10.base_armor,
                 bonus_armor=dummy_10.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=False,
                 crit_damage=0,
             )
@@ -298,7 +298,7 @@ def tests_normal_auto_attack_cait_dummy_10():
                 base_armor=dummy_10.base_armor,
                 bonus_armor=dummy_10.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=True,
                 crit_damage=0,
             )
@@ -319,7 +319,7 @@ def tests_normal_auto_attack_cait_dummy_10():
                 base_armor=dummy_10.base_armor,
                 bonus_armor=dummy_10.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=False,
                 crit_damage=0,
             )
@@ -339,7 +339,7 @@ def tests_normal_auto_attack_cait_dummy_10():
                 base_armor=dummy_10.base_armor,
                 bonus_armor=dummy_10.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=True,
                 crit_damage=0,
             )
@@ -360,7 +360,7 @@ def tests_normal_auto_attack_cait_dummy_10():
                 base_armor=dummy_10.base_armor,
                 bonus_armor=dummy_10.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=False,
                 crit_damage=0,
             )
@@ -380,7 +380,7 @@ def tests_normal_auto_attack_cait_dummy_10():
                 base_armor=dummy_10.base_armor,
                 bonus_armor=dummy_10.bonus_armor,
                 damage_modifier_flat=0,
-                damage_modifier_percent=0,
+                damage_modifier_coeff=1,
                 crit=True,
                 crit_damage=0,
             )
@@ -398,7 +398,7 @@ def test_pre_mtg_damage():
                 base_offensive_stats=mf.base_attack_damage,
                 bonus_offensive_stats=60,
                 damage_modifier_flat=56,
-                damage_modifier_percent=0.15,
+                damage_modifier_coeff=1.15,
                 crit=True,
                 crit_damage=0,
             )

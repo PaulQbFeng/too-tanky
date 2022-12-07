@@ -37,22 +37,22 @@ MAPPING_ITEM_STANDARD = {
     "gold": "gold",
 }
 
-DEFAULT_STAT_LIST = [
+
+STAT_BASE_BONUS_ONLY_INIT = [
     "health",
     "mana",
     "movespeed",
-    "armor",
-    "magic_resist",
     "attack_range",
     "health_regen",
     "mana_regen",
-    "attack_damage",
     "ability_power",
     "attack_speed",
-    "crit_chance",
 ]
 
-EXTRA_STAT_LIST = [
+STAT_BASE_BONUS_FOR_PROPERTY = ["armor", "magic_resist", "attack_damage"]
+
+STAT_STANDALONE_FROM_BONUS = [
+    "crit_chance",
     "lethality",
     "crit_damage",
     "magic_resist_pen_flat",
