@@ -1,5 +1,6 @@
-from tootanky.champion import BaseChampion, SpellFactory
+from tootanky.champion import BaseChampion
 from tootanky.spell import BaseSpell
+from tootanky.spell_factory import SpellFactory
 
 
 class Xerath(BaseChampion):
@@ -8,13 +9,6 @@ class Xerath(BaseChampion):
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
 
-    def init_spells(self, spell_levels):
-        level_q, level_w, level_e, level_r = spell_levels
-        self.spell_q = QXerath(self, level_q)
-        self.spell_w = WXerath(self, level_w)
-        self.spell_e = EXerath(self, level_e)
-        self.spell_r = RXerath(self, level_r)
-
 
 @SpellFactory.register_spell
 class QXerath(BaseSpell):
@@ -22,7 +16,7 @@ class QXerath(BaseSpell):
     spell_key = "q"
 
     def __init__(self, champion, level):
-        super().__init__(champion, spell_key=__class__.spell_key, level=level)
+        super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
@@ -34,12 +28,13 @@ class QXerath(BaseSpell):
         self.base_spell_damage = self.base_damage_per_level[level - 1]
 
 
+@SpellFactory.register_spell
 class WXerath(BaseSpell):
     champion_name = "Xerath"
     spell_key = "w"
 
     def __init__(self, champion, level):
-        super().__init__(champion, spell_key=__class__.spell_key, level=level)
+        super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
@@ -52,12 +47,13 @@ class WXerath(BaseSpell):
         return 1.667 if is_empowered else 1
 
 
+@SpellFactory.register_spell
 class EXerath(BaseSpell):
     champion_name = "Xerath"
     spell_key = "e"
 
     def __init__(self, champion, level):
-        super().__init__(champion, spell_key=__class__.spell_key, level=level)
+        super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
@@ -67,12 +63,13 @@ class EXerath(BaseSpell):
         self.ratios = [("ability_power", 0.45)]
 
 
+@SpellFactory.register_spell
 class RXerath(BaseSpell):
     champion_name = "Xerath"
     spell_key = "r"
 
     def __init__(self, champion, level):
-        super().__init__(champion, spell_key=__class__.spell_key, level=level)
+        super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"

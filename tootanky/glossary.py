@@ -18,23 +18,23 @@ MAPPING_CHAMPION_STANDARD = {
     "attackdamage": "attack_damage",
     "attackdamageperlevel": "attack_damage_perlevel",
     "attackspeedperlevel": "attack_speed_perlevel",
-    "attackspeed": "attack_speed"
+    "attackspeed": "attack_speed",
 }
 
 MAPPING_ITEM_STANDARD = {
-    'FlatMovementSpeedMod': 'move_speed',
-    'FlatHPPoolMod':'health',
-    'FlatCritChanceMod':'crit_chance',
-    'FlatMagicDamageMod':'ability_power',
-    'FlatMPPoolMod':'mana',
-    'FlatArmorMod':'armor',
-    'FlatSpellBlockMod': 'magic_resist',
-    'FlatPhysicalDamageMod':  'attack_damage',
-    'PercentAttackSpeedMod': 'attack_speed',
-    'PercentLifeStealMod':'life_steal',
-    'FlatHPRegenMod':  'health_regen',
-    'PercentMovementSpeedMod':  'move_speed_percent',
-    "gold": "gold"
+    "FlatMovementSpeedMod": "move_speed",
+    "FlatHPPoolMod": "health",
+    "FlatCritChanceMod": "crit_chance",
+    "FlatMagicDamageMod": "ability_power",
+    "FlatMPPoolMod": "mana",
+    "FlatArmorMod": "armor",
+    "FlatSpellBlockMod": "magic_resist",
+    "FlatPhysicalDamageMod": "attack_damage",
+    "PercentAttackSpeedMod": "attack_speed",
+    "PercentLifeStealMod": "life_steal",
+    "FlatHPRegenMod": "health_regen",
+    "PercentMovementSpeedMod": "move_speed_percent",
+    "gold": "gold",
 }
 
 DEFAULT_STAT_LIST = [
@@ -54,7 +54,7 @@ DEFAULT_STAT_LIST = [
 
 EXTRA_STAT_LIST = [
     "lethality",
-    "crit_damage", 
+    "crit_damage",
     "magic_resist_pen_flat",
     "magic_resist_pen_percent",
     "armor_pen_flat",
@@ -62,3 +62,9 @@ EXTRA_STAT_LIST = [
     "bonus_armor_pen_percent",
     "life_steal",
 ]
+
+
+def normalize_champion_name(name):
+    """Champion name are different in champion / spell / item json files"""
+    # TODO: normalize everything
+    return name.replace(" ", "")

@@ -1,34 +1,15 @@
 from typing import Callable, List, Optional
 
 import tootanky.stats_calculator as sc
+
 from tootanky.damage import damage_physical_auto_attack
 from tootanky.data_parser import ALL_CHAMPION_BASE_STATS
-from tootanky.glossary import DEFAULT_STAT_LIST, EXTRA_STAT_LIST
+from tootanky.glossary import DEFAULT_STAT_LIST, EXTRA_STAT_LIST, normalize_champion_name
 from tootanky.inventory import Inventory
 from tootanky.item import BaseItem
+from tootanky.spell_factory import SpellFactory
 
 
-class SpellFactory:
-    _SPELLS = {}
-
-    @classmethod
-    def register_spell(cls, spell_cls):
-        champion_name = spell_cls.champion_name.lower()
-        if champion_name in cls._SPELLS:
-            spell_key = spell_cls.__name__[0].lower()
-            cls._SPELLS[champion_name][spell_key] = spell_cls
-        else:
-            cls._SPELLS[champion_name] = dict()
-        return spell_cls
-
-    @classmethod
-    def get_spells_for_champion(cls, champion_name):
-        if champion_name in cls._SPELLS:
-            return cls._SPELLS[champion_name]
-        raise KeyError(f"Could not find spells for champion {champion_name}")
-
-
-# TODO: Might be a good opportunity to use abstract class for base champion
 class BaseChampion:
     """
     Base class to represent a champion. It is initialized with the stats of a champion at a given level.
@@ -46,6 +27,7 @@ class BaseChampion:
     ):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
+        champion_name = normalize_champion_name(champion_name)
         self.orig_base_stats = sc.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level)
         for stat_name in DEFAULT_STAT_LIST:
             setattr(self, "base_" + stat_name, 0)
@@ -59,7 +41,8 @@ class BaseChampion:
 
         if spell_levels is None:
             spell_levels = [1, 1, 1, 1]
-        self.init_spells(spell_levels)
+        if not champion_name == "Dummy":  # TODO: add dummy spells for Dummy champion
+            self.init_spells(spell_levels)
 
         self.inventory = Inventory(inventory, champion=self)
         self.orig_bonus_stats = self.get_bonus_stats()
@@ -70,8 +53,12 @@ class BaseChampion:
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
-        for letter in ["q", "w", "e", "r"]:
-            pass
+        spells = SpellFactory().get_spells_for_champion(self.champion_name)
+        level_q, level_w, level_e, level_r = spell_levels
+        self.spell_q = spells["q"](champion=self, level=level_q)
+        self.spell_w = spells["w"](champion=self, level=level_w)
+        self.spell_e = spells["e"](champion=self, level=level_e)
+        self.spell_r = spells["r"](champion=self, level=level_r)
 
     def getter_wrapper(stat_name: str) -> Callable:
         """Wrapper to use a single getter for all total stat attributes"""
