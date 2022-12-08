@@ -1,12 +1,21 @@
+import pytest
+
 from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie
 from tootanky.damage import damage_after_positive_resistance
-from tootanky.item import ALL_ITEM_CLASSES, DoranBlade, Sheen
+from tootanky.item import ALL_ITEM_CLASSES, DoranBlade, Sheen, InfinityEdge
+from tootanky.inventory import Inventory
 
 
 def test_doranblade():
     doranblade = DoranBlade()
     assert doranblade.stats._dict == {"attack_damage": 8, "health": 80}
+
+
+def test_infinity_edge():
+    ie = InfinityEdge()
+    assert ie.stats.attack_damage == 70
+    assert ie.stats.crit_chance == 0.2
 
 
 def test_sheen():
