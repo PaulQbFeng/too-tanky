@@ -335,19 +335,27 @@ class YoumuuGhostblade(BaseItem):  # missing passive, active, ability haste
 
 
 # Mythic items
-# TODO: Crown of the Shattered Queen, Divine Sunderer, Duskblade of Draktharr, Eclipse, Evenshroud, Everfrost,
+# TODO: Crown of the Shattered Queen, Divine Sunderer, Duskblade of Draktharr, Eclipse, Evenshroud,
 #  Goredrinker, Heartsteel, Hextech Rocketbelt, Iceborn Gauntlet, Immortal Shieldbow, Imperial Mandate,
 #  Jak'Sho, The Protean, Kraken Slayer, Liandry's Anguish, Locket of the Iron Solari, Luden's Tempest,
 #  Moonstone Renewer, Night Harvester, Prowler's Claw, Radiant Virtue, Riftmaker, Rod of Ages, Shurelya's Battlesong,
 #  Stridebreaker, Trinity Force
+class Everfrost(BaseItem):  # missing ability haste
+    name = "Everfrost"
+    type = "Mythic"
+
+    def __init__(self):
+        super().__init__()
+        self.mythic_passive_stats = [("ability_power", 10, "flat")]
+
+
 class Galeforce(BaseItem):
     name = "Galeforce"
     type = "Mythic"
 
     def __init__(self):
         super().__init__()
-        self.mythic_passive_ratio = [0.2]
-        self.mythic_passive_type = ["bonus_move_speed"]
+        self.mythic_passive_stats = [("bonus_move_speed", 0.2, "ratio")]
 
     def apply_active(self, target):
         max_health = target.orig_base_stats.health + target.orig_bonus_stats.health
