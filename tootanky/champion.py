@@ -58,7 +58,7 @@ class BaseChampion:
         Updates the stat depending on the stat type.
             - STAT_STANDALONE: set the stat as the sum of orig_base and orig_bonus stat.
             - STAT_TOTAL_PROPERTY: set base_stat, bonus_stat. the attribute stat is a property.
-            - STAT_STANDALONE_FROM_BONUS: set the stat taken from orig_bonus stat (without the bonus_prefix).
+            - STAT_UNDERLYING_PROPERTY: set the _stat. the attribute stat is a property with conditions (like crit_damage)
         """
         for name in STAT_STANDALONE:
             setattr(self, name, self.orig_base_stats.__getattr__(name) + self.orig_bonus_stats.__getattr__(name))
