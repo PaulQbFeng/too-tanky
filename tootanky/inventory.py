@@ -5,7 +5,6 @@ from tootanky.stats import Stats
 
 
 class Inventory:
-
     def __init__(self, items: Optional[List[BaseItem]] = None, champion=None):
         self.items = []
         self.unique_item_passives = []
@@ -20,6 +19,10 @@ class Inventory:
                 self.check_item(item)
                 self.apply_item_passive(item)
                 self.item_stats = self.item_stats + item.stats
+
+    def contains(self, name):
+        """Check if an item is in the inventory"""
+        return name in (item.name for item in self.items)
 
     def get_item(self, name):
         # TODO: what happens with this method when there are several copies of the same item in the inventory
@@ -47,14 +50,29 @@ class Inventory:
             assert self.is_unique_copy(item.name), "A champion can't have more than one copy of {}".format(item.name)
         if item.type == "Mythic":
             assert self.item_type_count["Mythic"] <= 1, "A champion can't have more than one mythic item."
-        if item.limitation in ["Immolate", "Lifeline", "Mana Charge", "Last Whisper", "Void Pen", "Sightstone",
-                               "Ability Haste Capstone", "Quicksilver", "Hydra", "Glory", "Eternity",
-                               "Mythic Component"]:
-            assert self.is_unique_limitation([item.limitation]), "A champion can have only one {} item".format(item.limitation)
+        if item.limitation in [
+            "Immolate",
+            "Lifeline",
+            "Mana Charge",
+            "Last Whisper",
+            "Void Pen",
+            "Sightstone",
+            "Ability Haste Capstone",
+            "Quicksilver",
+            "Hydra",
+            "Glory",
+            "Eternity",
+            "Mythic Component",
+        ]:
+            assert self.is_unique_limitation([item.limitation]), "A champion can have only one {} item".format(
+                item.limitation
+            )
         if item.limitation in ["Support", "Jungle"]:
             assert self.is_unique_limitation(["Support", "Jungle"]), "A champion can have only one Support/Jungle item"
         if item.limitation in ["Crit Modifier", "Marksman Capstone"]:
-            assert self.is_unique_limitation(["Crit Modifier", "Marksman Capstone"]), "A champion can have only one Crit Modifier/Marksman Capstone item"
+            assert self.is_unique_limitation(
+                ["Crit Modifier", "Marksman Capstone"]
+            ), "A champion can have only one Crit Modifier/Marksman Capstone item"
 
     def apply_item_passive(self, item):
         # TODO: some items have unique passives AND passives that are not unique

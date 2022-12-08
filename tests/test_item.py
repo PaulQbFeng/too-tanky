@@ -1,10 +1,7 @@
-import pytest
-
 from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie
 from tootanky.damage import damage_after_positive_resistance
-from tootanky.item import ALL_ITEM_CLASSES, DoranBlade, Sheen, InfinityEdge
-from tootanky.inventory import Inventory
+from tootanky.item import ALL_ITEM_CLASSES, DoranBlade, Sheen, InfinityEdge, CloakofAgility
 
 
 def test_doranblade():
@@ -16,6 +13,13 @@ def test_infinity_edge():
     ie = InfinityEdge()
     assert ie.stats.attack_damage == 70
     assert ie.stats.crit_chance == 0.2
+
+    agility_cloak = CloakofAgility()
+
+    ahri = Ahri(inventory=[ie] + 2 * [agility_cloak])
+    assert ahri.crit_damage == 0
+    ahri = Ahri(inventory=[ie] + 3 * [agility_cloak])
+    assert ahri.crit_damage == 0.35
 
 
 def test_sheen():
