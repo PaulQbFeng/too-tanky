@@ -66,6 +66,7 @@ class BaseChampion:
         for name in STAT_TOTAL_PROPERTY:
             setattr(self, "base_" + name, self.orig_base_stats.__getattr__(name))
             setattr(self, "bonus_" + name, self.orig_bonus_stats.__getattr__(name))
+
         for name in STAT_UNDERLYING_PROPERTY:
             setattr(self, "_" + name, self.orig_bonus_stats.__getattr__(name))
 
