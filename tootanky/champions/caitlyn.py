@@ -1,6 +1,7 @@
 from tootanky.champion import BaseChampion
 from tootanky.damage import damage_physical_auto_attack
 from tootanky.spell import BaseSpell
+from tootanky.spell_factory import SpellFactory
 
 
 class Caitlyn(BaseChampion):
@@ -17,13 +18,6 @@ class Caitlyn(BaseChampion):
             self.passive_multiplier = 0.9
         if 13 <= self.level <= 18:
             self.passive_multiplier = 1.2
-
-    def init_spells(self, spell_levels):
-        [level_q, level_w, level_e, level_r] = spell_levels
-        self.spell_q = QCaitlyn(self, level_q)
-        self.spell_w = WCaitlyn(self, level_w)
-        self.spell_e = ECaitlyn(self, level_e)
-        self.spell_r = RCaitlyn(self, level_r)
 
     def auto_attack_damage(self, target, is_crit: bool = False):
         base_attack_damage = self.base_attack_damage
@@ -70,12 +64,13 @@ class Caitlyn(BaseChampion):
         return damage
 
 
+@SpellFactory.register_spell
 class QCaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "q"
 
     def __init__(self, champion, level):
-        super().__init__(champion, spell_key=__class__.spell_key, level=level)
+        super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "physical"
@@ -88,12 +83,13 @@ class QCaitlyn(BaseSpell):
         return self.ratio_per_level[self.level - 1]
 
 
+@SpellFactory.register_spell
 class WCaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "w"
 
     def __init__(self, champion, level):
-        super().__init__(champion, spell_key=__class__.spell_key, level=level)
+        super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "physical"
@@ -111,12 +107,13 @@ class WCaitlyn(BaseSpell):
         self.champion.w_hit = True
 
 
+@SpellFactory.register_spell
 class ECaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "e"
 
     def __init__(self, champion, level):
-        super().__init__(champion, spell_key=__class__.spell_key, level=level)
+        super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "magical"
@@ -128,12 +125,13 @@ class ECaitlyn(BaseSpell):
         self.champion.e_hit = True
 
 
+@SpellFactory.register_spell
 class RCaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "r"
 
     def __init__(self, champion, level):
-        super().__init__(champion, spell_key=__class__.spell_key, level=level)
+        super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
         self.damage_type = "physical"

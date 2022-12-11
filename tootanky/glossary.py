@@ -38,7 +38,7 @@ MAPPING_ITEM_STANDARD = {
 }
 
 
-STAT_BASE_BONUS_ONLY_INIT = [
+STAT_STANDALONE = [
     "health",
     "mana",
     "movespeed",
@@ -47,14 +47,8 @@ STAT_BASE_BONUS_ONLY_INIT = [
     "mana_regen",
     "ability_power",
     "attack_speed",
-]
-
-STAT_BASE_BONUS_FOR_PROPERTY = ["armor", "magic_resist", "attack_damage"]
-
-STAT_STANDALONE_FROM_BONUS = [
-    "crit_chance",
     "lethality",
-    "crit_damage",
+    "crit_chance",
     "magic_resist_pen_flat",
     "magic_resist_pen_percent",
     "armor_pen_flat",
@@ -62,3 +56,14 @@ STAT_STANDALONE_FROM_BONUS = [
     "bonus_armor_pen_percent",
     "life_steal",
 ]
+
+STAT_TOTAL_PROPERTY = ["armor", "magic_resist", "attack_damage"]
+
+
+STAT_UNDERLYING_PROPERTY = ["crit_damage"]
+
+
+def normalize_champion_name(name):
+    """Champion name are different in champion / spell / item json files"""
+    # TODO: normalize everything
+    return name.replace(" ", "")
