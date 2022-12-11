@@ -33,7 +33,7 @@ class BaseItem:
         item_stats = ALL_ITEM_STATS[self.name].copy()
         self.gold = item_stats.pop("gold")
         self.stats = Stats(item_stats)
-        self.limitation = None
+        self.limitations = None
 
     def apply_passive(self):
         pass
@@ -70,7 +70,7 @@ class BamiCinder(BaseItem):  # missing passive
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Immolate"
+        self.limitations = ["Immolate"]
 
 
 class BFSword(BaseItem):
@@ -163,7 +163,7 @@ class BlightingJewel(BaseItem):
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Void Pen"
+        self.limitations = ["Void Pen"]
         self.stats.add("magic_resist_pen_percent", 0.13)
 
 
@@ -198,7 +198,7 @@ class Frostfang(BaseItem):  # missing base_mana_regen
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Support"
+        self.limitations = ["Support"]
 
 
 class GiantBelt(BaseItem):
@@ -217,7 +217,7 @@ class HarrowingCrescent(BaseItem):  # missing base_mana_regen
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Support"
+        self.limitations = ["Support"]
 
 
 class HearthboundAxe(BaseItem):  # missing passive (bonus_move_speed when basic attacks)
@@ -236,7 +236,7 @@ class LastWhisper(BaseItem):
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Last Whisper"
+        self.limitations = ["Last Whisper"]
         self.stats.armor_pen_percent = 0.18
 
 
@@ -246,7 +246,7 @@ class LostChapter(BaseItem):  # missing ability haste
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Mythic Component"
+        self.limitations = ["Mythic Component"]
 
 
 class NegatronCloak(BaseItem):
@@ -260,7 +260,7 @@ class Noonquiver(BaseItem):
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Mythic Component"
+        self.limitations = ["Mythic Component"]
 
 
 class RunesteelSpaulders(BaseItem):  # missing base_health_regen
@@ -269,7 +269,7 @@ class RunesteelSpaulders(BaseItem):  # missing base_health_regen
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Support"
+        self.limitations = ["Support"]
 
 
 class SerratedDirk(BaseItem):
@@ -290,7 +290,7 @@ class TargonBuckler(BaseItem):  # missing base_health_regen
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Support"
+        self.limitations = ["Support"]
 
 
 class WatchfulWardstone(BaseItem):  # missing ability haste
@@ -299,7 +299,7 @@ class WatchfulWardstone(BaseItem):  # missing ability haste
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Sightstone"
+        self.limitations = ["Sightstone"]
 
 
 # Legendary items
@@ -309,20 +309,47 @@ class WatchfulWardstone(BaseItem):  # missing ability haste
 #  Fimbulwinter, Force of Nature, Frozen Heart, Gargoyle Stoneplate, Guardian Angel, Guinsoo's Rageblade, Horizon Focus,
 #  Hullbreaker, Infinity Edge, Knight's Vow, Lich Bane, Lord Dominik's Regards, Manamune, Maw of Malmortius,
 #  Mejai's Soulstealer, Mercurial Scimitar, Mikael's Blessing, Morellonomicon, Mortal Reminder, Muramana,
-#  Nashor's Tooth, Navori Quickblades, Pauldrons of Whiterock, Phantom Dancer, Rabadon's Deathcap, Randuin's Omen,
-#  Rapid Firecannon, Ravenous Hydra, Redemption, Runaan's Hurricane, Rylai's Crystal Scepter, Seraph's Embrace,
-#  Serpent's Fang, Shadowflame, Shard of True Ice, Silvermere Dawn, Spear of Shojin, Spirit Visage,
-#  Staff of Flowing Water, Sterak's Gage, Stormrazor, Sunfire Aegis, The Collector, Thornmail, Titanic Hydra,
-#  Turbo Chemtank, Umbral Glaive, Vigilant Wardstone, Void Staff, Warmog's Armor, Winter's Approach, Wit's End,
-#  Zeke's Convergence, Zhonya's Hourglass
+#  Nashor's Tooth, Pauldrons of Whiterock, Phantom Dancer, Rabadon's Deathcap, Randuin's Omen, Rapid Firecannon,
+#  Ravenous Hydra, Redemption, Runaan's Hurricane, Rylai's Crystal Scepter, Seraph's Embrace, Serpent's Fang,
+#  Shadowflame, Shard of True Ice, Silvermere Dawn, Spear of Shojin, Spirit Visage, Staff of Flowing Water,
+#  Sterak's Gage, Stormrazor, Sunfire Aegis, The Collector, Thornmail, Titanic Hydra, Turbo Chemtank, Umbral Glaive,
+#  Vigilant Wardstone, Void Staff, Warmog's Armor, Winter's Approach, Wit's End, Zeke's Convergence, Zhonya's Hourglass
+class InfinityEdge(BaseItem):  # missing passive
+    name = "Infinity Edge"
+    type = "Legendary"
+
+    def __init__(self):
+        super().__init__()
+        self.limitations = ["Crit Modifier"]
+
+
+class NavoriQuickblades(BaseItem):  # missing passive, ability haste
+    name = "Navori Quickblades"
+    type = "Legendary"
+
+    def __init__(self):
+        super().__init__()
+        self.limitations = ["Marksman Capstone", "Ability Haste Capstone"]
+
+
+class RabadonDeathcap(BaseItem):
+    name = "Rabadon's Deathcap"
+    type = "Legendary"
+
+
 class SeryldaGrudge(BaseItem):  # missing passive, ability haste
     name = "Serylda's Grudge"
     type = "Legendary"
 
     def __init__(self):
         super().__init__()
-        self.limitation = "Last Whisper"
+        self.limitations = ["Last Whisper"]
         self.stats.armor_pen_percent = 0.3
+
+
+class VigilantWardstone(BaseItem):  # missing 12% ability haste increase in multiplier
+    name = "Vigilant Wardstone"
+    type = "Legendary"
 
 
 class YoumuuGhostblade(BaseItem):  # missing passive, active, ability haste

@@ -4,7 +4,7 @@ import pytest
 from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie, Caitlyn
 from tootanky.damage import damage_after_positive_resistance
-from tootanky.item import ALL_ITEM_CLASSES, DoranBlade, Sheen, InfinityEdge, CloakofAgility
+from tootanky.item import ALL_ITEM_CLASSES, DoranBlade, Sheen, InfinityEdge, CloakofAgility, RabadonDeathcap, BlastingWand
 
 
 @pytest.fixture()
@@ -104,3 +104,11 @@ def test_galeforce():
         test_crit_chance=0.35,
         test_active=[136, 136, 136, 136, 136, 136, 136, 136, 136, 146, 156, 167, 177, 187, 197, 207, 218, 228],
     )
+
+
+def test_rabadon():
+    ahri = Ahri(level=11, inventory=[RabadonDeathcap()])
+    print(ahri.orig_base_stats.ability_power, ahri.orig_bonus_stats.ability_power)
+    assert ahri.ability_power == 162
+    ahri = Ahri(level=11, inventory=[RabadonDeathcap(), BlastingWand()])
+    assert ahri.ability_power == 216
