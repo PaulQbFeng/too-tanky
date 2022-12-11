@@ -5,8 +5,10 @@ import tootanky.stats_calculator as sc
 from tootanky.damage import damage_physical_auto_attack
 from tootanky.data_parser import ALL_CHAMPION_BASE_STATS
 from tootanky.glossary import (
+    STAT_SUM_BASE_BONUS,
     STAT_STANDALONE,
     STAT_TOTAL_PROPERTY,
+    STAT_FLAT_PERCENT,
     STAT_UNDERLYING_PROPERTY,
     normalize_champion_name,
 )
@@ -47,12 +49,19 @@ class BaseChampion:
 
     def initialize_champion_stats_by_default(self):
         """Set all stats to 0"""
+        for stat_name in STAT_SUM_BASE_BONUS:
+            setattr(self, stat_name, 0)
+
+        for stat_name in STAT_STANDALONE:
+            setattr(self, stat_name, 0)
+
         for stat_name in STAT_TOTAL_PROPERTY:
             setattr(self, "base_" + stat_name, 0)
             setattr(self, "bonus_" + stat_name, 0)
 
-        for stat_name in STAT_STANDALONE:
-            setattr(self, stat_name, 0)
+        for stat_name in STAT_FLAT_PERCENT:
+            setattr(self, stat_name + "_flat", 0)
+            setattr(self, stat_name + "_percent", 0)
 
     def apply_multipliers(self):
         ap_multiplier = 1
@@ -68,7 +77,7 @@ class BaseChampion:
     def update_champion_stats(self):
         """
         Updates the stat depending on the stat type.
-            - STAT_STANDALONE: set the stat as the sum of orig_base and orig_bonus stat.
+            - STAT_SUM_BASE_BONUS: set the stat as the sum of orig_base and orig_bonus stat.
             - STAT_TOTAL_PROPERTY: set base_stat, bonus_stat. the attribute stat is a property.
             - STAT_UNDERLYING_PROPERTY: set the _stat. the attribute stat is a property with conditions (like crit_damage)
         """

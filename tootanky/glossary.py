@@ -37,30 +37,40 @@ MAPPING_ITEM_STANDARD = {
     "gold": "gold",
 }
 
-
-STAT_STANDALONE = [
+STAT_SUM_BASE_BONUS = [
     "health",
     "mana",
-    "move_speed",
     "attack_range",
     "health_regen",
     "mana_regen",
-    "ability_power",
-    "attack_speed",
-    "lethality",
-    "crit_chance",
-    "magic_resist_pen_flat",
-    "magic_resist_pen_percent",
-    "armor_pen_flat",
-    "armor_pen_percent",
-    "bonus_armor_pen_percent",
-    "life_steal",
 ]
 
-STAT_TOTAL_PROPERTY = ["armor", "magic_resist", "attack_damage"]
+STAT_STANDALONE = [
+    "lethality",
+    "crit_chance",
+    "crit_damage",
+    "life_steal",
+    "omni_vamp",
+    "spell_vamp",
+    "bonus_armor_pen_percent"
+]
 
+STAT_TOTAL_PROPERTY = [
+    "armor",
+    "magic_resist",
+    "attack_damage",
+    "attack_speed",
+    "move_speed",
+    "ability_power"
+]
 
-STAT_UNDERLYING_PROPERTY = ["crit_damage"]
+STAT_FLAT_PERCENT = [
+    "armor_pen",
+    "magic_resist_pen",
+    "bonus_move_speed"
+]
+
+STAT_UNDERLYING_PROPERTY = []
 
 
 def normalize_champion_name(name):
