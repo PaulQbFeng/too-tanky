@@ -97,7 +97,8 @@ def test_auto_attack_with_item_component():
     ahri = Ahri(level=4, inventory=inventory)
     dummy = Dummy(health=1000, bonus_resistance=100)
 
-    assert ahri.orig_bonus_stats._dict == {"armor": 15, "attack_damage": 75}
+    assert ahri.orig_bonus_stats.armor == 15
+    assert ahri.orig_bonus_stats.attack_damage == 75
     assert round(ahri.auto_attack_damage(dummy)) == 67
 
 
