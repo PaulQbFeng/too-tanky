@@ -133,7 +133,7 @@ class Sheen(BaseItem):
     type = "Basic"
 
     def spellblade(self, owner_champion, target):
-        #TODO: this must be unique passive
+        # TODO: this must be unique passive
         """Calculates the bonus damage dealt with an autoattack : 100% of base AD"""
         return damage_after_positive_resistance(owner_champion.base_attack_damage, target.bonus_armor)
 
@@ -332,6 +332,11 @@ class YoumuuGhostblade(BaseItem):  # missing passive, active, ability haste
     def __init__(self):
         super().__init__()
         self.stats.lethality = 18
+
+
+class InfinityEdge(BaseItem):
+    name = "Infinity Edge"
+    type = "Legendary"
 
 
 # Mythic items

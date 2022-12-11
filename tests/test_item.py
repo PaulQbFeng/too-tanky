@@ -1,12 +1,48 @@
+import math
+import pytest
+
 from tootanky.champion import Dummy
-from tootanky.champions import Ahri, Annie
+from tootanky.champions import Ahri, Annie, Caitlyn
 from tootanky.damage import damage_after_positive_resistance
-from tootanky.item import ALL_ITEM_CLASSES, DoranBlade, Sheen
+from tootanky.item import ALL_ITEM_CLASSES, DoranBlade, Sheen, InfinityEdge, CloakofAgility
+
+
+@pytest.fixture()
+def infinity_edge():
+    return InfinityEdge()
+
+
+@pytest.fixture()
+def agility_cloak():
+    return CloakofAgility()
 
 
 def test_doranblade():
     doranblade = DoranBlade()
     assert doranblade.stats._dict == {"attack_damage": 8, "health": 80}
+
+
+def test_infinity_edge(infinity_edge, agility_cloak):
+    assert infinity_edge.stats.attack_damage == 70
+    assert infinity_edge.stats.crit_chance == 0.2
+
+    ahri = Ahri(inventory=[infinity_edge] + 2 * [agility_cloak])
+    assert ahri.crit_damage == 0
+    ahri = Ahri(inventory=[infinity_edge] + 3 * [agility_cloak])
+    assert ahri.crit_damage == 0.35
+
+
+def test_infinity_edge_cait(infinity_edge, agility_cloak):
+    dummy = Dummy(health=1000, bonus_resistance=100)
+    caitlyn = Caitlyn(level=11, inventory=[infinity_edge] + 2 * [agility_cloak])
+    assert (
+        math.floor(caitlyn.auto_attack_damage(dummy, is_crit=False)) == 82
+    )  # TODO: why this auto is floor and next one is round
+    assert round(caitlyn.auto_attack_damage(dummy, is_crit=True)) == 145
+    caitlyn = Caitlyn(level=11, inventory=[infinity_edge] + 3 * [agility_cloak])
+    assert caitlyn.crit_damage == 0.35
+    assert math.floor(caitlyn.auto_attack_damage(dummy, is_crit=False)) == 82
+    assert round(caitlyn.auto_attack_damage(dummy, is_crit=True)) == 174
 
 
 def test_sheen():

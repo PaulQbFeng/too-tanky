@@ -1,5 +1,6 @@
+import pytest
 from tootanky.inventory import Inventory
-from tootanky.item import CloakofAgility, Galeforce, LongSword, SerratedDirk, SeryldaGrudge
+from tootanky.item import CloakofAgility, Galeforce, LongSword, SerratedDirk, SeryldaGrudge, InfinityEdge
 
 
 def test_inventory():
@@ -21,3 +22,11 @@ def test_inventory():
     inventory = Inventory([LongSword(), Galeforce(), SerratedDirk(), CloakofAgility(), SeryldaGrudge(), SerratedDirk()])
     assert inventory.item_stats.attack_damage == 175
     assert inventory.item_stats.lethality == 10
+
+
+def test_legendary_unicity():
+    ie = InfinityEdge()
+    assert ie.stats.attack_damage == 70
+    assert ie.stats.crit_chance == 0.2
+    with pytest.raises(AssertionError):
+        inv = Inventory([ie, ie])
