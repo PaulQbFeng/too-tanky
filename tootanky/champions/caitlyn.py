@@ -103,7 +103,7 @@ class WCaitlyn(BaseSpell):
         ratio = self.headshot_bonus_damage_ratio[self.level - 1]
         return flat, ratio
 
-    def on_hit_effect(self, target):
+    def on_attack_state_change(self):
         self.champion.w_hit = True
 
 
@@ -121,7 +121,7 @@ class ECaitlyn(BaseSpell):
         self.base_damage_per_level = [80, 130, 180, 230, 280]
         self.ratios = [("ability_power", 0.8)]
 
-    def on_hit_effect(self, target):
+    def on_attack_state_change(self):
         self.champion.e_hit = True
 
 
