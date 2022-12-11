@@ -24,6 +24,20 @@ def pre_mitigation_auto_attack_damage(
     return (tot_off_stats * crit_multiplier + damage_modifier_flat) * damage_modifier_coeff
 
 
+def ratio_damage(champion, target, ratios, spell_leve1) -> float:
+    """Get the damage dealt by the ratio part of a spell, taking into account multiple ratios"""
+    damage = 0
+    for stat_name, ratio in ratios:
+        if "target_" in stat_name:
+            stat_value = getattr(target, stat_name.replace("target_", ""))
+        else:
+            stat_value = getattr(champion, stat_name)
+        if isinstance(ratio, list):
+            ratio = ratio[spell_leve1 - 1]
+        damage += stat_value * ratio
+    return damage
+
+
 def pre_mitigation_spell_damage(
     base_spell_damage: float,
     ratio_damage: float,
@@ -37,7 +51,6 @@ def pre_mitigation_spell_damage(
     :param: ratio_damage is damage that scales with the champion's or target's stat
     """
     return (base_spell_damage + ratio_damage + damage_modifier_flat) * damage_modifier_coeff
-
 
 
 def avg_pre_mitigation_auto_attack_damage(
