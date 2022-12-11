@@ -36,7 +36,10 @@ class Inventory:
         return [item.name for item in self.items].count(name) <= 1
 
     def is_unique_limitation(self, limitations):
-        return sum([item.limitations[i] for item in self.items if item.limitations is not None for i in range(len(item.limitations))].count(limitation) for limitation in limitations) <= 1
+        return sum(
+            [item.limitations[i] for item in self.items if item.limitations is not None
+             for i in range(len(item.limitations))].count(limitation) for limitation in limitations
+        ) <= 1
 
     def get_all_indexes(self, name):
         indexes = []
@@ -93,7 +96,10 @@ class Inventory:
         if self.item_type_count["Mythic"] == 1:
             if item.type == "Legendary":
                 mythic_item = self.get_mythic_item()
-                mythic_passive_dict = {mythic_item.mythic_passive_type[i]: mythic_item.mythic_passive_ratio[i] for i in range(len(mythic_item.mythic_passive_type))}
+                mythic_passive_dict = {
+                    mythic_item.mythic_passive_type[i]:
+                        mythic_item.mythic_passive_ratio[i] for i in range(len(mythic_item.mythic_passive_type))
+                }
                 item.stats = item.stats + Stats(mythic_passive_dict)
 
     def get_price(self):

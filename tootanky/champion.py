@@ -55,14 +55,12 @@ class BaseChampion:
             setattr(self, stat_name, 0)
 
     def apply_multipliers(self):
-        rabadon = next((item for item in self.inventory.items if item.name == "Rabadon's Deathcap"), None)
-        vigilantwardstone = next((item for item in self.inventory.items if item.name == "Vigilant Wardstone"), None)
         ap_multiplier = 1
-        if vigilantwardstone is not None:  # missing ability haste
+        if self.inventory.contains("Vigilant Wardstone"):  # missing ability haste
             ap_multiplier += 0.12
             self.orig_bonus_stats.attack_damage = self.orig_bonus_stats.attack_damage * 1.12
             self.orig_bonus_stats.health = self.orig_bonus_stats.health * 1.12
-        if rabadon is not None:
+        if self.inventory.contains("Rabadon's Deathcap"):
             ap_multiplier += 0.35
         self.orig_base_stats.ability_power = self.orig_base_stats.ability_power * ap_multiplier
         self.orig_bonus_stats.ability_power = self.orig_bonus_stats.ability_power * ap_multiplier
