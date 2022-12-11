@@ -44,7 +44,7 @@ class BaseChampion:
 
         self.inventory = Inventory(inventory, champion=self)
         self.orig_bonus_stats = self.get_bonus_stats()
-        self.apply_multipliers()
+        self.apply_stat_modifiers()
         self.update_champion_stats()
 
     def initialize_champion_stats_by_default(self):
@@ -63,7 +63,21 @@ class BaseChampion:
             setattr(self, stat_name + "_flat", 0)
             setattr(self, stat_name + "_percent", 0)
 
-    def apply_multipliers(self):
+    def apply_stat_modifiers(self):
+        """
+        Stat modifier from some items that are applied at the end of the inventory initialisation. (E.g rabadon, infinity_edge)
+        Stat modifiers can affect both base and bonus stats (e.g rabadon)
+        """
+        self.apply_crit_damage_modifier()
+        self.apply_ap_multipliers()
+
+    def apply_crit_damage_modifier(self):
+        bonus_crit_damage = 0
+        if self.inventory.contains("Infinity Edge") and self.orig_bonus_stats.crit_chance >= 0.6:
+            bonus_crit_damage += 0.35
+        self.orig_bonus_stats.crit_damage += bonus_crit_damage
+
+    def apply_ap_multipliers(self):
         ap_multiplier = 1
         if self.inventory.contains("Vigilant Wardstone"):  # missing ability haste
             ap_multiplier += 0.12
@@ -116,17 +130,6 @@ class BaseChampion:
             return base_value + bonus_value
 
         return total_stat_getter
-
-    @property
-    def crit_damage(self):
-        bonus_crit_damage = 0
-        if self.inventory.contains("Infinity Edge") and self.crit_chance >= 0.6:
-            bonus_crit_damage += 0.35
-        return self._crit_damage + bonus_crit_damage
-
-    @crit_damage.setter
-    def crit_damage(self, value):
-        self._crit_damage = value
 
     armor = property(fget=getter_wrapper("armor"))
     magic_resist = property(fget=getter_wrapper("magic_resist"))
