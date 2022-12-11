@@ -55,12 +55,13 @@ STAT_STANDALONE = [
     "armor_pen_percent",
     "bonus_armor_pen_percent",
     "life_steal",
+    "crit_damage",
 ]
 
 STAT_TOTAL_PROPERTY = ["armor", "magic_resist", "attack_damage"]
 
 
-STAT_UNDERLYING_PROPERTY = ["crit_damage"]
+STAT_UNDERLYING_PROPERTY = []
 
 
 def normalize_champion_name(name):
