@@ -360,7 +360,7 @@ class Galeforce(BaseItem):
 
     def __init__(self):
         super().__init__()
-        self.mythic_passive_stats = [("bonus_move_speed", 0.2, "ratio")]
+        self.mythic_passive_stats = [("bonus_move_speed", 0.02, "ratio")]
 
     def apply_active(self, target):
         max_health = target.orig_base_stats.health + target.orig_bonus_stats.health

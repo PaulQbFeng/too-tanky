@@ -123,6 +123,37 @@ class BaseChampion:
         assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
         return selected_item.apply_active(target)
 
+    def apply_mythic_passive(self):
+        mythic_passive_stats = self.inventory.get_mythic_passive_stats()
+        if mythic_passive_stats is not None:
+            for i in range(len(mythic_passive_stats)):
+                mythic_passive_stat = mythic_passive_stats[i]
+                if mythic_passive_stat[2] == "flat":
+                    if "base_" in mythic_passive_stat[0]:
+                        stat = mythic_passive_stat[0].replace("base_", "")
+                        assert stat in STAT_STANDALONE or stat in STAT_TOTAL_PROPERTY or stat in STAT_UNDERLYING_PROPERTY, "{} was not found in the glossary".format(stat)
+                        if stat in STAT_STANDALONE:
+                            setattr(self.orig_base_stats, stat,
+                                    getattr(self.orig_base_stats, stat) + mythic_passive_stat[1])
+                        if stat in STAT_TOTAL_PROPERTY:
+                            setattr(self, mythic_passive_stat[0],
+                                    getattr(self, mythic_passive_stat[0]) + mythic_passive_stat[1])
+                    elif "bonus_" in mythic_passive_stat[0]:
+                        stat = mythic_passive_stat[0].replace("bonus_", "")
+                        assert stat in STAT_STANDALONE or stat in STAT_TOTAL_PROPERTY or stat in STAT_UNDERLYING_PROPERTY, "{} was not found in the glossary".format(stat)
+                        if stat in STAT_STANDALONE:
+                            setattr(self.orig_bonus_stats, stat,
+                                    getattr(self.orig_bonus_stats, stat) + mythic_passive_stat[1])
+                        if stat in STAT_TOTAL_PROPERTY:
+                            setattr(self, mythic_passive_stat[0],
+                                    getattr(self, mythic_passive_stat[0]) + mythic_passive_stat[1])
+                        if stat in STAT_UNDERLYING_PROPERTY:
+                            setattr(self.orig_bonus_stats, stat,
+                                    getattr(self.orig_bonus_stats, stat) + mythic_passive_stat[1])
+                    else:
+                        stat = mythic_passive_stat[0]
+                        assert stat in STAT_STANDALONE or stat in STAT_TOTAL_PROPERTY or stat in STAT_UNDERLYING_PROPERTY, "{} was not found in the glossary".format(stat)
+
     def auto_attack_damage(self, target, is_crit: bool = False):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
         damage = damage_physical_auto_attack(

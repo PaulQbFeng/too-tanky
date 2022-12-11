@@ -41,7 +41,7 @@ MAPPING_ITEM_STANDARD = {
 STAT_STANDALONE = [
     "health",
     "mana",
-    "movespeed",
+    "move_speed",
     "attack_range",
     "health_regen",
     "mana_regen",
