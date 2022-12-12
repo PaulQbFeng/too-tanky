@@ -35,6 +35,7 @@ class BaseChampion:
         self.level = level
         champion_name = normalize_champion_name(champion_name)
         self.orig_base_stats = sc.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level)
+        self.orig_bonus_stats = sc.get_champion_bonus_stats(ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level)
         self.initialize_champion_stats_by_default()
 
         if spell_levels is None:
@@ -43,7 +44,7 @@ class BaseChampion:
         self.init_spells(spell_levels)
 
         self.inventory = Inventory(inventory, champion=self)
-        self.orig_bonus_stats = self.get_bonus_stats()
+        self.orig_bonus_stats = self.orig_bonus_stats + self.get_bonus_stats()
         self.apply_stat_modifiers()
         self.update_champion_stats()
 
@@ -140,11 +141,11 @@ class BaseChampion:
                 # missing attack speed decrease (stacks multiplicatively and take percentages off the final attack speed
                 # value after all bonus attack speed has been factored in)
                 bonus_value = getattr(self, "bonus_" + stat_name)
-                return base_value * (1 + bonus_value)
+                return base_value * (1 + bonus_value / 100)
             elif stat_name == "move_speed":  # missing slow ratio and multiplicative movespeed bonus
-                bonus_value_flat = getattr(self, "bonus_" + stat_name + "_flat")
-                bonus_value_percent = getattr(self, "bonus_" + stat_name + "_percent")
-                return (base_value + bonus_value_flat) * (1 + bonus_value_percent)
+                bonus_flat = getattr(self, stat_name + "_flat")
+                bonus_percent = getattr(self, stat_name + "_percent")
+                return (base_value + bonus_flat) * (1 + bonus_percent)
             else:
                 bonus_value = getattr(self, "bonus_" + stat_name)
                 return base_value + bonus_value

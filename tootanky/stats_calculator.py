@@ -10,22 +10,36 @@ def calculate_flat_stat_from_level(base: float, mean_growth_perlevel: float, lev
     return base + mean_growth_perlevel * (level - 1) * (0.7025 + 0.0175 * (level - 1))
 
 
-def calculate_stat_from_level(base_stats: dict, stat_name: str, level: int) -> float:
+def calculate_base_stat_from_level(base_stats: dict, stat_name: str, level: int) -> float:
     """Flat scaling for all stats except for attack speed"""
     stat = base_stats[stat_name]
     mean_growth_perlevel = base_stats[stat_name + "_perlevel"]
     if stat_name == "attack_speed":
-        # attack speed scaling is in % instead of flat. Base increase level 1 is considered to be 0 %.
-        percentage_increase = calculate_flat_stat_from_level(0, mean_growth_perlevel, level)
-        return stat * (1 + percentage_increase / 100)
+        # attack speed per level is considered as bonus attack speed
+        return stat
     return calculate_flat_stat_from_level(stat, mean_growth_perlevel, level)
+
+
+def calculate_bonus_stat_from_level(base_stats: dict, stat_name: str, level: int) -> float:
+    """Bonus scaling for attack speed"""
+    if stat_name == "attack_speed":
+        # bonus attack speed is in % instead of flat. Bonus attack speed level 1 is considered to be 0 %.
+        mean_growth_perlevel = base_stats[stat_name + "_perlevel"]
+        percentage_increase = calculate_flat_stat_from_level(0, mean_growth_perlevel, level)
+        return percentage_increase
+    return 0
 
 
 def get_champion_base_stats(champion_stats, level):
     """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
-
     return Stats(
-        {stat_name: calculate_stat_from_level(champion_stats, stat_name, level) for stat_name in SCALING_STAT_NAMES}
+        {stat_name: calculate_base_stat_from_level(champion_stats, stat_name, level) for stat_name in SCALING_STAT_NAMES}
+    )
+
+
+def get_champion_bonus_stats(champion_stats, level):
+    return Stats(
+        {stat_name: calculate_bonus_stat_from_level(champion_stats, stat_name, level) for stat_name in SCALING_STAT_NAMES}
     )
 
 

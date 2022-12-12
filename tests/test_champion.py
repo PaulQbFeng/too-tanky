@@ -14,58 +14,63 @@ def test_auto_attack_lvl1():
 
 def test_ahri_stat_perlevel():
     """Stats per level are checked in game"""
+    base_attack_speed = []
+    bonus_attack_speed = []
     attack_speed = []
-    health_point = []
+    base_health = []
+    bonus_health = []
+    health = []
+    base_attack_damage = []
+    bonus_attack_damage = []
     attack_damage = []
+    base_move_speed = []
+    bonus_move_speed = []
+    move_speed = []
     for i in range(1, 19):
         ahri = Ahri(level=i)
-        attack_damage.append(round(ahri.attack_damage))
-        health_point.append(math.ceil(ahri.health))
+        base_attack_speed.append(round(ahri.orig_base_stats.attack_speed, 3))
+        bonus_attack_speed.append(round(ahri.orig_bonus_stats.attack_speed, 3))
         attack_speed.append(round(ahri.attack_speed, 3))
+        base_health.append(math.ceil(ahri.orig_base_stats.health))
+        bonus_health.append(round(ahri.orig_bonus_stats.health))
+        health.append(math.ceil(ahri.health))
+        base_attack_damage.append(round(ahri.orig_base_stats.attack_damage))
+        bonus_attack_damage.append(round(ahri.orig_bonus_stats.attack_damage))
+        attack_damage.append(round(ahri.attack_damage))
+        base_move_speed.append(round(ahri.orig_base_stats.move_speed))
+        bonus_move_speed.append(round(ahri.orig_bonus_stats.move_speed))
+        move_speed.append(round(ahri.move_speed))
+
+    assert base_attack_speed == [0.668] * 18
+
+    assert bonus_attack_speed == [
+        0.0, 1.44, 2.95, 4.53, 6.18, 7.9, 9.69, 11.55, 13.48, 15.48, 17.55, 19.69, 21.9, 24.18, 26.53, 28.95, 31.44, 34
+    ]
 
     assert attack_speed == [
-        0.668,
-        0.678,
-        0.688,
-        0.698,
-        0.709,
-        0.721,
-        0.733,
-        0.745,
-        0.758,
-        0.771,
-        0.785,
-        0.8,
-        0.814,
-        0.83,
-        0.845,
-        0.861,
-        0.878,
-        0.895,
+        0.668, 0.678, 0.688, 0.698, 0.709, 0.721, 0.733, 0.745, 0.758, 0.771, 0.785, 0.8, 0.814, 0.83, 0.845, 0.861,
+        0.878, 0.895,
     ]
 
-    assert health_point == [
-        570,
-        640,
-        712,
-        788,
-        867,
-        950,
-        1036,
-        1125,
-        1218,
-        1314,
-        1413,
-        1516,
-        1622,
-        1731,
-        1844,
-        1960,
-        2080,
-        2202,
+    assert base_health == health
+
+    assert bonus_health == [0] * 18
+
+    assert health == [
+        570, 640, 712, 788, 867, 950, 1036, 1125, 1218, 1314, 1413, 1516, 1622, 1731, 1844, 1960, 2080, 2202
     ]
+
+    assert base_attack_damage == attack_damage
+
+    assert bonus_attack_damage == [0] * 18
 
     assert attack_damage == [53, 55, 57, 60, 62, 65, 68, 70, 73, 76, 79, 83, 86, 89, 93, 96, 100, 104]
+
+    assert base_move_speed == [330] * 18
+
+    assert bonus_move_speed == [0] * 18
+
+    assert move_speed == [330] * 18
 
 
 def test_get_stats():

@@ -67,7 +67,7 @@ STAT_TOTAL_PROPERTY = [
 STAT_FLAT_PERCENT = [
     "armor_pen",
     "magic_resist_pen",
-    "bonus_move_speed"
+    "move_speed"
 ]
 
 STAT_UNDERLYING_PROPERTY = []
