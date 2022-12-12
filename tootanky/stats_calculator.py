@@ -13,11 +13,14 @@ def calculate_flat_stat_from_level(base: float, mean_growth_perlevel: float, lev
 def calculate_base_stat_from_level(base_stats: dict, stat_name: str, level: int) -> float:
     """Flat scaling for all stats except for attack speed"""
     stat = base_stats[stat_name]
-    mean_growth_perlevel = base_stats[stat_name + "_perlevel"]
     if stat_name == "attack_speed":
         # attack speed per level is considered as bonus attack speed
         return stat
-    return calculate_flat_stat_from_level(stat, mean_growth_perlevel, level)
+    elif stat_name == "move_speed":
+        return stat
+    else:
+        mean_growth_perlevel = base_stats[stat_name + "_perlevel"]
+        return calculate_flat_stat_from_level(stat, mean_growth_perlevel, level)
 
 
 def calculate_bonus_stat_from_level(base_stats: dict, stat_name: str, level: int) -> float:
@@ -33,7 +36,7 @@ def calculate_bonus_stat_from_level(base_stats: dict, stat_name: str, level: int
 def get_champion_base_stats(champion_stats, level):
     """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
     return Stats(
-        {stat_name: calculate_base_stat_from_level(champion_stats, stat_name, level) for stat_name in SCALING_STAT_NAMES}
+        {stat_name: calculate_base_stat_from_level(champion_stats, stat_name, level) for stat_name in (SCALING_STAT_NAMES + ["move_speed"])}
     )
 
 
