@@ -92,11 +92,20 @@ class BaseChampion:
         """
         Updates the stat depending on the stat type.
             - STAT_SUM_BASE_BONUS: set the stat as the sum of orig_base and orig_bonus stat.
+            - STAT_STANDALONE: set the stat as orig_bonus stat.
+            - STAT_FLAT_PERCENT: set the flat and percent stat as orig_bonus stat. (only useful for mythic passives)
             - STAT_TOTAL_PROPERTY: set base_stat, bonus_stat. the attribute stat is a property.
             - STAT_UNDERLYING_PROPERTY: set the _stat. the attribute stat is a property with conditions (like crit_damage)
         """
-        for name in STAT_STANDALONE:
+        for name in STAT_SUM_BASE_BONUS:
             setattr(self, name, self.orig_base_stats.__getattr__(name) + self.orig_bonus_stats.__getattr__(name))
+
+        for name in STAT_STANDALONE:
+            setattr(self, name, self.orig_bonus_stats.__getattr__(name))
+
+        for name in STAT_FLAT_PERCENT:
+            setattr(self, name + "_flat", self.orig_bonus_stats.__getattr__(name + "_flat"))
+            setattr(self, name + "_percent", self.orig_bonus_stats.__getattr__(name + "_percent"))
 
         for name in STAT_TOTAL_PROPERTY:
             setattr(self, "base_" + name, self.orig_base_stats.__getattr__(name))
@@ -126,14 +135,28 @@ class BaseChampion:
             Items and spells directly impact the base and bonus stat, hence no need for a setter.
             """
             base_value = getattr(self, "base_" + stat_name)
-            bonus_value = getattr(self, "bonus_" + stat_name)
-            return base_value + bonus_value
+            if stat_name == "attack_speed":
+                # missing attack speed cap, any bonus AS above the cap still affects scalings
+                # missing attack speed decrease (stacks multiplicatively and take percentages off the final attack speed
+                # value after all bonus attack speed has been factored in)
+                bonus_value = getattr(self, "bonus_" + stat_name)
+                return base_value * (1 + bonus_value)
+            elif stat_name == "move_speed":  # missing slow ratio and multiplicative movespeed bonus
+                bonus_value_flat = getattr(self, "bonus_" + stat_name + "_flat")
+                bonus_value_percent = getattr(self, "bonus_" + stat_name + "_percent")
+                return (base_value + bonus_value_flat) * (1 + bonus_value_percent)
+            else:
+                bonus_value = getattr(self, "bonus_" + stat_name)
+                return base_value + bonus_value
 
         return total_stat_getter
 
     armor = property(fget=getter_wrapper("armor"))
     magic_resist = property(fget=getter_wrapper("magic_resist"))
     attack_damage = property(fget=getter_wrapper("attack_damage"))
+    ability_power = property(fget=getter_wrapper("ability_power"))
+    attack_speed = property(fget=getter_wrapper("attack_speed"))
+    move_speed = property(fget=getter_wrapper("move_speed"))
 
     def get_bonus_stats(self):  # TODO: add runes
         """Get bonus stats from all sources of bonus stats (items, runes)"""
@@ -146,49 +169,6 @@ class BaseChampion:
         selected_item = self.inventory.get_item(item_name)
         assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
         return selected_item.apply_active(target)
-
-    def apply_mythic_passive(self):
-        mythic_passive_stats = self.inventory.get_mythic_passive_stats()
-        if mythic_passive_stats is not None:
-            for i in range(len(mythic_passive_stats)):
-                mythic_passive_stat = mythic_passive_stats[i]
-                if mythic_passive_stat[2] == "flat":
-                    if "base_" in mythic_passive_stat[0]:
-                        stat = mythic_passive_stat[0].replace("base_", "")
-                        assert (
-                                stat in STAT_STANDALONE
-                                or stat in STAT_TOTAL_PROPERTY
-                                or stat in STAT_UNDERLYING_PROPERTY
-                        ), "{} was not found in the glossary".format(stat)
-                        if stat in STAT_STANDALONE:
-                            setattr(self.orig_base_stats, stat,
-                                    getattr(self.orig_base_stats, stat) + mythic_passive_stat[1])
-                        if stat in STAT_TOTAL_PROPERTY:
-                            setattr(self, mythic_passive_stat[0],
-                                    getattr(self, mythic_passive_stat[0]) + mythic_passive_stat[1])
-                    elif "bonus_" in mythic_passive_stat[0]:
-                        stat = mythic_passive_stat[0].replace("bonus_", "")
-                        assert (
-                                stat in STAT_STANDALONE
-                                or stat in STAT_TOTAL_PROPERTY
-                                or stat in STAT_UNDERLYING_PROPERTY
-                        ), "{} was not found in the glossary".format(stat)
-                        if stat in STAT_STANDALONE:
-                            setattr(self.orig_bonus_stats, stat,
-                                    getattr(self.orig_bonus_stats, stat) + mythic_passive_stat[1])
-                        if stat in STAT_TOTAL_PROPERTY:
-                            setattr(self, mythic_passive_stat[0],
-                                    getattr(self, mythic_passive_stat[0]) + mythic_passive_stat[1])
-                        if stat in STAT_UNDERLYING_PROPERTY:
-                            setattr(self.orig_bonus_stats, stat,
-                                    getattr(self.orig_bonus_stats, stat) + mythic_passive_stat[1])
-                    else:
-                        stat = mythic_passive_stat[0]
-                        assert (
-                                stat in STAT_STANDALONE
-                                or stat in STAT_TOTAL_PROPERTY
-                                or stat in STAT_UNDERLYING_PROPERTY
-                        ), "{} was not found in the glossary".format(stat)
 
     def auto_attack_damage(self, target, is_crit: bool = False):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
@@ -234,5 +214,4 @@ class Dummy(BaseChampion):
         self.orig_bonus_stats.armor = bonus_resistance
         self.orig_bonus_stats.magic_resist = bonus_resistance
         self.orig_bonus_stats.health = health - 1000
-
         self.update_champion_stats()

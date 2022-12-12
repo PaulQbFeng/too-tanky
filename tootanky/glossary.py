@@ -22,7 +22,7 @@ MAPPING_CHAMPION_STANDARD = {
 }
 
 MAPPING_ITEM_STANDARD = {
-    "FlatMovementSpeedMod": "move_speed",
+    "FlatMovementSpeedMod": "move_speed_flat",
     "FlatHPPoolMod": "health",
     "FlatCritChanceMod": "crit_chance",
     "FlatMagicDamageMod": "ability_power",
