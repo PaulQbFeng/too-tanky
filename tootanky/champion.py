@@ -45,6 +45,8 @@ class BaseChampion:
         self.apply_stat_modifiers()
         self.update_champion_stats()
 
+        self.on_hits = []
+
     def initialize_champion_stats_by_default(self):
         """Set all stats to 0"""
         for stat_name in STAT_TOTAL_PROPERTY:
@@ -152,7 +154,10 @@ class BaseChampion:
             crit=is_crit,
             crit_damage=self.crit_damage,
         )
-        return damage
+        on_hit_damage = 0
+        for on_hit in self.on_hits:
+            on_hit_damage = on_hit.on_hit_effect(target)
+        return damage + on_hit_damage
 
     def take_damage(self, damage):
         """Takes damage from an enemy champion"""

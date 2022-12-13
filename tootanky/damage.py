@@ -24,7 +24,7 @@ def pre_mitigation_auto_attack_damage(
     return (tot_off_stats * crit_multiplier + damage_modifier_flat) * damage_modifier_coeff
 
 
-def ratio_damage(champion, target, ratios, spell_leve1) -> float:
+def ratio_damage(champion, target, ratios, spell_leve1=1) -> float:
     """Get the damage dealt by the ratio part of a spell, taking into account multiple ratios"""
     damage = 0
     for stat_name, ratio in ratios:

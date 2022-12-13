@@ -28,6 +28,8 @@ class BaseSpell:
 
         self.set_level(level)
         self.damage_type = None
+        self.can_trigger_spellblade = True
+        self.apply_on_hit = False
 
     @staticmethod
     def get_spell_nature(spell_key: str) -> str:
@@ -67,12 +69,7 @@ class BaseSpell:
     def damage(self, target, damage_modifier_flat=0, damage_modifier_coeff=1) -> float:
         """Calculates the damage dealt to a champion with a spell"""
 
-        ratio_dmg = ratio_damage(
-            champion=self.champion,
-            target=target,
-            ratios=self.ratios,
-            spell_leve1=self.level
-            )
+        ratio_dmg = ratio_damage(champion=self.champion, target=target, ratios=self.ratios, spell_leve1=self.level)
 
         pre_mtg_dmg = pre_mitigation_spell_damage(
             self.get_base_damage(),
@@ -108,9 +105,24 @@ class BaseSpell:
         """Effect on hit"""
         pass
 
-    def hit_damage(self, target, **kwargs):
+    def on_attack_state_change(self):
+        """Change internal attribute e.g cait w and e"""
+        pass
+
+    def hit_damage(self, target, spellblade=False, **kwargs):
+        on_hit_damage = 0
+        self.on_attack_state_change()
+        if spellblade and self.can_trigger_spellblade:
+            item = self.champion.inventory.get_spellblade_item()
+            if item:
+                self.champion.on_hits.append(item)
         damage_modifier_flat = self.get_damage_modifier_flat(**kwargs)
         damage_modifier_coeff = self.get_damage_modifier_coeff(**kwargs)
         damage = self.damage(target, damage_modifier_flat, damage_modifier_coeff)
-        self.on_hit_effect(target, **kwargs)  # Be sure to compute the damage before the effect
-        return damage
+
+        if self.apply_on_hit:
+            for on_hit in self.champion.on_hits:
+                on_hit_damage = on_hit.on_hit_effect(
+                    target, **kwargs
+                )  # Be sure to compute the damage before the effect
+        return damage + on_hit_damage

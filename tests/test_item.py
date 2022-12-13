@@ -4,7 +4,15 @@ import pytest
 from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie, Caitlyn
 from tootanky.damage import damage_after_positive_resistance
-from tootanky.item import ALL_ITEM_CLASSES, DoranBlade, Sheen, InfinityEdge, CloakofAgility, RabadonDeathcap, BlastingWand
+from tootanky.item import (
+    ALL_ITEM_CLASSES,
+    DoranBlade,
+    Sheen,
+    InfinityEdge,
+    CloakofAgility,
+    RabadonDeathcap,
+    BlastingWand,
+)
 
 
 @pytest.fixture()
@@ -46,12 +54,15 @@ def test_infinity_edge_cait(infinity_edge, agility_cloak):
 
 
 def test_sheen():
-    sheen = Sheen()
-    annie = Annie()
-    dummy = Dummy(health=1000, bonus_resistance=50)
-    assert sheen.spellblade(annie, dummy) == damage_after_positive_resistance(
-        annie.base_attack_damage, dummy.bonus_armor
-    )
+    annie = Annie(level=2, inventory=[Sheen()])
+    dummy = Dummy(health=1000, bonus_resistance=100)
+    assert round(annie.auto_attack_damage(dummy)) == 26
+    assert len(annie.on_hits) == 0
+    assert annie.spell_q.hit_damage(dummy, spellblade=True) == 40
+    assert len(annie.on_hits) == 1
+    assert round(annie.auto_attack_damage(dummy)) == 52
+    assert len(annie.on_hits) == 0
+    assert round(annie.auto_attack_damage(dummy)) == 26
 
 
 def test_serrated_unique_passive():

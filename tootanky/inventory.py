@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from tootanky.item import BaseItem
+from tootanky.item import BaseItem, SPELL_BLADE_ITEMS
 from tootanky.stats import Stats
 
 
@@ -26,8 +26,11 @@ class Inventory:
         return name in (item.name for item in self.items)
 
     def get_item(self, name):
-        # TODO: what happens with this method when there are several copies of the same item in the inventory
-        return next(item for item in self.items if item.name == name)
+        # TODO: Handle case where there are item duplicates
+        for item in self.items:
+            if item.name == name:
+                return item
+        return None
 
     def get_mythic_item(self):
         return next((item for item in self.items if item.type == "Mythic"), None)
@@ -36,10 +39,18 @@ class Inventory:
         return [item.name for item in self.items].count(name) <= 1
 
     def is_unique_limitation(self, limitations):
-        return sum(
-            [item.limitations[i] for item in self.items if item.limitations is not None
-             for i in range(len(item.limitations))].count(limitation) for limitation in limitations
-        ) <= 1
+        return (
+            sum(
+                [
+                    item.limitations[i]
+                    for item in self.items
+                    if item.limitations is not None
+                    for i in range(len(item.limitations))
+                ].count(limitation)
+                for limitation in limitations
+            )
+            <= 1
+        )
 
     def get_all_indexes(self, name):
         indexes = []
@@ -68,7 +79,7 @@ class Inventory:
                     "Hydra",
                     "Glory",
                     "Eternity",
-                    "Mythic Component"
+                    "Mythic Component",
                 ]:
                     assert self.is_unique_limitation([limitation]), "A champion can have only one {} item".format(
                         limitation
@@ -97,8 +108,8 @@ class Inventory:
             if item.type == "Legendary":
                 mythic_item = self.get_mythic_item()
                 mythic_passive_dict = {
-                    mythic_item.mythic_passive_type[i]:
-                        mythic_item.mythic_passive_ratio[i] for i in range(len(mythic_item.mythic_passive_type))
+                    mythic_item.mythic_passive_type[i]: mythic_item.mythic_passive_ratio[i]
+                    for i in range(len(mythic_item.mythic_passive_type))
                 }
                 item.stats = item.stats + Stats(mythic_passive_dict)
 
@@ -113,3 +124,10 @@ class Inventory:
         mythic_item = self.get_mythic_item()
         if mythic_item is None:
             return 0
+
+    def get_spellblade_item(self):
+        for name in SPELL_BLADE_ITEMS:
+            item = self.get_item(name)
+            if item:
+                return item
+        return None
