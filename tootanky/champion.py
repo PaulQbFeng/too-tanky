@@ -45,7 +45,6 @@ class BaseChampion:
 
         self.inventory = Inventory(inventory, champion=self)
         self.orig_bonus_stats = self.orig_bonus_stats + self.get_bonus_stats()
-        self.get_mythic_passive_stats().print_stats()
         self.orig_bonus_stats = self.orig_bonus_stats + self.get_mythic_passive_stats()
         self.apply_stat_modifiers()
         self.update_champion_stats()
