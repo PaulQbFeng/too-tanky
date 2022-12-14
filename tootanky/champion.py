@@ -8,13 +8,13 @@ from tootanky.glossary import (
     STAT_SUM_BASE_BONUS,
     STAT_STANDALONE,
     STAT_TOTAL_PROPERTY,
-    STAT_FLAT_PERCENT,
     STAT_UNDERLYING_PROPERTY,
     normalize_champion_name,
 )
 from tootanky.inventory import Inventory
 from tootanky.item import BaseItem
 from tootanky.spell_factory import SpellFactory
+from tootanky.stats import Stats
 
 
 class BaseChampion:
@@ -45,6 +45,8 @@ class BaseChampion:
 
         self.inventory = Inventory(inventory, champion=self)
         self.orig_bonus_stats = self.orig_bonus_stats + self.get_bonus_stats()
+        self.get_mythic_passive_stats().print_stats()
+        self.orig_bonus_stats = self.orig_bonus_stats + self.get_mythic_passive_stats()
         self.apply_stat_modifiers()
         self.update_champion_stats()
 
@@ -60,9 +62,37 @@ class BaseChampion:
             setattr(self, "base_" + stat_name, 0)
             setattr(self, "bonus_" + stat_name, 0)
 
-        for stat_name in STAT_FLAT_PERCENT:
-            setattr(self, stat_name + "_flat", 0)
-            setattr(self, stat_name + "_percent", 0)
+    def get_mythic_passive_stats(self):
+        if self.inventory.item_type_count["Mythic"] == 1:
+            mythic_item = self.inventory.get_mythic_item()
+            mythic_passive_stats = dict()
+            for mythic_passive_stat in mythic_item.mythic_passive_stats:
+                stat_name = mythic_passive_stat[0]
+                value = mythic_passive_stat[1]
+                value = value * self.inventory.item_type_count["Legendary"]
+                value_type = mythic_passive_stat[2]
+                assert value_type in ["flat", "percent"], "mythic_passive_stats[2] must be flat or percent."
+                if any(s in stat_name for s in STAT_SUM_BASE_BONUS):
+                    assert not stat_name.startswith("base_"), "Base {} isn't affected by mythic passives.".format(
+                        stat_name.replace("base_", "")
+                    )
+                    stat = stat_name.replace("bonus_", "")
+                    if value_type == "percent":
+                        value = value * (getattr(self.orig_base_stats, stat) + getattr(self.orig_bonus_stats, stat))
+                if any(s in stat_name for s in STAT_STANDALONE + STAT_TOTAL_PROPERTY):
+                    assert not stat_name.startswith("base_"), "Base {} isn't affected by mythic passives.".format(
+                        stat_name.replace("base_", "")
+                    )
+                    stat = stat_name.replace("bonus_", "")
+                    if stat == "move_speed":
+                        stat = stat + "_" + value_type
+                    else:
+                        assert value_type == "flat", "Only flat bonuses for {} in mythic passives.".format(stat)
+                mythic_passive_stats[stat] = value
+
+            return Stats(mythic_passive_stats)
+        else:
+            return Stats()
 
     def apply_stat_modifiers(self):
         """
@@ -94,7 +124,6 @@ class BaseChampion:
         Updates the stat depending on the stat type.
             - STAT_SUM_BASE_BONUS: set the stat as the sum of orig_base and orig_bonus stat.
             - STAT_STANDALONE: set the stat as orig_bonus stat.
-            - STAT_FLAT_PERCENT: set the flat and percent stat as orig_bonus stat. (only useful for mythic passives)
             - STAT_TOTAL_PROPERTY: set base_stat, bonus_stat. the attribute stat is a property.
             - STAT_UNDERLYING_PROPERTY: set the _stat. the attribute stat is a property with conditions (like crit_damage)
         """
@@ -104,13 +133,13 @@ class BaseChampion:
         for name in STAT_STANDALONE:
             setattr(self, name, self.orig_bonus_stats.__getattr__(name))
 
-        for name in STAT_FLAT_PERCENT:
-            setattr(self, name + "_flat", self.orig_bonus_stats.__getattr__(name + "_flat"))
-            setattr(self, name + "_percent", self.orig_bonus_stats.__getattr__(name + "_percent"))
-
         for name in STAT_TOTAL_PROPERTY:
             setattr(self, "base_" + name, self.orig_base_stats.__getattr__(name))
-            setattr(self, "bonus_" + name, self.orig_bonus_stats.__getattr__(name))
+            if name == "move_speed":
+                self.move_speed_flat = self.orig_bonus_stats.move_speed_flat
+                self.move_speed_percent = self.orig_bonus_stats.move_speed_percent
+            else:
+                setattr(self, "bonus_" + name, self.orig_bonus_stats.__getattr__(name))
 
         for name in STAT_UNDERLYING_PROPERTY:
             setattr(self, "_" + name, self.orig_bonus_stats.__getattr__(name))
@@ -141,10 +170,10 @@ class BaseChampion:
                 # missing attack speed decrease (stacks multiplicatively and take percentages off the final attack speed
                 # value after all bonus attack speed has been factored in)
                 bonus_value = getattr(self, "bonus_" + stat_name)
-                return base_value * (1 + bonus_value / 100)
+                return base_value * (1 + bonus_value)
             elif stat_name == "move_speed":  # missing slow ratio and multiplicative movespeed bonus
-                bonus_flat = getattr(self, stat_name + "_flat")
-                bonus_percent = getattr(self, stat_name + "_percent")
+                bonus_flat = self.move_speed_flat
+                bonus_percent = self.move_speed_percent
                 return (base_value + bonus_flat) * (1 + bonus_percent)
             else:
                 bonus_value = getattr(self, "bonus_" + stat_name)
@@ -160,7 +189,10 @@ class BaseChampion:
     move_speed = property(fget=getter_wrapper("move_speed"))
 
     def get_bonus_stats(self):  # TODO: add runes
-        """Get bonus stats from all sources of bonus stats (items, runes)"""
+        """
+        Get bonus stats from all sources of bonus stats (items, runes).
+        This does not include mythic passives.
+        """
         return self.inventory.item_stats
 
     def apply_item_active(self, item_name, target):

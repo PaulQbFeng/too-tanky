@@ -29,7 +29,7 @@ def test_ahri_stat_perlevel():
     for i in range(1, 19):
         ahri = Ahri(level=i)
         base_attack_speed.append(round(ahri.orig_base_stats.attack_speed, 3))
-        bonus_attack_speed.append(round(ahri.orig_bonus_stats.attack_speed, 3))
+        bonus_attack_speed.append(round(ahri.orig_bonus_stats.attack_speed, 4))
         attack_speed.append(round(ahri.attack_speed, 3))
         base_health.append(math.ceil(ahri.orig_base_stats.health))
         bonus_health.append(round(ahri.orig_bonus_stats.health))
@@ -44,7 +44,8 @@ def test_ahri_stat_perlevel():
     assert base_attack_speed == [0.668] * 18
 
     assert bonus_attack_speed == [
-        0.0, 1.44, 2.95, 4.53, 6.18, 7.9, 9.69, 11.55, 13.48, 15.48, 17.55, 19.69, 21.9, 24.18, 26.53, 28.95, 31.44, 34
+        0.0, 0.0144, 0.0295, 0.0453, 0.0618, 0.079, 0.0969, 0.1155, 0.1348, 0.1548, 0.1755, 0.1969, 0.219, 0.2418,
+        0.2653, 0.2895, 0.3144, 0.34
     ]
 
     assert attack_speed == [

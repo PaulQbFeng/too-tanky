@@ -29,7 +29,7 @@ def calculate_bonus_stat_from_level(base_stats: dict, stat_name: str, level: int
         # bonus attack speed is in % instead of flat. Bonus attack speed level 1 is considered to be 0 %.
         mean_growth_perlevel = base_stats[stat_name + "_perlevel"]
         percentage_increase = calculate_flat_stat_from_level(0, mean_growth_perlevel, level)
-        return percentage_increase
+        return percentage_increase / 100
     return 0
 
 
