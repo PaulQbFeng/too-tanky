@@ -1,6 +1,9 @@
-import json, os
+import json
+import os
+
 import matplotlib.pyplot as plt
-from data_parser import get_json_files
+
+from tootanky.data_parser import get_json_files
 
 
 #sort a list of dic of type {key: value}, by value from highest to lowest
