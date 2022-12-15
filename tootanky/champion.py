@@ -30,6 +30,7 @@ class BaseChampion:
         inventory: Optional[List[BaseItem]] = None,
         level: int = 1,
         spell_levels: Optional[List[int]] = None,
+        spell_max_order: Optional[List[str]] = None,
     ):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
@@ -39,7 +40,11 @@ class BaseChampion:
         self.initialize_champion_stats_by_default()
 
         if spell_levels is None:
-            spell_levels = [1, 1, 1, 1]
+            if spell_max_order is None:
+                spell_levels = [1, 1, 1, 1]
+            else:
+                self.spell_max_order = spell_max_order
+                spell_levels = self.get_default_spell_levels()
 
         self.init_spells(spell_levels)
 
@@ -92,6 +97,23 @@ class BaseChampion:
             return Stats(mythic_passive_stats)
         else:
             return Stats()
+
+    def get_default_spell_levels(self):
+        # This method will be overriden for champions like jayce, udyr, etc.
+        spell_1, spell_2, spell_3 = self.spell_max_order
+        default_order = [
+            spell_1, spell_2, spell_3, spell_1, spell_1, "r",
+            spell_1, spell_2, spell_1, spell_2, "r",
+            spell_2, spell_2, spell_3, spell_3, "r",
+            spell_3, spell_3
+        ]
+        default_order_per_level = default_order[0:self.level]
+        return [
+            default_order_per_level.count("q"),
+            default_order_per_level.count("w"),
+            default_order_per_level.count("e"),
+            default_order_per_level.count("r")
+        ]
 
     def apply_stat_modifiers(self):
         """
