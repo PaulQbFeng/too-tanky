@@ -164,7 +164,7 @@ class BlightingJewel(BaseItem):
     def __init__(self):
         super().__init__()
         self.limitations = ["Void Pen"]
-        self.stats.add("magic_resist_pen_percent", 0.13)
+        self.stats.magic_resist_pen_percent = 0.13
 
 
 class BrambleVest(BaseItem):  # missing passive
@@ -325,7 +325,7 @@ class EdgeofNight(BaseItem):  # missing passive
 
     def __init__(self):
         super().__init__()
-        self.stats.add("lethality", 10)
+        self.stats.lethality = 10
 
 
 class GuardianAngel(BaseItem):  # missing passive
@@ -447,4 +447,4 @@ class Galeforce(BaseItem):
 
 
 ALL_ITEM_CLASSES = {cls.name: cls for cls in BaseItem.__subclasses__()}
-ALL_MYTHIC_ITEMS = {cls.name: cls for cls in BaseItem.__subclasses__() if cls.type == "Mythic"}
+

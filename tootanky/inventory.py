@@ -98,7 +98,7 @@ class Inventory:
             if nb_legendary > 0:
                 mythic_item = self.get_mythic_item()
                 for i in range(len(mythic_item.mythic_passive_stats)):
-                    mythic_item.mythic_passive_stats[i][1] = mythic_item.mythic_passive_stats[i][1] * nb_legendary
+                    mythic_item.mythic_passive_stats[i][1] *= nb_legendary
                 return mythic_item.mythic_passive_stats
         return None
 

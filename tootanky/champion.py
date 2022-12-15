@@ -66,10 +66,8 @@ class BaseChampion:
             mythic_item = self.inventory.get_mythic_item()
             mythic_passive_stats = dict()
             for mythic_passive_stat in mythic_item.mythic_passive_stats:
-                stat_name = mythic_passive_stat[0]
-                value = mythic_passive_stat[1]
-                value = value * self.inventory.item_type_count["Legendary"]
-                value_type = mythic_passive_stat[2]
+                stat_name, value, value_type = mythic_passive_stat
+                value *= self.inventory.item_type_count["Legendary"]
                 assert value_type in ["flat", "percent"], "mythic_passive_stats[2] must be flat or percent."
                 if any(s in stat_name for s in STAT_SUM_BASE_BONUS):
                     assert not stat_name.startswith("base_"), "Base {} isn't affected by mythic passives.".format(

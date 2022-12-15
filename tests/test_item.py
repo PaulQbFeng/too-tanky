@@ -6,7 +6,6 @@ from tootanky.champions import Ahri, Annie, Caitlyn
 from tootanky.damage import damage_after_positive_resistance
 from tootanky.item import ALL_ITEM_CLASSES
 from tootanky.item import DoransBlade, Sheen, InfinityEdge, CloakofAgility, RabadonsDeathcap, BlastingWand
-from tootanky.item import ALL_MYTHIC_ITEMS
 
 
 @pytest.fixture()
@@ -118,6 +117,7 @@ def test_rabadon():
 
 def test_mythic_passives():
     # tests on ahri level 9 + 16 MR in runes
+    ALL_MYTHIC_ITEMS = {cls_name: cls for cls_name, cls in ALL_ITEM_CLASSES.items() if cls.type == "Mythic"}
     item_names = ["Cosmic Drive", "Nashor's Tooth", "Serylda's Grudge", "Guardian Angel", "Edge of Night"]
     test_dict = {
         "Everfrost": {
