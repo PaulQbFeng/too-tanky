@@ -195,3 +195,17 @@ def avg_damage_physical_auto_attack(
         armor_pen,
         bonus_armor_pen,
     )
+
+
+def get_resistance_type(damage_type: str) -> str:
+    """Get resistance type based on spell damage type"""
+    # TODO: Might be changed into a dict
+
+    if damage_type == "magical":
+        res_type = "magic_resist"
+    elif damage_type == "physical":
+        res_type = "armor"
+    else:
+        raise AttributeError(f"spell_damage type {damage_type} not taken into account")
+
+    return res_type

@@ -1,4 +1,4 @@
-from tootanky.damage import damage_after_resistance, pre_mitigation_spell_damage, ratio_damage
+from tootanky.damage import damage_after_resistance, pre_mitigation_spell_damage, ratio_damage, get_resistance_type
 from tootanky.data_parser import ALL_CHAMPION_SPELLS
 
 
@@ -18,6 +18,7 @@ class BaseSpell:
     """
 
     spell_key = None
+    damage_type = None
 
     def __init__(self, champion, level=1):
         self.champion = champion
@@ -27,28 +28,16 @@ class BaseSpell:
         self.ratios = []
 
         self.set_level(level)
-        self.damage_type = None
         self.can_trigger_spellblade = True
         self.apply_on_hit = False
+        if self.damage_type is not None:
+            self.target_res_type = get_resistance_type(self.damage_type)
 
     @staticmethod
     def get_spell_nature(spell_key: str) -> str:
         if spell_key in ["q", "w", "e"]:
             return "basic"
         return "ulti"
-
-    def get_resistance_type(self) -> str:
-        """Get resistance type based on spell damage type"""
-        # TODO: Might be changed into a dict
-
-        if self.damage_type == "magical":
-            res_type = "magic_resist"
-        elif self.damage_type == "physical":
-            res_type = "armor"
-        else:
-            raise AttributeError(f"spell_damage type {self.damage_type} not taken into account")
-
-        return res_type
 
     def print_specs(self):
         """pretty print the stats"""
