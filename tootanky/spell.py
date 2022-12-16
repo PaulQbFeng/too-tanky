@@ -91,10 +91,6 @@ class BaseSpell:
     def get_damage_modifier_coeff(self, **kwargs):
         return 1
 
-    def on_hit_effect(self, target, **kwargs):
-        """Effect on hit"""
-        pass
-
     def on_attack_state_change(self):
         """Change internal attribute e.g cait w and e"""
         pass
