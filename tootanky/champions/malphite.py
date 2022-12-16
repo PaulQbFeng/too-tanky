@@ -18,7 +18,6 @@ class QMalphite(BaseSpell):
 
     def __init__(self, champion, level):
         super().__init__(champion, level)
-
         self.base_damage_per_level = [70, 120, 170, 220, 270]
         self.ratios = [("ability_power", 0.6)]
 
@@ -37,7 +36,6 @@ class EMalphite(BaseSpell):
 
     def __init__(self, champion, level):
         super().__init__(champion, level)
-
         self.base_damage_per_level = [60, 95, 130, 165, 200]
         self.ratios = [("ability_power", 0.9), ("armor", 0.3)]
 
@@ -50,6 +48,5 @@ class RMalphite(BaseSpell):
 
     def __init__(self, champion, level):
         super().__init__(champion, level)
-
         self.base_damage_per_level = [200, 300, 400]
         self.ratios = [("ability_power", 0.9)]

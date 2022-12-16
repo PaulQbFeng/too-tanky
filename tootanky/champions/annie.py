@@ -18,7 +18,6 @@ class QAnnie(BaseSpell):
 
     def __init__(self, champion, level):
         super().__init__(champion, level)
-
         self.base_damage_per_level = [80, 115, 150, 185, 220]
         self.ratios = [("ability_power", 0.8)]
 

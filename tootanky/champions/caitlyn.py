@@ -72,7 +72,6 @@ class QCaitlyn(BaseSpell):
 
     def __init__(self, champion, level):
         super().__init__(champion, level)
-
         self.base_damage_per_level = [50, 90, 130, 170, 210]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("attack_damage", [1.25, 1.45, 1.65, 1.85, 2.05])]
@@ -89,7 +88,6 @@ class WCaitlyn(BaseSpell):
 
     def __init__(self, champion, level):
         super().__init__(champion, level)
-
         self.base_damage_per_level = [0, 0, 0, 0, 0]
         self.headshot_bonus_damage_flat = [40, 85, 130, 175, 220]
         self.headshot_bonus_damage_ratio = [0.4, 0.5, 0.6, 0.7, 0.8]
@@ -111,7 +109,6 @@ class ECaitlyn(BaseSpell):
 
     def __init__(self, champion, level):
         super().__init__(champion, level)
-
         self.base_damage_per_level = [80, 130, 180, 230, 280]
         self.ratios = [("ability_power", 0.8)]
 
@@ -127,7 +124,6 @@ class RCaitlyn(BaseSpell):
 
     def __init__(self, champion, level):
         super().__init__(champion, level)
-
         self.base_damage_per_level = [300, 525, 750]
         self.ratios = [("bonus_attack_damage", 2)]
 

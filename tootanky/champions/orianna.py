@@ -36,6 +36,5 @@ class ROrianna(BaseSpell):
 
     def __init__(self, champion, level):
         super().__init__(champion, level)
-
         self.base_damage_per_level = [200, 275, 350]
         self.ratios = [("ability_power", 0.8)]
