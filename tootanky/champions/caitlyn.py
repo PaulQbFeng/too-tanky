@@ -68,13 +68,12 @@ class Caitlyn(BaseChampion):
 class QCaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "q"
+    damage_type = "physical"
 
     def __init__(self, champion, level):
         super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
-        self.damage_type = "physical"
-        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [50, 90, 130, 170, 210]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("attack_damage", [1.25, 1.45, 1.65, 1.85, 2.05])]
@@ -87,13 +86,13 @@ class QCaitlyn(BaseSpell):
 class WCaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "w"
+    damage_type = "physical"
 
     def __init__(self, champion, level):
         super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
-        self.damage_type = "physical"
-        self.target_res_type = self.get_resistance_type()
+
         self.base_damage_per_level = [0, 0, 0, 0, 0]
         self.headshot_bonus_damage_flat = [40, 85, 130, 175, 220]
         self.headshot_bonus_damage_ratio = [0.4, 0.5, 0.6, 0.7, 0.8]
@@ -111,13 +110,12 @@ class WCaitlyn(BaseSpell):
 class ECaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "e"
+    damage_type = "magical"
 
     def __init__(self, champion, level):
         super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
-        self.damage_type = "magical"
-        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [80, 130, 180, 230, 280]
         self.ratios = [("ability_power", 0.8)]
 
@@ -129,13 +127,13 @@ class ECaitlyn(BaseSpell):
 class RCaitlyn(BaseSpell):
     champion_name = "Caitlyn"
     spell_key = "r"
+    damage_type = "physical"
 
     def __init__(self, champion, level):
         super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
-        self.damage_type = "physical"
-        self.target_res_type = self.get_resistance_type()
+
         self.base_damage_per_level = [300, 525, 750]
         self.ratios = [("bonus_attack_damage", 2)]
 

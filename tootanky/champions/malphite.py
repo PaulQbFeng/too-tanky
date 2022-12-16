@@ -14,13 +14,12 @@ class Malphite(BaseChampion):
 class QMalphite(BaseSpell):
     champion_name = "Malphite"
     spell_key = "q"
+    damage_type = "magical"
 
     def __init__(self, champion, level):
         super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
-        self.damage_type = "magical"
-        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [70, 120, 170, 220, 270]
         self.ratios = [("ability_power", 0.6)]
 
@@ -35,13 +34,13 @@ class WMalphite(BaseSpell):
 class EMalphite(BaseSpell):
     champion_name = "Malphite"
     spell_key = "e"
+    damage_type = "magical"
 
     def __init__(self, champion, level):
         super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
-        self.damage_type = "magical"
-        self.target_res_type = self.get_resistance_type()
+
         self.base_damage_per_level = [60, 95, 130, 165, 200]
         self.ratios = [("ability_power", 0.9), ("armor", 0.3)]
 
@@ -50,12 +49,12 @@ class EMalphite(BaseSpell):
 class RMalphite(BaseSpell):
     champion_name = "Malphite"
     spell_key = "r"
+    damage_type = "magical"
 
     def __init__(self, champion, level):
         super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
-        self.damage_type = "magical"
-        self.target_res_type = self.get_resistance_type()
+
         self.base_damage_per_level = [200, 300, 400]
         self.ratios = [("ability_power", 0.9)]

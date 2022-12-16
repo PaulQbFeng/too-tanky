@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional
 
-from tootanky.damage import damage_after_resistance, ratio_damage, pre_mitigation_spell_damage
+from tootanky.damage import damage_after_resistance, ratio_damage, pre_mitigation_spell_damage, get_resistance_type
 from tootanky.data_parser import ALL_ITEM_STATS
 from tootanky.stats import Stats
 
@@ -37,21 +37,11 @@ class BaseItem:
         self.gold = item_stats.pop("gold")
         self.stats = Stats(item_stats)
         self.limitations = None
-        self.target_res_type = self.get_resistance_type()
+        if self.damage_type is not None:
+            self.target_res_type = get_resistance_type(self.damage_type)
 
     def apply_passive(self):
         pass
-
-    def get_resistance_type(self) -> str:
-        """Get resistance type based on spell damage type"""
-        # TODO: Might be changed into a dict
-        res_type = None
-        if self.damage_type == "magical":
-            res_type = "magic_resist"
-        elif self.damage_type == "physical":
-            res_type = "armor"
-
-        return res_type
 
     def damage(self, target, damage_modifier_flat=0, damage_modifier_coeff=1) -> float:
         """Calculates the damage dealt to a champion with a spell"""

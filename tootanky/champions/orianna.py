@@ -32,12 +32,11 @@ class EOrianna(BaseSpell):
 class ROrianna(BaseSpell):
     champion_name = "Orianna"
     spell_key = "r"
+    damage_type = "magical"
 
     def __init__(self, champion, level):
         super().__init__(champion, level=level)
 
         self.nature = self.get_spell_nature(self.spell_key)
-        self.damage_type = "magical"
-        self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [200, 275, 350]
         self.ratios = [("ability_power", 0.8)]
