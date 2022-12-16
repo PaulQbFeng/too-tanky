@@ -5,6 +5,7 @@ import tootanky.stats_calculator as sc
 from tootanky.damage import damage_physical_auto_attack
 from tootanky.data_parser import ALL_CHAMPION_BASE_STATS
 from tootanky.glossary import (
+    STAT_SUM_BASE_BONUS,
     STAT_STANDALONE,
     STAT_TOTAL_PROPERTY,
     STAT_UNDERLYING_PROPERTY,
@@ -13,6 +14,7 @@ from tootanky.glossary import (
 from tootanky.inventory import Inventory
 from tootanky.item import BaseItem
 from tootanky.spell_factory import SpellFactory
+from tootanky.stats import Stats
 
 
 class BaseChampion:
@@ -33,6 +35,7 @@ class BaseChampion:
         self.level = level
         champion_name = normalize_champion_name(champion_name)
         self.orig_base_stats = sc.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level)
+        self.orig_bonus_stats = sc.get_champion_bonus_stats(ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level)
         self.initialize_champion_stats_by_default()
 
         if spell_levels is None:
@@ -41,18 +44,52 @@ class BaseChampion:
         self.init_spells(spell_levels)
 
         self.inventory = Inventory(inventory, champion=self)
-        self.orig_bonus_stats = self.get_bonus_stats()
+        self.orig_bonus_stats = self.orig_bonus_stats + self.get_bonus_stats()
+        self.orig_bonus_stats = self.orig_bonus_stats + self.get_mythic_passive_stats()
         self.apply_stat_modifiers()
         self.update_champion_stats()
 
     def initialize_champion_stats_by_default(self):
         """Set all stats to 0"""
+        for stat_name in STAT_SUM_BASE_BONUS:
+            setattr(self, stat_name, 0)
+
+        for stat_name in STAT_STANDALONE:
+            setattr(self, stat_name, 0)
+
         for stat_name in STAT_TOTAL_PROPERTY:
             setattr(self, "base_" + stat_name, 0)
             setattr(self, "bonus_" + stat_name, 0)
 
-        for stat_name in STAT_STANDALONE:
-            setattr(self, stat_name, 0)
+    def get_mythic_passive_stats(self):
+        if self.inventory.item_type_count["Mythic"] == 1:
+            mythic_item = self.inventory.get_mythic_item()
+            mythic_passive_stats = dict()
+            for mythic_passive_stat in mythic_item.mythic_passive_stats:
+                stat_name, value, value_type = mythic_passive_stat
+                value *= self.inventory.item_type_count["Legendary"]
+                assert value_type in ["flat", "percent"], "mythic_passive_stats[2] must be flat or percent."
+                if any(s in stat_name for s in STAT_SUM_BASE_BONUS):
+                    assert not stat_name.startswith("base_"), "Base {} isn't affected by mythic passives.".format(
+                        stat_name.replace("base_", "")
+                    )
+                    stat = stat_name.replace("bonus_", "")
+                    if value_type == "percent":
+                        value = value * (getattr(self.orig_base_stats, stat) + getattr(self.orig_bonus_stats, stat))
+                if any(s in stat_name for s in STAT_STANDALONE + STAT_TOTAL_PROPERTY):
+                    assert not stat_name.startswith("base_"), "Base {} isn't affected by mythic passives.".format(
+                        stat_name.replace("base_", "")
+                    )
+                    stat = stat_name.replace("bonus_", "")
+                    if stat == "move_speed":
+                        stat = stat + "_" + value_type
+                    else:
+                        assert value_type == "flat", "Only flat bonuses for {} in mythic passives.".format(stat)
+                mythic_passive_stats[stat] = value
+
+            return Stats(mythic_passive_stats)
+        else:
+            return Stats()
 
     def apply_stat_modifiers(self):
         """
@@ -82,16 +119,24 @@ class BaseChampion:
     def update_champion_stats(self):
         """
         Updates the stat depending on the stat type.
-            - STAT_STANDALONE: set the stat as the sum of orig_base and orig_bonus stat.
+            - STAT_SUM_BASE_BONUS: set the stat as the sum of orig_base and orig_bonus stat.
+            - STAT_STANDALONE: set the stat as orig_bonus stat.
             - STAT_TOTAL_PROPERTY: set base_stat, bonus_stat. the attribute stat is a property.
             - STAT_UNDERLYING_PROPERTY: set the _stat. the attribute stat is a property with conditions (like crit_damage)
         """
-        for name in STAT_STANDALONE:
+        for name in STAT_SUM_BASE_BONUS:
             setattr(self, name, self.orig_base_stats.__getattr__(name) + self.orig_bonus_stats.__getattr__(name))
+
+        for name in STAT_STANDALONE:
+            setattr(self, name, self.orig_bonus_stats.__getattr__(name))
 
         for name in STAT_TOTAL_PROPERTY:
             setattr(self, "base_" + name, self.orig_base_stats.__getattr__(name))
-            setattr(self, "bonus_" + name, self.orig_bonus_stats.__getattr__(name))
+            if name == "move_speed":
+                self.move_speed_flat = self.orig_bonus_stats.move_speed_flat
+                self.move_speed_percent = self.orig_bonus_stats.move_speed_percent
+            else:
+                setattr(self, "bonus_" + name, self.orig_bonus_stats.__getattr__(name))
 
         for name in STAT_UNDERLYING_PROPERTY:
             setattr(self, "_" + name, self.orig_bonus_stats.__getattr__(name))
@@ -117,17 +162,34 @@ class BaseChampion:
             Items and spells directly impact the base and bonus stat, hence no need for a setter.
             """
             base_value = getattr(self, "base_" + stat_name)
-            bonus_value = getattr(self, "bonus_" + stat_name)
-            return base_value + bonus_value
+            if stat_name == "attack_speed":
+                # missing attack speed cap, any bonus AS above the cap still affects scalings
+                # missing attack speed decrease (stacks multiplicatively and take percentages off the final attack speed
+                # value after all bonus attack speed has been factored in)
+                bonus_value = getattr(self, "bonus_" + stat_name)
+                return base_value * (1 + bonus_value)
+            elif stat_name == "move_speed":  # missing slow ratio and multiplicative movespeed bonus
+                bonus_flat = self.move_speed_flat
+                bonus_percent = self.move_speed_percent
+                return (base_value + bonus_flat) * (1 + bonus_percent)
+            else:
+                bonus_value = getattr(self, "bonus_" + stat_name)
+                return base_value + bonus_value
 
         return total_stat_getter
 
     armor = property(fget=getter_wrapper("armor"))
     magic_resist = property(fget=getter_wrapper("magic_resist"))
     attack_damage = property(fget=getter_wrapper("attack_damage"))
+    ability_power = property(fget=getter_wrapper("ability_power"))
+    attack_speed = property(fget=getter_wrapper("attack_speed"))
+    move_speed = property(fget=getter_wrapper("move_speed"))
 
     def get_bonus_stats(self):  # TODO: add runes
-        """Get bonus stats from all sources of bonus stats (items, runes)"""
+        """
+        Get bonus stats from all sources of bonus stats (items, runes).
+        This does not include mythic passives.
+        """
         return self.inventory.item_stats
 
     def apply_item_active(self, item_name, target):
@@ -182,5 +244,4 @@ class Dummy(BaseChampion):
         self.orig_bonus_stats.armor = bonus_resistance
         self.orig_bonus_stats.magic_resist = bonus_resistance
         self.orig_bonus_stats.health = health - 1000
-
         self.update_champion_stats()
