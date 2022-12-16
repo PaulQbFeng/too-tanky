@@ -6,11 +6,11 @@ from tootanky.champions import Ahri, Annie, Caitlyn
 from tootanky.damage import damage_after_positive_resistance
 from tootanky.item import (
     ALL_ITEM_CLASSES,
-    DoranBlade,
+    DoransBlade,
     Sheen,
     InfinityEdge,
     CloakofAgility,
-    RabadonDeathcap,
+    RabadonsDeathcap,
     BlastingWand,
 )
 
@@ -26,7 +26,7 @@ def agility_cloak():
 
 
 def test_doranblade():
-    doranblade = DoranBlade()
+    doranblade = DoransBlade()
     assert doranblade.stats._dict == {"attack_damage": 8, "health": 80}
 
 
@@ -43,13 +43,11 @@ def test_infinity_edge(infinity_edge, agility_cloak):
 def test_infinity_edge_cait(infinity_edge, agility_cloak):
     dummy = Dummy(health=1000, bonus_resistance=100)
     caitlyn = Caitlyn(level=11, inventory=[infinity_edge] + 2 * [agility_cloak])
-    assert (
-        math.floor(caitlyn.auto_attack_damage(dummy, is_crit=False)) == 82
-    )  # TODO: why this auto is floor and next one is round
+    assert round(caitlyn.auto_attack_damage(dummy, is_crit=False)) == 83
     assert round(caitlyn.auto_attack_damage(dummy, is_crit=True)) == 145
     caitlyn = Caitlyn(level=11, inventory=[infinity_edge] + 3 * [agility_cloak])
     assert caitlyn.crit_damage == 0.35
-    assert math.floor(caitlyn.auto_attack_damage(dummy, is_crit=False)) == 82
+    assert round(caitlyn.auto_attack_damage(dummy, is_crit=False)) == 83
     assert round(caitlyn.auto_attack_damage(dummy, is_crit=True)) == 174
 
 
@@ -118,8 +116,53 @@ def test_galeforce():
 
 
 def test_rabadon():
-    ahri = Ahri(level=11, inventory=[RabadonDeathcap()])
+    ahri = Ahri(level=11, inventory=[RabadonsDeathcap()])
     print(ahri.orig_base_stats.ability_power, ahri.orig_bonus_stats.ability_power)
     assert ahri.ability_power == 162
-    ahri = Ahri(level=11, inventory=[RabadonDeathcap(), BlastingWand()])
+    ahri = Ahri(level=11, inventory=[RabadonsDeathcap(), BlastingWand()])
     assert ahri.ability_power == 216
+
+
+def test_mythic_passives():
+    # tests on ahri level 9 + 16 MR in runes
+    ALL_MYTHIC_ITEMS = {cls_name: cls for cls_name, cls in ALL_ITEM_CLASSES.items() if cls.type == "Mythic"}
+    item_names = ["Cosmic Drive", "Nashor's Tooth", "Serylda's Grudge", "Guardian Angel", "Edge of Night"]
+    test_dict = {
+        "Everfrost": {
+            "health": 1993,
+            "attack_damage": 213,
+            "ability_power": 285,
+            "armor": 90,
+            "magic_resist": 55 - 16,
+            "attack_speed": 1.092,
+            "move_speed": 346,
+            "lethality": 10,
+            "armor_pen_percent": 0.3,
+        },
+        "Galeforce": {
+            "health": 1743,
+            "attack_damage": 273,
+            "ability_power": 165,
+            "armor": 90,
+            "magic_resist": 55 - 16,
+            "attack_speed": 1.226,
+            "move_speed": 380 - 1,  # exceptional case where ahri base_move_speed = 330 multiplied by 1.15 gives 379.5
+            # Our program rounds it to 379 and in game the movespeed is rounded to 380 instead
+            "lethality": 10,
+            "armor_pen_percent": 0.3,
+            "crit_chance": 0.2,
+        },
+    }
+    for mythic_item_name, mythic_item in ALL_MYTHIC_ITEMS.items():
+        item_names.append(mythic_item_name)
+        ahri = Ahri(level=9, inventory=[ALL_ITEM_CLASSES[item_name]() for item_name in item_names])
+        for stat, value in test_dict[mythic_item_name].items():
+            if stat == "health":
+                assert math.ceil(getattr(ahri, stat)) == value
+            elif stat in ["armor_pen_percent", "crit_chance"]:
+                assert getattr(ahri, stat) == value
+            elif stat == "attack_speed":
+                assert round(getattr(ahri, stat), 3) == value
+            else:
+                assert round(getattr(ahri, stat)) == value
+        item_names.remove(mythic_item_name)

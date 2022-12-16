@@ -66,7 +66,3 @@ class Stats:
     def print_stats(self):
         """pretty print the stats"""
         return print("\n".join([f"{k}: {v}" for k, v in self._dict.items()]))
-
-    def add(self, attribute: str, value: float):
-        """Add single value to stats"""
-        self._dict[attribute] = value

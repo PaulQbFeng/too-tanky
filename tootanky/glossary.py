@@ -22,7 +22,7 @@ MAPPING_CHAMPION_STANDARD = {
 }
 
 MAPPING_ITEM_STANDARD = {
-    "FlatMovementSpeedMod": "move_speed",
+    "FlatMovementSpeedMod": "move_speed_flat",
     "FlatHPPoolMod": "health",
     "FlatCritChanceMod": "crit_chance",
     "FlatMagicDamageMod": "ability_power",
@@ -37,29 +37,36 @@ MAPPING_ITEM_STANDARD = {
     "gold": "gold",
 }
 
-
-STAT_STANDALONE = [
+STAT_SUM_BASE_BONUS = [
     "health",
     "mana",
-    "movespeed",
     "attack_range",
     "health_regen",
     "mana_regen",
-    "ability_power",
-    "attack_speed",
+]
+
+STAT_STANDALONE = [
     "lethality",
-    "crit_chance",
-    "magic_resist_pen_flat",
-    "magic_resist_pen_percent",
     "armor_pen_flat",
     "armor_pen_percent",
     "bonus_armor_pen_percent",
-    "life_steal",
+    "magic_resist_pen_flat",
+    "magic_resist_pen_percent",
+    "crit_chance",
     "crit_damage",
+    "life_steal",
+    "omni_vamp",
+    "spell_vamp"
 ]
 
-STAT_TOTAL_PROPERTY = ["armor", "magic_resist", "attack_damage"]
-
+STAT_TOTAL_PROPERTY = [
+    "armor",
+    "magic_resist",
+    "attack_damage",
+    "attack_speed",
+    "move_speed",
+    "ability_power"
+]
 
 STAT_UNDERLYING_PROPERTY = []
 

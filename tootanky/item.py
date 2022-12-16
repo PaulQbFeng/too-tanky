@@ -86,17 +86,17 @@ class BaseItem:
 # Starter items
 # TODO: Cull, Dark Seal, Gustwalker Hatchling, Mosstomper Seedling, Relic Shield,
 #  Scorchclaw Pup, Spectral Sickle, Spellthief's Edge, Steel Shoulderguards, Tear of the Goddess
-class DoranBlade(BaseItem):
+class DoransBlade(BaseItem):
     name = "Doran's Blade"
     type = "Starter"
 
 
-class DoranRing(BaseItem):  # missing passive (mana_regen)
+class DoransRing(BaseItem):  # missing passive (mana_regen)
     name = "Doran's Ring"
     type = "Starter"
 
 
-class DoranShield(BaseItem):  # missing passive (health_regen after taking damage)
+class DoransShield(BaseItem):  # missing passive (health_regen after taking damage)
     name = "Doran's Shield"
     type = "Starter"
 
@@ -108,7 +108,7 @@ class AmplifyingTome(BaseItem):
     type = "Basic"
 
 
-class BamiCinder(BaseItem):  # missing passive
+class BamisCinder(BaseItem):  # missing passive
     name = "Bami's Cinder"
     type = "Basic"
 
@@ -195,7 +195,7 @@ class Sheen(BaseItem):
 # TODO: Executioner's Calling, Forbidden Idol, Hexdrinker, Hextech Alternator, Ironspike Whip, Kircheis Shard,
 #  Leeching Leer, Oblivion Orb, Phage, Quicksilver Sash, Rageknife, Recurve Bow, Seeker's Armguard, Spectre's Cowl,
 #  Tiamat, Vampiric Scepter, Verdant Barrier, Warden's Mail, Winged Moonplate, Zeal
-class AegisLegion(BaseItem):  # missing ability haste
+class AegisoftheLegion(BaseItem):  # missing ability haste
     name = "Aegis of the Legion"
     type = "Epic"
 
@@ -217,7 +217,7 @@ class BlightingJewel(BaseItem):
     def __init__(self):
         super().__init__()
         self.limitations = ["Void Pen"]
-        self.stats.add("magic_resist_pen_percent", 0.13)
+        self.stats.magic_resist_pen_percent = 0.13
 
 
 class BrambleVest(BaseItem):  # missing passive
@@ -225,7 +225,7 @@ class BrambleVest(BaseItem):  # missing passive
     type = "Epic"
 
 
-class CaulfieldWarhammer(BaseItem):  # missing ability haste
+class CaulfieldsWarhammer(BaseItem):  # missing ability haste
     name = "Caulfield's Warhammer"
     type = "Epic"
 
@@ -254,7 +254,7 @@ class Frostfang(BaseItem):  # missing base_mana_regen
         self.limitations = ["Support"]
 
 
-class GiantBelt(BaseItem):
+class GiantsBelt(BaseItem):
     name = "Giant's Belt"
     type = "Epic"
 
@@ -337,7 +337,7 @@ class SerratedDirk(BaseItem):
         self.stats = self.stats + self.passive.stats
 
 
-class TargonBuckler(BaseItem):  # missing base_health_regen
+class TargonsBuckler(BaseItem):  # missing base_health_regen
     name = "Targon's Buckler"
     type = "Epic"
 
@@ -358,15 +358,34 @@ class WatchfulWardstone(BaseItem):  # missing ability haste
 # Legendary items
 # TODO: Abyssal Mask, Anathema's Chains, Archangel's Staff, Ardent Censer, Axiom Arc, Banshee's Veil, Black Cleaver,
 #  Black Mist Scythe, Blade of the Ruined King, Bloodthirster, Bulwark of the Mountain, Chempunk Chainsword,
-#  Chemtech Putrifier, Cosmic Drive, Dead Man's Plate, Death's Dance, Demonic Embrace, Edge of Night, Essence Reaver,
+#  Chemtech Putrifier, Dead Man's Plate, Death's Dance, Demonic Embrace, Essence Reaver,
 #  Fimbulwinter, Force of Nature, Frozen Heart, Gargoyle Stoneplate, Guardian Angel, Guinsoo's Rageblade, Horizon Focus,
 #  Hullbreaker, Infinity Edge, Knight's Vow, Lich Bane, Lord Dominik's Regards, Manamune, Maw of Malmortius,
 #  Mejai's Soulstealer, Mercurial Scimitar, Mikael's Blessing, Morellonomicon, Mortal Reminder, Muramana,
-#  Nashor's Tooth, Pauldrons of Whiterock, Phantom Dancer, Rabadon's Deathcap, Randuin's Omen, Rapid Firecannon,
+#  Pauldrons of Whiterock, Phantom Dancer, Rabadon's Deathcap, Randuin's Omen, Rapid Firecannon,
 #  Ravenous Hydra, Redemption, Runaan's Hurricane, Rylai's Crystal Scepter, Seraph's Embrace, Serpent's Fang,
 #  Shadowflame, Shard of True Ice, Silvermere Dawn, Spear of Shojin, Spirit Visage, Staff of Flowing Water,
 #  Sterak's Gage, Stormrazor, Sunfire Aegis, The Collector, Thornmail, Titanic Hydra, Turbo Chemtank, Umbral Glaive,
 #  Vigilant Wardstone, Void Staff, Warmog's Armor, Winter's Approach, Wit's End, Zeke's Convergence, Zhonya's Hourglass
+class CosmicDrive(BaseItem):  # missing ability haste, passive
+    name = "Cosmic Drive"
+    type = "Legendary"
+
+
+class EdgeofNight(BaseItem):  # missing passive
+    name = "Edge of Night"
+    type = "Legendary"
+
+    def __init__(self):
+        super().__init__()
+        self.stats.lethality = 10
+
+
+class GuardianAngel(BaseItem):  # missing passive
+    name = "Guardian Angel"
+    type = "Legendary"
+
+
 class InfinityEdge(BaseItem):  # missing passive
     name = "Infinity Edge"
     type = "Legendary"
@@ -374,6 +393,11 @@ class InfinityEdge(BaseItem):  # missing passive
     def __init__(self):
         super().__init__()
         self.limitations = ["Crit Modifier"]
+
+
+class NashorsTooth(BaseItem):  # missing passive
+    name = "Nashor's Tooth"
+    type = "Legendary"
 
 
 class NavoriQuickblades(BaseItem):  # missing passive, ability haste
@@ -385,12 +409,12 @@ class NavoriQuickblades(BaseItem):  # missing passive, ability haste
         self.limitations = ["Marksman Capstone", "Ability Haste Capstone"]
 
 
-class RabadonDeathcap(BaseItem):
+class RabadonsDeathcap(BaseItem):
     name = "Rabadon's Deathcap"
     type = "Legendary"
 
 
-class SeryldaGrudge(BaseItem):  # missing passive, ability haste
+class SeryldasGrudge(BaseItem):  # missing passive, ability haste
     name = "Serylda's Grudge"
     type = "Legendary"
 
@@ -405,7 +429,7 @@ class VigilantWardstone(BaseItem):  # missing 12% ability haste increase in mult
     type = "Legendary"
 
 
-class YoumuuGhostblade(BaseItem):  # missing passive, active, ability haste
+class YoumuusGhostblade(BaseItem):  # missing passive, active, ability haste
     name = "Youmuu's Ghostblade"
     type = "Legendary"
 
@@ -420,19 +444,27 @@ class InfinityEdge(BaseItem):
 
 
 # Mythic items
-# TODO: Crown of the Shattered Queen, Divine Sunderer, Duskblade of Draktharr, Eclipse, Evenshroud, Everfrost,
+# TODO: Crown of the Shattered Queen, Divine Sunderer, Duskblade of Draktharr, Eclipse, Evenshroud,
 #  Goredrinker, Heartsteel, Hextech Rocketbelt, Iceborn Gauntlet, Immortal Shieldbow, Imperial Mandate,
 #  Jak'Sho, The Protean, Kraken Slayer, Liandry's Anguish, Locket of the Iron Solari, Luden's Tempest,
 #  Moonstone Renewer, Night Harvester, Prowler's Claw, Radiant Virtue, Riftmaker, Rod of Ages, Shurelya's Battlesong,
 #  Stridebreaker, Trinity Force
+class Everfrost(BaseItem):  # missing ability haste
+    name = "Everfrost"
+    type = "Mythic"
+
+    def __init__(self):
+        super().__init__()
+        self.mythic_passive_stats = [("ability_power", 10, "flat")]
+
+
 class Galeforce(BaseItem):
     name = "Galeforce"
     type = "Mythic"
 
     def __init__(self):
         super().__init__()
-        self.mythic_passive_ratio = [0.2]
-        self.mythic_passive_type = ["bonus_move_speed"]
+        self.mythic_passive_stats = [("bonus_move_speed", 0.02, "percent")]
 
     def apply_active(self, target):
         max_health = target.orig_base_stats.health + target.orig_bonus_stats.health

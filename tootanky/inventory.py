@@ -103,15 +103,15 @@ class Inventory:
             else:
                 item.apply_passive()
 
-    def apply_mythic_passive(self, item):
+    def get_mythic_passive_stats(self):
         if self.item_type_count["Mythic"] == 1:
-            if item.type == "Legendary":
+            nb_legendary = self.item_type_count["Legendary"]
+            if nb_legendary > 0:
                 mythic_item = self.get_mythic_item()
-                mythic_passive_dict = {
-                    mythic_item.mythic_passive_type[i]: mythic_item.mythic_passive_ratio[i]
-                    for i in range(len(mythic_item.mythic_passive_type))
-                }
-                item.stats = item.stats + Stats(mythic_passive_dict)
+                for i in range(len(mythic_item.mythic_passive_stats)):
+                    mythic_item.mythic_passive_stats[i][1] *= nb_legendary
+                return mythic_item.mythic_passive_stats
+        return None
 
     def get_price(self):
         price = 0
