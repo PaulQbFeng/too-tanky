@@ -1,7 +1,7 @@
 import math
 
 from tootanky.champion import Dummy
-from tootanky.champions import Ahri, Annie, Darius
+from tootanky.champions import Ahri, Annie, Darius, Xerath
 from tootanky.item import ALL_ITEM_CLASSES, BlastingWand, RubyCrystal
 
 
@@ -137,3 +137,28 @@ def test_equip_item_health():
     assert math.ceil(ahri.health) == 2080
     ahri = Ahri(level=17, inventory=[RubyCrystal()], spell_levels=[5, 5, 5, 5])
     assert math.ceil(ahri.health) == 2230
+
+def test_default_init_spells_xerath():
+    test_values = [
+        [1, 0, 0, 0],
+        [1, 1, 0, 0],
+        [1, 1, 1, 0],
+        [2, 1, 1, 0],
+        [3, 1, 1, 0],
+        [3, 1, 1, 1],
+        [4, 1, 1, 1],
+        [4, 2, 1, 1],
+        [5, 2, 1, 1],
+        [5, 3, 1, 1],
+        [5, 3, 1, 2],
+        [5, 4, 1, 2],
+        [5, 5, 1, 2],
+        [5, 5, 2, 2],
+        [5, 5, 3, 2],
+        [5, 5, 3, 3],
+        [5, 5, 4, 3],
+        [5, 5, 5, 3]
+    ]
+    for i in range(18):
+        xerath = Xerath(level=i+1)
+        assert [xerath.spell_q.level, xerath.spell_w.level, xerath.spell_e.level, xerath.spell_r.level] == test_values[i]

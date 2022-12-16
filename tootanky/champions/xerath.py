@@ -7,7 +7,7 @@ class Xerath(BaseChampion):
     champion_name = "Xerath"
 
     def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)
+        super().__init__(champion_name=__class__.champion_name, spell_max_order=["q", "w", "e"], **kwargs)
 
 
 @SpellFactory.register_spell
@@ -42,7 +42,6 @@ class WXerath(BaseSpell):
         self.base_damage_per_level = [60, 95, 130, 165, 200]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("ability_power", 0.6)]
-
 
     def get_damage_modifier_coeff(self, is_empowered = True):
         return 1.667 if is_empowered else 1
