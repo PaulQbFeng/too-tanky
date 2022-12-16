@@ -71,9 +71,8 @@ class QCaitlyn(BaseSpell):
     damage_type = "physical"
 
     def __init__(self, champion, level):
-        super().__init__(champion, level=level)
+        super().__init__(champion, level)
 
-        self.nature = self.get_spell_nature(self.spell_key)
         self.base_damage_per_level = [50, 90, 130, 170, 210]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("attack_damage", [1.25, 1.45, 1.65, 1.85, 2.05])]
@@ -89,9 +88,7 @@ class WCaitlyn(BaseSpell):
     damage_type = "physical"
 
     def __init__(self, champion, level):
-        super().__init__(champion, level=level)
-
-        self.nature = self.get_spell_nature(self.spell_key)
+        super().__init__(champion, level)
 
         self.base_damage_per_level = [0, 0, 0, 0, 0]
         self.headshot_bonus_damage_flat = [40, 85, 130, 175, 220]
@@ -113,9 +110,8 @@ class ECaitlyn(BaseSpell):
     damage_type = "magical"
 
     def __init__(self, champion, level):
-        super().__init__(champion, level=level)
+        super().__init__(champion, level)
 
-        self.nature = self.get_spell_nature(self.spell_key)
         self.base_damage_per_level = [80, 130, 180, 230, 280]
         self.ratios = [("ability_power", 0.8)]
 
@@ -130,9 +126,7 @@ class RCaitlyn(BaseSpell):
     damage_type = "physical"
 
     def __init__(self, champion, level):
-        super().__init__(champion, level=level)
-
-        self.nature = self.get_spell_nature(self.spell_key)
+        super().__init__(champion, level)
 
         self.base_damage_per_level = [300, 525, 750]
         self.ratios = [("bonus_attack_damage", 2)]

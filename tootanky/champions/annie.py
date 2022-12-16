@@ -17,9 +17,8 @@ class QAnnie(BaseSpell):
     damage_type = "magical"
 
     def __init__(self, champion, level):
-        super().__init__(champion, level=level)
+        super().__init__(champion, level)
 
-        self.nature = self.get_spell_nature(self.spell_key)
         self.base_damage_per_level = [80, 115, 150, 185, 220]
         self.ratios = [("ability_power", 0.8)]
 

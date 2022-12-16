@@ -22,16 +22,17 @@ class BaseSpell:
 
     def __init__(self, champion, level=1):
         self.champion = champion
+        self.set_level(level)
         self.spell_specs = ALL_CHAMPION_SPELLS[champion.champion_name][self.spell_key].copy()
+        self.nature = self.get_spell_nature(self.spell_key)
         for name, value in self.spell_specs.items():
             setattr(self, name, value)
         self.ratios = []
-
-        self.set_level(level)
-        self.can_trigger_spellblade = True
-        self.apply_on_hit = False
         if self.damage_type is not None:
             self.target_res_type = get_resistance_type(self.damage_type)
+
+        self.can_trigger_spellblade = True
+        self.apply_on_hit = False
 
     @staticmethod
     def get_spell_nature(spell_key: str) -> str:
