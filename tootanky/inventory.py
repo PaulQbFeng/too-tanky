@@ -19,7 +19,7 @@ class Inventory:
                 self.items.append(item)
                 self.check_item(item)
                 self.apply_item_passive(item)
-                self.item_stats = self.item_stats + item.stats
+                self.item_stats += item.stats
 
     def contains(self, name):
         """Check if an item is in the inventory"""
