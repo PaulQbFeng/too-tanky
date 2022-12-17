@@ -1,9 +1,15 @@
-from tootanky.damage import damage_after_resistance, pre_mitigation_spell_damage
+from tootanky.damage import damage_after_resistance, pre_mitigation_spell_damage, ratio_damage, get_resistance_type
 from tootanky.data_parser import ALL_CHAMPION_SPELLS
 
 
 class BaseSpell:
     """
+    Some class variables that can be overwritten in the subclasses:
+        - spell_key: q, w, e, r (default=None)
+        - damage_type: physical, magical (default=None)
+        - apply_on_hit: If the spell can apply on_hit (default=False)
+        - can_trigger_spellblade: If the spell can activate spellblade effect (default=True)
+
     ALL_CHAMPION_SPELLS["Kog\'Maw"]["e"] contains:
         {
             'name': 'Void Ooze',
@@ -18,35 +24,26 @@ class BaseSpell:
     """
 
     spell_key = None
+    damage_type = None
+    apply_on_hit = False
+    can_trigger_spellblade = True
 
     def __init__(self, champion, level=1):
         self.champion = champion
+        self.set_level(level)
         self.spell_specs = ALL_CHAMPION_SPELLS[champion.champion_name][self.spell_key].copy()
+        self.nature = self.get_spell_nature(self.spell_key)
         for name, value in self.spell_specs.items():
             setattr(self, name, value)
         self.ratios = []
-
-        self.set_level(level)
-        self.damage_type = None
+        if self.damage_type is not None:
+            self.target_res_type = get_resistance_type(self.damage_type)
 
     @staticmethod
     def get_spell_nature(spell_key: str) -> str:
         if spell_key in ["q", "w", "e"]:
             return "basic"
         return "ulti"
-
-    def get_resistance_type(self) -> str:
-        """Get resistance type based on spell damage type"""
-        # TODO: Might be changed into a dict
-
-        if self.damage_type == "magical":
-            res_type = "magic_resist"
-        elif self.damage_type == "physical":
-            res_type = "armor"
-        else:
-            raise AttributeError(f"spell_damage type {self.damage_type} not taken into account")
-
-        return res_type
 
     def print_specs(self):
         """pretty print the stats"""
@@ -64,27 +61,14 @@ class BaseSpell:
         """Get the base damage of a spell"""
         return self.base_damage_per_level[self.level - 1]
 
-    def ratio_damage(self, target) -> float:
-        """Get the damage dealt by the ratio part of a spell, taking into account multiple ratios"""
-        damage = 0
-        for stat_name, ratio in self.ratios:
-            if "target_" in stat_name:
-                stat_value = getattr(target, stat_name.replace("target_", ""))
-            else:
-                stat_value = getattr(self.champion, stat_name)
-            if isinstance(ratio, list):
-                ratio = ratio[self.level - 1]
-            damage += stat_value * ratio
-        return damage
-
     def damage(self, target, damage_modifier_flat=0, damage_modifier_coeff=1) -> float:
         """Calculates the damage dealt to a champion with a spell"""
 
-        ratio_damage = self.ratio_damage(target)
+        ratio_dmg = ratio_damage(champion=self.champion, target=target, ratios=self.ratios, spell_leve1=self.level)
 
         pre_mtg_dmg = pre_mitigation_spell_damage(
             self.get_base_damage(),
-            ratio_damage,
+            ratio_dmg,
             damage_modifier_flat=damage_modifier_flat,
             damage_modifier_coeff=damage_modifier_coeff,
         )
@@ -112,13 +96,23 @@ class BaseSpell:
     def get_damage_modifier_coeff(self, **kwargs):
         return 1
 
-    def on_hit_effect(self, target, **kwargs):
-        """Effect on hit"""
+    def on_attack_state_change(self):
+        """Change internal attribute e.g cait w and e"""
         pass
 
-    def hit_damage(self, target, **kwargs):
+    def hit_damage(self, target, spellblade=False, **kwargs):
+        on_hit_damage = 0
+        self.on_attack_state_change()
+        if spellblade and self.can_trigger_spellblade:
+            if self.champion.spellblade_item is not None:
+                self.champion.spellblade_item.activate = True
+
         damage_modifier_flat = self.get_damage_modifier_flat(**kwargs)
         damage_modifier_coeff = self.get_damage_modifier_coeff(**kwargs)
         damage = self.damage(target, damage_modifier_flat, damage_modifier_coeff)
-        self.on_hit_effect(target, **kwargs)  # Be sure to compute the damage before the effect
-        return damage
+
+        if self.apply_on_hit:
+            for on_hit_source in self.champion.on_hits:
+                on_hit_damage = on_hit_source.on_hit_effect(target)
+
+        return damage + on_hit_damage

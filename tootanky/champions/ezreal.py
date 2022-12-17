@@ -3,38 +3,39 @@ from tootanky.spell import BaseSpell
 from tootanky.spell_factory import SpellFactory
 
 
-class Annie(BaseChampion):
-    champion_name = "Annie"
+class Ezreal(BaseChampion):
+    champion_name = "Ezreal"
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, **kwargs)
 
 
 @SpellFactory.register_spell
-class QAnnie(BaseSpell):
-    champion_name = "Annie"
+class QEzreal(BaseSpell):
+    champion_name = "Ezreal"
     spell_key = "q"
-    damage_type = "magical"
+    damage_type = "physical"
+    apply_on_hit = True
 
     def __init__(self, champion, level):
         super().__init__(champion, level)
-        self.base_damage_per_level = [80, 115, 150, 185, 220]
-        self.ratios = [("ability_power", 0.8)]
+        self.base_damage_per_level = [20, 45, 70, 95, 120]
+        self.ratios = [("attack_damage", 1.3), ("ability_power", 0.15)]
 
 
 @SpellFactory.register_spell
-class WAnnie(BaseSpell):
-    champion_name = "Annie"
+class WEzreal(BaseSpell):
+    champion_name = "Ezreal"
     spell_key = "w"
 
 
 @SpellFactory.register_spell
-class EAnnie(BaseSpell):
-    champion_name = "Annie"
+class EEzreal(BaseSpell):
+    champion_name = "Ezreal"
     spell_key = "e"
 
 
 @SpellFactory.register_spell
-class RAnnie(BaseSpell):
-    champion_name = "Annie"
+class REzreal(BaseSpell):
+    champion_name = "Ezreal"
     spell_key = "r"

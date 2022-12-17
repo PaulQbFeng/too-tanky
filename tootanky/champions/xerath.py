@@ -14,13 +14,10 @@ class Xerath(BaseChampion):
 class QXerath(BaseSpell):
     champion_name = "Xerath"
     spell_key = "q"
+    damage_type = "magical"
 
     def __init__(self, champion, level):
-        super().__init__(champion, level=level)
-
-        self.nature = self.get_spell_nature(self.spell_key)
-        self.damage_type = "magical"
-        self.target_res_type = self.get_resistance_type()
+        super().__init__(champion, level)
         self.base_damage_per_level = [70, 110, 150, 190, 230]
         self.ratios = [("ability_power", 0.85)]
 
@@ -32,18 +29,16 @@ class QXerath(BaseSpell):
 class WXerath(BaseSpell):
     champion_name = "Xerath"
     spell_key = "w"
+    damage_type = "magical"
 
     def __init__(self, champion, level):
-        super().__init__(champion, level=level)
-
-        self.nature = self.get_spell_nature(self.spell_key)
-        self.damage_type = "magical"
-        self.target_res_type = self.get_resistance_type()
+        super().__init__(champion, level)
         self.base_damage_per_level = [60, 95, 130, 165, 200]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("ability_power", 0.6)]
 
-    def get_damage_modifier_coeff(self, is_empowered = True):
+
+    def get_damage_modifier_coeff(self, is_empowered=True):
         return 1.667 if is_empowered else 1
 
 
@@ -51,13 +46,10 @@ class WXerath(BaseSpell):
 class EXerath(BaseSpell):
     champion_name = "Xerath"
     spell_key = "e"
+    damage_type = "magical"
 
     def __init__(self, champion, level):
-        super().__init__(champion, level=level)
-
-        self.nature = self.get_spell_nature(self.spell_key)
-        self.damage_type = "magical"
-        self.target_res_type = self.get_resistance_type()
+        super().__init__(champion, level)
         self.base_damage_per_level = [80, 110, 140, 170, 200]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("ability_power", 0.45)]
@@ -67,13 +59,10 @@ class EXerath(BaseSpell):
 class RXerath(BaseSpell):
     champion_name = "Xerath"
     spell_key = "r"
+    damage_type = "magical"
 
     def __init__(self, champion, level):
-        super().__init__(champion, level=level)
-
-        self.nature = self.get_spell_nature(self.spell_key)
-        self.damage_type = "magical"
-        self.target_res_type = self.get_resistance_type()
+        super().__init__(champion, level)
         self.base_damage_per_level = [200, 250, 300]
         self.recast_per_level = [3, 4, 5]
         self.base_spell_damage = self.base_damage_per_level[level - 1]

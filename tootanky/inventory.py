@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from tootanky.item import BaseItem
+from tootanky.item import BaseItem, SPELL_BLADE_ITEMS
 from tootanky.stats import Stats
 
 
@@ -19,15 +19,15 @@ class Inventory:
                 self.items.append(item)
                 self.check_item(item)
                 self.apply_item_passive(item)
-                self.item_stats = self.item_stats + item.stats
+                self.item_stats += item.stats
 
     def contains(self, name):
         """Check if an item is in the inventory"""
         return name in (item.name for item in self.items)
 
     def get_item(self, name):
-        # TODO: what happens with this method when there are several copies of the same item in the inventory
-        return next(item for item in self.items if item.name == name)
+        # TODO: Handle case where there are item duplicates
+        return next((item for item in self.items if item.name == name), None)
 
     def get_mythic_item(self):
         return next((item for item in self.items if item.type == "Mythic"), None)
@@ -36,10 +36,18 @@ class Inventory:
         return [item.name for item in self.items].count(name) <= 1
 
     def is_unique_limitation(self, limitations):
-        return sum(
-            [item.limitations[i] for item in self.items if item.limitations is not None
-             for i in range(len(item.limitations))].count(limitation) for limitation in limitations
-        ) <= 1
+        return (
+            sum(
+                [
+                    item.limitations[i]
+                    for item in self.items
+                    if item.limitations is not None
+                    for i in range(len(item.limitations))
+                ].count(limitation)
+                for limitation in limitations
+            )
+            <= 1
+        )
 
     def get_all_indexes(self, name):
         indexes = []
@@ -68,7 +76,7 @@ class Inventory:
                     "Hydra",
                     "Glory",
                     "Eternity",
-                    "Mythic Component"
+                    "Mythic Component",
                 ]:
                     assert self.is_unique_limitation([limitation]), "A champion can have only one {} item".format(
                         limitation
@@ -107,3 +115,16 @@ class Inventory:
         for item in self.items:
             price += item.gold
         return price
+
+    def mythic_passive_stats(self):
+        # TODO
+        mythic_item = self.get_mythic_item()
+        if mythic_item is None:
+            return 0
+
+    def get_spellblade_item(self):
+        for name in SPELL_BLADE_ITEMS:
+            item = self.get_item(name)
+            if item:
+                return item
+        return None

@@ -4,8 +4,15 @@ import pytest
 from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie, Caitlyn
 from tootanky.damage import damage_after_positive_resistance
-from tootanky.item import ALL_ITEM_CLASSES
-from tootanky.item import DoransBlade, Sheen, InfinityEdge, CloakofAgility, RabadonsDeathcap, BlastingWand
+from tootanky.item import (
+    ALL_ITEM_CLASSES,
+    DoransBlade,
+    Sheen,
+    InfinityEdge,
+    CloakofAgility,
+    RabadonsDeathcap,
+    BlastingWand,
+)
 
 
 @pytest.fixture()
@@ -36,9 +43,7 @@ def test_infinity_edge(infinity_edge, agility_cloak):
 def test_infinity_edge_cait(infinity_edge, agility_cloak):
     dummy = Dummy(health=1000, bonus_resistance=100)
     caitlyn = Caitlyn(level=11, inventory=[infinity_edge] + 2 * [agility_cloak])
-    assert (
-        round(caitlyn.auto_attack_damage(dummy, is_crit=False)) == 83
-    )
+    assert round(caitlyn.auto_attack_damage(dummy, is_crit=False)) == 83
     assert round(caitlyn.auto_attack_damage(dummy, is_crit=True)) == 145
     caitlyn = Caitlyn(level=11, inventory=[infinity_edge] + 3 * [agility_cloak])
     assert caitlyn.crit_damage == 0.35
@@ -47,12 +52,13 @@ def test_infinity_edge_cait(infinity_edge, agility_cloak):
 
 
 def test_sheen():
-    sheen = Sheen()
-    annie = Annie()
-    dummy = Dummy(health=1000, bonus_resistance=50)
-    assert sheen.spellblade(annie, dummy) == damage_after_positive_resistance(
-        annie.base_attack_damage, dummy.bonus_armor
-    )
+    annie = Annie(level=2, inventory=[Sheen()])
+    dummy = Dummy(health=1000, bonus_resistance=100)
+    assert len(annie.on_hits) == 1
+    assert round(annie.auto_attack_damage(dummy)) == 26
+    assert annie.spell_q.hit_damage(dummy, spellblade=True) == 40
+    assert round(annie.auto_attack_damage(dummy)) == 52
+    assert round(annie.auto_attack_damage(dummy)) == 26
 
 
 def test_serrated_unique_passive():
@@ -129,7 +135,7 @@ def test_mythic_passives():
             "attack_speed": 1.092,
             "move_speed": 346,
             "lethality": 10,
-            "armor_pen_percent": 0.3
+            "armor_pen_percent": 0.3,
         },
         "Galeforce": {
             "health": 1743,
@@ -139,11 +145,11 @@ def test_mythic_passives():
             "magic_resist": 55 - 16,
             "attack_speed": 1.226,
             "move_speed": 380 - 1,  # exceptional case where ahri base_move_speed = 330 multiplied by 1.15 gives 379.5
-                                    # Our program rounds it to 379 and in game the movespeed is rounded to 380 instead
+            # Our program rounds it to 379 and in game the movespeed is rounded to 380 instead
             "lethality": 10,
             "armor_pen_percent": 0.3,
-            "crit_chance": 0.2
-        }
+            "crit_chance": 0.2,
+        },
     }
     for mythic_item_name, mythic_item in ALL_MYTHIC_ITEMS.items():
         item_names.append(mythic_item_name)
