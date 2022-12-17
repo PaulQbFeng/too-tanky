@@ -12,7 +12,7 @@ from tootanky.glossary import (
     normalize_champion_name,
 )
 from tootanky.inventory import Inventory
-from tootanky.item import BaseItem
+from tootanky.item import BaseItem, SPELL_BLADE_ITEMS
 from tootanky.spell_factory import SpellFactory
 from tootanky.stats import Stats
 
@@ -50,6 +50,13 @@ class BaseChampion:
         self.update_champion_stats()
 
         self.on_hits = []
+        self.spellblade_item = None
+
+        for name in SPELL_BLADE_ITEMS:
+            if self.inventory.contains(name):
+                self.spellblade_item = self.inventory.get_item(name)
+                self.on_hits.append(self.spellblade_item)
+                break
 
     def initialize_champion_stats_by_default(self):
         """Set all stats to 0"""
@@ -217,8 +224,8 @@ class BaseChampion:
             crit_damage=self.crit_damage,
         )
         on_hit_damage = 0
-        for on_hit in self.on_hits:
-            on_hit_damage = on_hit.on_hit_effect(target)
+        for on_hit_source in self.on_hits:
+            on_hit_damage = on_hit_source.on_hit_effect(target)
         return damage + on_hit_damage
 
     def take_damage(self, damage):

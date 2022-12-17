@@ -99,16 +99,15 @@ class BaseSpell:
         on_hit_damage = 0
         self.on_attack_state_change()
         if spellblade and self.can_trigger_spellblade:
-            item = self.champion.inventory.get_spellblade_item()
-            if item:
-                self.champion.on_hits.append(item)
+            if self.champion.spellblade_item is not None:
+                self.champion.spellblade_item.activate = True
+
         damage_modifier_flat = self.get_damage_modifier_flat(**kwargs)
         damage_modifier_coeff = self.get_damage_modifier_coeff(**kwargs)
         damage = self.damage(target, damage_modifier_flat, damage_modifier_coeff)
 
         if self.apply_on_hit:
-            for on_hit in self.champion.on_hits:
-                on_hit_damage = on_hit.on_hit_effect(
-                    target, **kwargs
-                )  # Be sure to compute the damage before the effect
+            for on_hit_source in self.champion.on_hits:
+                on_hit_damage = on_hit_source.on_hit_effect(target)
+
         return damage + on_hit_damage

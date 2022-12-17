@@ -169,15 +169,16 @@ class Sheen(BaseItem):
     base_damage = 0
     damage_type = "physical"
 
-    # def spellblade(self, owner_champion, target):
-    #     # TODO: this must be unique passive
-    #     """Calculates the bonus damage dealt with an autoattack : 100% of base AD"""
-    #     return damage_after_positive_resistance(owner_champion.base_attack_damage, target.bonus_armor)
+    def __init__(self):
+        super().__init__()
+        self.activate = False
 
     def on_hit_effect(self, target):
         """Calculates the bonus damage dealt with an autoattack : 100% of base AD"""
-        damage = self.damage(target)
-        self.champion.on_hits.remove(self)
+        damage = 0
+        if self.activate:
+            damage += self.damage(target)
+            self.activate = False
         return damage
 
 
