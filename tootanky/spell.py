@@ -4,6 +4,12 @@ from tootanky.data_parser import ALL_CHAMPION_SPELLS
 
 class BaseSpell:
     """
+    Some class variables that can be overwritten in the subclasses:
+        - spell_key: q, w, e, r (default=None)
+        - damage_type: physical, magical (default=None)
+        - apply_on_hit: If the spell can apply on_hit (default=False)
+        - can_trigger_spellblade: If the spell can activate spellblade effect (default=True)
+
     ALL_CHAMPION_SPELLS["Kog\'Maw"]["e"] contains:
         {
             'name': 'Void Ooze',
@@ -19,6 +25,8 @@ class BaseSpell:
 
     spell_key = None
     damage_type = None
+    apply_on_hit = False
+    can_trigger_spellblade = True
 
     def __init__(self, champion, level=1):
         self.champion = champion
@@ -30,9 +38,6 @@ class BaseSpell:
         self.ratios = []
         if self.damage_type is not None:
             self.target_res_type = get_resistance_type(self.damage_type)
-
-        self.can_trigger_spellblade = True
-        self.apply_on_hit = False
 
     @staticmethod
     def get_spell_nature(spell_key: str) -> str:

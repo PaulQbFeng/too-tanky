@@ -173,11 +173,11 @@ class Sheen(BaseItem):
         super().__init__()
         self.activate = False
 
-    def on_hit_effect(self, target):
+    def on_hit_effect(self, target, damage_modifier_coeff=1):
         """Calculates the bonus damage dealt with an autoattack : 100% of base AD"""
         damage = 0
         if self.activate:
-            damage += self.damage(target)
+            damage = self.damage(target, damage_modifier_coeff)
             self.activate = False
         return damage
 
