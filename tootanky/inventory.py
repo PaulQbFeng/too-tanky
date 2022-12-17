@@ -27,10 +27,7 @@ class Inventory:
 
     def get_item(self, name):
         # TODO: Handle case where there are item duplicates
-        for item in self.items:
-            if item.name == name:
-                return item
-        return None
+        return next((item for item in self.items if item.name == name), None)
 
     def get_mythic_item(self):
         return next((item for item in self.items if item.type == "Mythic"), None)
