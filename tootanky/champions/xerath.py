@@ -24,9 +24,6 @@ class QXerath(BaseSpell):
         self.base_damage_per_level = [70, 110, 150, 190, 230]
         self.ratios = [("ability_power", 0.85)]
 
-    def init_per_level(self, level):
-        self.base_spell_damage = self.base_damage_per_level[level - 1]
-
 
 @SpellFactory.register_spell
 class WXerath(BaseSpell):
@@ -40,10 +37,9 @@ class WXerath(BaseSpell):
         self.damage_type = "magical"
         self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [60, 95, 130, 165, 200]
-        self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("ability_power", 0.6)]
 
-    def get_damage_modifier_coeff(self, is_empowered = True):
+    def get_damage_modifier_coeff(self, is_empowered=True):
         return 1.667 if is_empowered else 1
 
 
@@ -59,7 +55,6 @@ class EXerath(BaseSpell):
         self.damage_type = "magical"
         self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [80, 110, 140, 170, 200]
-        self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("ability_power", 0.45)]
 
 
@@ -76,7 +71,6 @@ class RXerath(BaseSpell):
         self.target_res_type = self.get_resistance_type()
         self.base_damage_per_level = [200, 250, 300]
         self.recast_per_level = [3, 4, 5]
-        self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("ability_power", 0.45)]
 
     def get_damage_modifer_ratio(self, target: BaseChampion, nb_hit=None):

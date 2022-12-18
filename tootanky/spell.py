@@ -116,9 +116,14 @@ class BaseSpell:
         """Effect on hit"""
         pass
 
+    def apply_debuff(self, target, **kwargs):
+        """Debuff, maybe buff later if it can handle buffs also"""
+        pass
+
     def hit_damage(self, target, **kwargs):
         damage_modifier_flat = self.get_damage_modifier_flat(**kwargs)
         damage_modifier_coeff = self.get_damage_modifier_coeff(**kwargs)
         damage = self.damage(target, damage_modifier_flat, damage_modifier_coeff)
         self.on_hit_effect(target, **kwargs)  # Be sure to compute the damage before the effect
+        self.apply_debuff(target, **kwargs)  # Applied after the on-hits based on test with sheen + blackcleaver
         return damage
