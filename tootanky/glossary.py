@@ -1,3 +1,5 @@
+import re
+
 MAPPING_CHAMPION_STANDARD = {
     "hp": "health",
     "hpperlevel": "health_perlevel",
@@ -75,5 +77,18 @@ STAT_UNDERLYING_PROPERTY = []
 
 def normalize_champion_name(name):
     """Champion name are different in champion / spell / item json files"""
-    # TODO: normalize everything
-    return name.replace(" ", "")
+    exceptions_dict = {
+        "MonkeyKing": "Wukong",
+        "Belveth": "BelVeth",
+        "Chogath": "ChoGath",
+        "Kaisa": "KaiSa",
+        "Khazix": "KhaZix",
+        "Leblanc": "LeBlanc",
+        "Nunu": "NunuWillump",
+        "Renata": "RenataGlasc",
+        "Velkoz": "VelKoz"
+    }
+    if name in exceptions_dict.keys():
+        return exceptions_dict[name]
+
+    return re.sub('[^A-Za-z0-9]+', '', name)
