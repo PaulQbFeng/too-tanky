@@ -5,23 +5,7 @@ from typing import Optional
 from tootanky.damage import damage_after_resistance, ratio_damage, pre_mitigation_damage, get_resistance_type
 from tootanky.data_parser import ALL_ITEM_STATS
 from tootanky.stats import Stats
-
-
-@dataclass
-class ItemPassive:
-    """Class to define item (or more?) passive"""
-
-    name: str = ""
-    unique: bool = False
-    stats: Stats = None
-
-
-class AbstractItem(ABC):
-    """Abstract BaseItem class"""
-
-    @abstractmethod
-    def apply_passive(self):
-        pass
+from tootanky.attack import BaseDamageInstance
 
 
 class BaseItem:
@@ -71,3 +55,29 @@ class BaseItem:
         )
 
         return post_mtg_dmg
+
+
+class ActiveItem(BaseItem, BaseDamageInstance):
+    name = None
+    champion = None
+
+    def __init__(self, champion):
+        BaseItem.__init__(self)
+        BaseDamageInstance.__init__(self, champion)
+
+
+@dataclass
+class ItemPassive:
+    """Class to define item (or more?) passive"""
+
+    name: str = ""
+    unique: bool = False
+    stats: Stats = None
+
+
+class AbstractItem(ABC):
+    """Abstract BaseItem class"""
+
+    @abstractmethod
+    def apply_passive(self):
+        pass
