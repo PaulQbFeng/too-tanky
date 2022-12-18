@@ -12,7 +12,7 @@ from tootanky.glossary import (
     normalize_champion_name,
 )
 from tootanky.inventory import Inventory
-from tootanky.item import BaseItem
+from tootanky.item import BaseItem, SPELL_BLADE_ITEMS
 from tootanky.spell_factory import SpellFactory
 from tootanky.stats import Stats
 
@@ -49,10 +49,19 @@ class BaseChampion:
         self.init_spells(spell_levels)
 
         self.inventory = Inventory(inventory, champion=self)
-        self.orig_bonus_stats = self.orig_bonus_stats + self.get_bonus_stats()
-        self.orig_bonus_stats = self.orig_bonus_stats + self.get_mythic_passive_stats()
+        self.orig_bonus_stats += self.get_bonus_stats()
+        self.orig_bonus_stats += self.get_mythic_passive_stats()
         self.apply_stat_modifiers()
         self.update_champion_stats()
+
+        self.on_hits = []
+        self.spellblade_item = None
+
+        for name in SPELL_BLADE_ITEMS:
+            if self.inventory.contains(name):
+                self.spellblade_item = self.inventory.get_item(name)
+                self.on_hits.append(self.spellblade_item)
+                break
 
     def initialize_champion_stats_by_default(self):
         """Set all stats to 0"""
@@ -131,12 +140,12 @@ class BaseChampion:
         ap_multiplier = 1
         if self.inventory.contains("Vigilant Wardstone"):  # missing ability haste
             ap_multiplier += 0.12
-            self.orig_bonus_stats.attack_damage = self.orig_bonus_stats.attack_damage * 1.12
-            self.orig_bonus_stats.health = self.orig_bonus_stats.health * 1.12
+            self.orig_bonus_stats.attack_damage *= 1.12
+            self.orig_bonus_stats.health *= 1.12
         if self.inventory.contains("Rabadon's Deathcap"):
             ap_multiplier += 0.35
-        self.orig_base_stats.ability_power = self.orig_base_stats.ability_power * ap_multiplier
-        self.orig_bonus_stats.ability_power = self.orig_bonus_stats.ability_power * ap_multiplier
+        self.orig_base_stats.ability_power *= ap_multiplier
+        self.orig_bonus_stats.ability_power *= ap_multiplier
 
     def update_champion_stats(self):
         """
@@ -236,7 +245,10 @@ class BaseChampion:
             crit=is_crit,
             crit_damage=self.crit_damage,
         )
-        return damage
+        on_hit_damage = 0
+        for on_hit_source in self.on_hits:
+            on_hit_damage = on_hit_source.on_hit_effect(target)
+        return damage + on_hit_damage
 
     def take_damage(self, damage):
         """Takes damage from an enemy champion"""
