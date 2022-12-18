@@ -13,8 +13,8 @@ class BaseDamageInstance:
          - etc...
 
     Several league objects need this attack system:
-        - Champion spells ---> BaseSpell(BaseAttack)
-        - Item actives / on-hits ---> ActiveItem(BaseItem, BaseAttack)
+        - Champion spells ---> BaseSpell(BaseDamageInstance)
+        - Item actives / on-hits ---> ActiveItem(BaseItem, BaseDamageInstance)
         - Runes ---> TODO
         - Champion auto-attack ---> TODO
 
