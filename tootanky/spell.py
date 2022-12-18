@@ -1,4 +1,4 @@
-from tootanky.damage import damage_after_resistance, pre_mitigation_spell_damage, ratio_damage, get_resistance_type
+from tootanky.damage import damage_after_resistance, pre_mitigation_spell_damage, ratio_stat, get_resistance_type
 from tootanky.data_parser import ALL_CHAMPION_SPELLS
 
 
@@ -64,7 +64,7 @@ class BaseSpell:
     def damage(self, target, damage_modifier_flat=0, damage_modifier_coeff=1) -> float:
         """Calculates the damage dealt to a champion with a spell"""
 
-        ratio_dmg = ratio_damage(champion=self.champion, target=target, ratios=self.ratios, spell_leve1=self.level)
+        ratio_dmg = ratio_stat(champion=self.champion, target=target, ratios=self.ratios, spell_leve1=self.level)
 
         pre_mtg_dmg = pre_mitigation_spell_damage(
             self.get_base_damage(),
