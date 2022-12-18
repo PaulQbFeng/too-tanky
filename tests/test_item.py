@@ -4,7 +4,7 @@ import pytest
 from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie, Caitlyn
 from tootanky.damage import damage_after_positive_resistance
-from tootanky.item import (
+from tootanky.item_factory import (
     ALL_ITEM_CLASSES,
     DoransBlade,
     Sheen,

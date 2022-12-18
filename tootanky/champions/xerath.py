@@ -1,6 +1,6 @@
 from tootanky.champion import BaseChampion
 from tootanky.spell import BaseSpell
-from tootanky.spell_factory import SpellFactory
+from tootanky.spell_registry import SpellFactory
 
 
 class Xerath(BaseChampion):
@@ -36,7 +36,6 @@ class WXerath(BaseSpell):
         self.base_damage_per_level = [60, 95, 130, 165, 200]
         self.base_spell_damage = self.base_damage_per_level[level - 1]
         self.ratios = [("ability_power", 0.6)]
-
 
     def get_damage_modifier_coeff(self, is_empowered=True):
         return 1.667 if is_empowered else 1

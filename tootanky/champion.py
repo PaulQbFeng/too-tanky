@@ -12,8 +12,8 @@ from tootanky.glossary import (
     normalize_champion_name,
 )
 from tootanky.inventory import Inventory
-from tootanky.item import BaseItem, SPELL_BLADE_ITEMS
-from tootanky.spell_factory import SpellFactory
+from tootanky.item_factory import BaseItem, SPELL_BLADE_ITEMS
+from tootanky.spell_registry import SpellFactory
 from tootanky.stats import Stats
 
 

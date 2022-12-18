@@ -1,7 +1,7 @@
 import math
 from tootanky.champion import Dummy
 from tootanky.champions import Ezreal
-from tootanky.item import BlastingWand, Sheen, BFSword
+from tootanky.item_factory import BlastingWand, Sheen, BFSword
 
 
 dummy = Dummy(health=1000, bonus_resistance=100)

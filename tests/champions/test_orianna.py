@@ -1,6 +1,6 @@
 from tootanky.champion import Dummy
 from tootanky.champions.orianna import Orianna
-from tootanky.item import BlastingWand
+from tootanky.item_factory import BlastingWand
 
 
 def test_orianna_r():

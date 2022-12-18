@@ -2,7 +2,7 @@ import math
 
 from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie, Darius, Xerath
-from tootanky.item import ALL_ITEM_CLASSES, BlastingWand, RubyCrystal
+from tootanky.item_factory import ALL_ITEM_CLASSES, BlastingWand, RubyCrystal
 
 
 def test_auto_attack_lvl1():

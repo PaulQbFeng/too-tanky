@@ -1,6 +1,6 @@
 from tootanky.champion import Dummy
 from tootanky.champions import Malphite
-from tootanky.item import AmplifyingTome, BlastingWand, NeedlesslyLargeRod
+from tootanky.item_factory import AmplifyingTome, BlastingWand, NeedlesslyLargeRod
 
 
 def test_malphite_q():

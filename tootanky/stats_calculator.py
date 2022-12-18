@@ -1,5 +1,5 @@
 from tootanky.data_parser import SCALING_STAT_NAMES
-from tootanky.item import BaseItem
+from tootanky.item_factory import BaseItem
 from tootanky.stats import Stats
 
 
@@ -36,13 +36,19 @@ def calculate_bonus_stat_from_level(base_stats: dict, stat_name: str, level: int
 def get_champion_base_stats(champion_stats, level):
     """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
     return Stats(
-        {stat_name: calculate_base_stat_from_level(champion_stats, stat_name, level) for stat_name in (SCALING_STAT_NAMES + ["move_speed"])}
+        {
+            stat_name: calculate_base_stat_from_level(champion_stats, stat_name, level)
+            for stat_name in (SCALING_STAT_NAMES + ["move_speed"])
+        }
     )
 
 
 def get_champion_bonus_stats(champion_stats, level):
     return Stats(
-        {stat_name: calculate_bonus_stat_from_level(champion_stats, stat_name, level) for stat_name in SCALING_STAT_NAMES}
+        {
+            stat_name: calculate_bonus_stat_from_level(champion_stats, stat_name, level)
+            for stat_name in SCALING_STAT_NAMES
+        }
     )
 
 

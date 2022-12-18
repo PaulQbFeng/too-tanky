@@ -1,6 +1,6 @@
 import pytest
 from tootanky.inventory import Inventory
-from tootanky.item import CloakofAgility, Galeforce, LongSword, SerratedDirk, SeryldasGrudge, InfinityEdge
+from tootanky.item_factory import CloakofAgility, Galeforce, LongSword, SerratedDirk, SeryldasGrudge, InfinityEdge
 
 
 def test_inventory():
@@ -19,7 +19,9 @@ def test_inventory():
     assert inventory.item_stats.attack_speed == 0.2
     assert inventory.item_stats.armor_pen_percent == 0.3
     # Test of unique passive feature
-    inventory = Inventory([LongSword(), Galeforce(), SerratedDirk(), CloakofAgility(), SeryldasGrudge(), SerratedDirk()])
+    inventory = Inventory(
+        [LongSword(), Galeforce(), SerratedDirk(), CloakofAgility(), SeryldasGrudge(), SerratedDirk()]
+    )
     assert inventory.item_stats.attack_damage == 175
     assert inventory.item_stats.lethality == 10
 
