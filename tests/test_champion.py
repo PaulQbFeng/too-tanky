@@ -2,7 +2,7 @@ import math
 
 from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie, Darius, Xerath
-from tootanky.item_factory import ALL_ITEM_CLASSES, BlastingWand, RubyCrystal
+from tootanky.item_factory import ALL_ITEMS, BlastingWand, RubyCrystal
 
 
 def test_auto_attack_lvl1():
@@ -148,7 +148,7 @@ def test_annie_q():
 
 def test_auto_attack_with_item_component():
     item_names = ["Cloth Armor", "Long Sword", "Pickaxe", "B. F. Sword"]
-    inventory = [ALL_ITEM_CLASSES[item_name]() for item_name in item_names]
+    inventory = [ALL_ITEMS[item_name]() for item_name in item_names]
     ahri = Ahri(level=4, inventory=inventory)
     dummy = Dummy(health=1000, bonus_resistance=100)
 
@@ -160,7 +160,7 @@ def test_auto_attack_with_item_component():
 def test_auto_attack_with_item_component_2():
     """Test auto attack damage with letha, armor pen percent, crit"""
     item_names = ["Serrated Dirk", "Last Whisper", "Serrated Dirk"]
-    inventory = [ALL_ITEM_CLASSES[item_name]() for item_name in item_names]
+    inventory = [ALL_ITEMS[item_name]() for item_name in item_names]
     ahri = Ahri(level=7, inventory=inventory)
     dummy = Dummy(health=1000, bonus_resistance=60)
 

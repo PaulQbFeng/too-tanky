@@ -420,5 +420,6 @@ class Galeforce(BaseItem):
         return total_damage
 
 
-ALL_ITEM_CLASSES = {cls.name: cls for cls in BaseItem.__subclasses__()}
+ALL_ITEMS = {cls.name: cls for cls in BaseItem.__subclasses__() if cls.__name__ != "ActiveItem"}
+ALL_MYTHIC_ITEMS = {cls_name: cls for cls_name, cls in ALL_ITEMS.items() if cls.type == "Mythic"}
 SPELL_BLADE_ITEMS = ["Divine Sunderer", "Trinity Force", "Lich Bane", "Essence Reaver", "Sheen"]
