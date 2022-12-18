@@ -83,7 +83,6 @@ def get_champion_spell_stats(folder: str):
                 "range": spell["range"],
                 "cost": spell["costCoefficients"],
                 "cooldown": spell["cooldownCoefficients"],
-                "ratios": [spell["coefficients"]["coefficient1"], spell["coefficients"]["coefficient2"]],
                 "max_level": spell["maxLevel"],
             }
 
@@ -92,12 +91,32 @@ def get_champion_spell_stats(folder: str):
 
 dataset = get_dataset_from_json("data/ddragon/champion.json")
 ALL_CHAMPION_BASE_STATS = fill_champion_stats(dataset)
-ALL_CHAMPION_BASE_STATS.update({'Dummy': {'health': 1000, 'health_perlevel': 0, 'mana': 0, 'mana_perlevel': 0,
-                                          'move_speed': 0, 'armor': 0, 'armor_perlevel': 0, 'magic_resist': 0,
-                                          'magic_resist_perlevel': 0, 'attack_range': 0, 'health_regen': 0,
-                                          'health_regen_perlevel': 0, 'mana_regen': 0, 'mana_regen_perlevel': 0,
-                                          'crit_chance': 0, 'crit_chance_perlevel': 0, 'attack_damage': 0,
-                                          'attack_damage_perlevel': 0, 'attack_speed_perlevel': 0, 'attack_speed': 0}})
+ALL_CHAMPION_BASE_STATS.update(
+    {
+        "Dummy": {
+            "health": 1000,
+            "health_perlevel": 0,
+            "mana": 0,
+            "mana_perlevel": 0,
+            "move_speed": 0,
+            "armor": 0,
+            "armor_perlevel": 0,
+            "magic_resist": 0,
+            "magic_resist_perlevel": 0,
+            "attack_range": 0,
+            "health_regen": 0,
+            "health_regen_perlevel": 0,
+            "mana_regen": 0,
+            "mana_regen_perlevel": 0,
+            "crit_chance": 0,
+            "crit_chance_perlevel": 0,
+            "attack_damage": 0,
+            "attack_damage_perlevel": 0,
+            "attack_speed_perlevel": 0,
+            "attack_speed": 0,
+        }
+    }
+)
 
 ALL_CHAMPION_SPELLS = get_champion_spell_stats("data/raw-community-dragon/champions")
 
