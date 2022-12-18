@@ -50,6 +50,8 @@ STAT_STANDALONE = [
     "armor_pen_flat",
     "armor_pen_percent",
     "bonus_armor_pen_percent",
+    "armor_reduction_flat",
+    "armor_reduction_percent",
     "magic_resist_pen_flat",
     "magic_resist_pen_percent",
     "crit_chance",

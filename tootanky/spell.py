@@ -1,5 +1,6 @@
 from tootanky.damage import damage_after_resistance, pre_mitigation_spell_damage, ratio_stat, get_resistance_type
 from tootanky.data_parser import ALL_CHAMPION_SPELLS
+from tootanky.stats import Stats
 
 
 class BaseSpell:
@@ -36,6 +37,7 @@ class BaseSpell:
         for name, value in self.spell_specs.items():
             setattr(self, name, value)
         self.ratios = []
+        self.buffs = []
         if self.damage_type is not None:
             self.target_res_type = get_resistance_type(self.damage_type)
 
@@ -100,9 +102,38 @@ class BaseSpell:
         """Change internal attribute e.g cait w and e"""
         pass
 
-    def apply_debuff(self, target, **kwargs):
+    def apply_buffs(self, target, **kwargs):
         """Debuff, maybe buff later if it can handle buffs also"""
-        pass
+        stats_dict = dict()
+        target_stats_dict = dict()
+        for stat, value_per_level in self.buffs:
+            value = value_per_level[self.level]
+            if stat.startswith("target_"):
+                stat = stat.replace("target_", "")
+                target_stats_dict[stat] = value
+            else:
+                stats_dict[stat] = value
+        self.champion.orig_bonus_stats += Stats(stats_dict)
+        self.champion.update_champion_stats()
+        target.orig_bonus_stats += Stats(target_stats_dict)
+        target.update_champion_stats()
+
+    def deapply_buffs(self, target, **kwargs):
+        stats_dict = dict()
+        target_stats_dict = dict()
+        for stat, value_per_level in self.buffs:
+            value = value_per_level[self.level]
+            if stat.startswith("target_"):
+                stat = stat.replace("target_", "")
+                target_stats_dict[stat] = value
+            else:
+                stats_dict[stat] = value
+        self.champion.orig_bonus_stats -= Stats(stats_dict)
+        self.champion.update_champion_stats()
+        target.orig_bonus_stats -= Stats(target_stats_dict)
+        target.update_champion_stats()
+
+
 
     def hit_damage(self, target, spellblade=False, **kwargs):
         on_hit_damage = 0

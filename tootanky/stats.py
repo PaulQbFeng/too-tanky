@@ -37,7 +37,7 @@ class Stats:
         for name, value in stats._dict.items():
             if name not in self._dict:
                 addition[name] = value
-            elif name.endswith("_pen_percent"):
+            elif name.endswith("_pen_percent") or name.endswith("_reduction_percent"):
                 addition[name] = 1 - (1 - self._dict.get(name)) * (1 - value)
             else:
                 addition[name] = self._dict.get(name) + value
@@ -56,7 +56,7 @@ class Stats:
         for name, value in stats._dict.items():
             if name not in self._dict:
                 subtraction[name] = -value
-            elif name.endswith("_pen_percent"):
+            elif name.endswith("_pen_percent") or name.endswith("_reduction_percent"):
                 subtraction[name] = 1 - (1 - self._dict.get(name)) / (1 - value)
             else:
                 subtraction[name] = self._dict.get(name) - value

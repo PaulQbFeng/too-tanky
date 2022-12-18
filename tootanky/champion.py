@@ -52,7 +52,7 @@ class BaseChampion:
         self.orig_bonus_stats += self.get_bonus_stats()
         self.orig_bonus_stats += self.get_mythic_passive_stats()
         self.apply_stat_modifiers()
-        self.update_champion_stats()
+        self.restore_champion_stats()
 
         self.on_hits = []
         self.spellblade_item = None
@@ -147,13 +147,14 @@ class BaseChampion:
         self.orig_base_stats.ability_power *= ap_multiplier
         self.orig_bonus_stats.ability_power *= ap_multiplier
 
-    def update_champion_stats(self):
+    def restore_champion_stats(self):
         """
-        Updates the stat depending on the stat type.
+        Restores the stat depending on the stat type.
             - STAT_SUM_BASE_BONUS: set the stat as the sum of orig_base and orig_bonus stat.
             - STAT_STANDALONE: set the stat as orig_bonus stat.
             - STAT_TOTAL_PROPERTY: set base_stat, bonus_stat. the attribute stat is a property.
-            - STAT_UNDERLYING_PROPERTY: set the _stat. the attribute stat is a property with conditions (like crit_damage)
+            - STAT_UNDERLYING_PROPERTY: set the _stat. the attribute stat is a property with conditions (like
+            crit_damage)
         """
         for name in STAT_SUM_BASE_BONUS:
             setattr(self, name, self.orig_base_stats.__getattr__(name) + self.orig_bonus_stats.__getattr__(name))
@@ -171,6 +172,14 @@ class BaseChampion:
 
         for name in STAT_UNDERLYING_PROPERTY:
             setattr(self, "_" + name, self.orig_bonus_stats.__getattr__(name))
+
+    def update_champion_stats(self):
+        """
+        Updates the champion stats mid fight to handle buffs/debuffs.
+        """
+        orig_base_armor = self.orig_base_stats.armor
+        orig_bonus_armor = self.orig_bonus_stats.armor
+        self.base_armor = (orig_base_armor - self.armor_reduction_flat * self.orig_base_armor / (orig_base_armor + orig_bonus_armor)) * (1 - self.armor_reduction_percent)
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
@@ -278,4 +287,4 @@ class Dummy(BaseChampion):
         self.orig_bonus_stats.armor = bonus_resistance
         self.orig_bonus_stats.magic_resist = bonus_resistance
         self.orig_bonus_stats.health = health - 1000
-        self.update_champion_stats()
+        self.restore_champion_stats()
