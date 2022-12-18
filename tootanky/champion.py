@@ -109,17 +109,31 @@ class BaseChampion:
         # This method will be overriden for champions like jayce, udyr, etc.
         spell_1, spell_2, spell_3 = self.spell_max_order
         default_order = [
-            spell_1, spell_2, spell_3, spell_1, spell_1, "r",
-            spell_1, spell_2, spell_1, spell_2, "r",
-            spell_2, spell_2, spell_3, spell_3, "r",
-            spell_3, spell_3
+            spell_1,
+            spell_2,
+            spell_3,
+            spell_1,
+            spell_1,
+            "r",
+            spell_1,
+            spell_2,
+            spell_1,
+            spell_2,
+            "r",
+            spell_2,
+            spell_2,
+            spell_3,
+            spell_3,
+            "r",
+            spell_3,
+            spell_3,
         ]
-        default_order_per_level = default_order[0:self.level]
+        default_order_per_level = default_order[0 : self.level]
         return [
             default_order_per_level.count("q"),
             default_order_per_level.count("w"),
             default_order_per_level.count("e"),
-            default_order_per_level.count("r")
+            default_order_per_level.count("r"),
         ]
 
     def apply_stat_modifiers(self):
@@ -245,10 +259,10 @@ class BaseChampion:
             crit=is_crit,
             crit_damage=self.crit_damage,
         )
-        on_hit_damage = 0
+        on_damage = 0
         for on_hit_source in self.on_hits:
-            on_hit_damage = on_hit_source.on_hit_effect(target)
-        return damage + on_hit_damage
+            on_damage = on_hit_source.on_hit_effect(target)
+        return damage + on_damage
 
     def take_damage(self, damage):
         """Takes damage from an enemy champion"""

@@ -56,7 +56,7 @@ def test_sheen():
     dummy = Dummy(health=1000, bonus_resistance=100)
     assert len(annie.on_hits) == 1
     assert round(annie.auto_attack_damage(dummy)) == 26
-    assert annie.spell_q.hit_damage(dummy, spellblade=True) == 40
+    assert annie.spell_q.damage(dummy, spellblade=True) == 40
     assert round(annie.auto_attack_damage(dummy)) == 52
     assert round(annie.auto_attack_damage(dummy)) == 26
 
@@ -115,7 +115,6 @@ def test_galeforce():
 
 def test_rabadon():
     ahri = Ahri(level=11, inventory=[RabadonsDeathcap()])
-    print(ahri.orig_base_stats.ability_power, ahri.orig_bonus_stats.ability_power)
     assert ahri.ability_power == 162
     ahri = Ahri(level=11, inventory=[RabadonsDeathcap(), BlastingWand()])
     assert ahri.ability_power == 216

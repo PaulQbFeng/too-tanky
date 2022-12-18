@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional
 
-from tootanky.damage import damage_after_resistance, ratio_damage, pre_mitigation_spell_damage, get_resistance_type
+from tootanky.damage import damage_after_resistance, ratio_damage, pre_mitigation_damage, get_resistance_type
 from tootanky.data_parser import ALL_ITEM_STATS
 from tootanky.stats import Stats
 
@@ -48,7 +48,7 @@ class BaseItem:
 
         ratio_dmg = ratio_damage(champion=self.champion, target=target, ratios=self.ratios)
 
-        pre_mtg_dmg = pre_mitigation_spell_damage(
+        pre_mtg_dmg = pre_mitigation_damage(
             self.base_damage,
             ratio_dmg,
             damage_modifier_flat=damage_modifier_flat,

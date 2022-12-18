@@ -44,13 +44,45 @@ def test_ahri_stat_perlevel():
     assert base_attack_speed == [0.668] * 18
 
     assert bonus_attack_speed == [
-        0.0, 0.0144, 0.0295, 0.0453, 0.0618, 0.079, 0.0969, 0.1155, 0.1348, 0.1548, 0.1755, 0.1969, 0.219, 0.2418,
-        0.2653, 0.2895, 0.3144, 0.34
+        0.0,
+        0.0144,
+        0.0295,
+        0.0453,
+        0.0618,
+        0.079,
+        0.0969,
+        0.1155,
+        0.1348,
+        0.1548,
+        0.1755,
+        0.1969,
+        0.219,
+        0.2418,
+        0.2653,
+        0.2895,
+        0.3144,
+        0.34,
     ]
 
     assert attack_speed == [
-        0.668, 0.678, 0.688, 0.698, 0.709, 0.721, 0.733, 0.745, 0.758, 0.771, 0.785, 0.8, 0.814, 0.83, 0.845, 0.861,
-        0.878, 0.895,
+        0.668,
+        0.678,
+        0.688,
+        0.698,
+        0.709,
+        0.721,
+        0.733,
+        0.745,
+        0.758,
+        0.771,
+        0.785,
+        0.8,
+        0.814,
+        0.83,
+        0.845,
+        0.861,
+        0.878,
+        0.895,
     ]
 
     assert base_health == health
@@ -58,7 +90,24 @@ def test_ahri_stat_perlevel():
     assert bonus_health == [0] * 18
 
     assert health == [
-        570, 640, 712, 788, 867, 950, 1036, 1125, 1218, 1314, 1413, 1516, 1622, 1731, 1844, 1960, 2080, 2202
+        570,
+        640,
+        712,
+        788,
+        867,
+        950,
+        1036,
+        1125,
+        1218,
+        1314,
+        1413,
+        1516,
+        1622,
+        1731,
+        1844,
+        1960,
+        2080,
+        2202,
     ]
 
     assert base_attack_damage == attack_damage
@@ -92,7 +141,7 @@ def test_get_stats():
 def test_annie_q():
     annie = Annie(level=17, inventory=[BlastingWand()], spell_levels=[5, 5, 5, 5])
     dummy = Dummy(health=1000, bonus_resistance=30)
-    dmg = annie.spell_q.hit_damage(dummy)
+    dmg = annie.spell_q.damage(dummy)
 
     assert round(dmg, 2) == 193.85
 
@@ -138,6 +187,7 @@ def test_equip_item_health():
     ahri = Ahri(level=17, inventory=[RubyCrystal()], spell_levels=[5, 5, 5, 5])
     assert math.ceil(ahri.health) == 2230
 
+
 def test_default_init_spells_xerath():
     test_values = [
         [1, 0, 0, 0],
@@ -157,8 +207,10 @@ def test_default_init_spells_xerath():
         [5, 5, 3, 2],
         [5, 5, 3, 3],
         [5, 5, 4, 3],
-        [5, 5, 5, 3]
+        [5, 5, 5, 3],
     ]
     for i in range(18):
-        xerath = Xerath(level=i+1)
-        assert [xerath.spell_q.level, xerath.spell_w.level, xerath.spell_e.level, xerath.spell_r.level] == test_values[i]
+        xerath = Xerath(level=i + 1)
+        assert [xerath.spell_q.level, xerath.spell_w.level, xerath.spell_e.level, xerath.spell_r.level] == test_values[
+            i
+        ]

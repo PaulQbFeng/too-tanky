@@ -14,7 +14,7 @@ def test_ezreal_q():
     expected_q_sb_dmgs = [133, 146, 158, 171, 183]
     for spell_level in range(1, 6):
         ezreal = Ezreal(level=11, inventory=inv, spell_levels=[spell_level, 1, 1, 1])
-        dmg = ezreal.spell_q.hit_damage(dummy)
+        dmg = ezreal.spell_q.damage(dummy)
         assert math.floor(dmg) == expected_q_dmgs[spell_level - 1]
-        dmg = ezreal.spell_q.hit_damage(dummy, spellblade=True)
+        dmg = ezreal.spell_q.damage(dummy, spellblade=True)
         assert math.floor(dmg) == expected_q_sb_dmgs[spell_level - 1]
