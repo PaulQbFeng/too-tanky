@@ -429,11 +429,6 @@ class YoumuusGhostblade(BaseItem):  # missing passive, active, ability haste
         self.stats.lethality = 18
 
 
-class InfinityEdge(BaseItem):
-    name = "Infinity Edge"
-    type = "Legendary"
-
-
 # Mythic items
 # TODO: Crown of the Shattered Queen, Divine Sunderer, Duskblade of Draktharr, Eclipse, Evenshroud,
 #  Goredrinker, Heartsteel, Hextech Rocketbelt, Iceborn Gauntlet, Immortal Shieldbow, Imperial Mandate,
