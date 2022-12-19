@@ -9,6 +9,7 @@ from tootanky.glossary import (
     STAT_STANDALONE,
     STAT_TOTAL_PROPERTY,
     STAT_UNDERLYING_PROPERTY,
+    STAT_TEMPORARY_BUFF,
     normalize_champion_name,
 )
 from tootanky.inventory import Inventory
@@ -155,6 +156,7 @@ class BaseChampion:
             - STAT_TOTAL_PROPERTY: set base_stat, bonus_stat. the attribute stat is a property.
             - STAT_UNDERLYING_PROPERTY: set the _stat. the attribute stat is a property with conditions (like
             crit_damage)
+            - STAT_TEMPORARY_BUFF: set the stat (which only exists in orig_bonus_stats) back to 0.
         """
         for name in STAT_SUM_BASE_BONUS:
             setattr(self, name, self.orig_base_stats.__getattr__(name) + self.orig_bonus_stats.__getattr__(name))
@@ -173,13 +175,26 @@ class BaseChampion:
         for name in STAT_UNDERLYING_PROPERTY:
             setattr(self, "_" + name, self.orig_bonus_stats.__getattr__(name))
 
+        for name in STAT_TEMPORARY_BUFF:
+            setattr(self.orig_bonus_stats, name, 0)
+
     def update_champion_stats(self):
         """
         Updates the champion stats mid fight to handle buffs/debuffs.
         """
         orig_base_armor = self.orig_base_stats.armor
         orig_bonus_armor = self.orig_bonus_stats.armor
-        self.base_armor = (orig_base_armor - self.armor_reduction_flat * self.orig_base_armor / (orig_base_armor + orig_bonus_armor)) * (1 - self.armor_reduction_percent)
+        orig_total_armor = orig_base_armor + orig_bonus_armor
+        armor_reduction_flat = self.orig_bonus_stats.armor_reduction_flat
+        armor_reduction_percent = self.orig_bonus_stats.armor_reduction_percent
+        if orig_total_armor == 0:
+            self.bonus_armor -= armor_reduction_flat
+        else:
+            self.base_armor -= armor_reduction_flat * orig_base_armor / orig_total_armor
+            self.bonus_armor -= armor_reduction_flat * orig_bonus_armor / orig_total_armor
+        if self.base_armor + self.bonus_armor > 0:
+            self.base_armor *= (1 - armor_reduction_percent)
+            self.bonus_armor *= (1 - armor_reduction_percent)
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
@@ -224,6 +239,7 @@ class BaseChampion:
     ability_power = property(fget=getter_wrapper("ability_power"))
     attack_speed = property(fget=getter_wrapper("attack_speed"))
     move_speed = property(fget=getter_wrapper("move_speed"))
+
 
     def get_bonus_stats(self):  # TODO: add runes
         """
@@ -278,7 +294,7 @@ class BaseChampion:
 class Dummy(BaseChampion):
     champion_name = "Dummy"
 
-    def __init__(self, health: float, bonus_resistance: int):
+    def __init__(self, health: float = 1000, bonus_resistance: int = 0):
         super().__init__(champion_name=__class__.champion_name, inventory=None, level=1)
         """Dummy champion have the same armor and mr"""
         assert bonus_resistance % 10 == 0
