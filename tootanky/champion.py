@@ -148,6 +148,12 @@ class BaseChampion:
         self.orig_base_stats.ability_power *= ap_multiplier
         self.orig_bonus_stats.ability_power *= ap_multiplier
 
+    def apply_blackcleaver(self, target):
+        if self.inventory.contains("Black Cleaver"):
+            target.orig_bonus_stats += self.inventory.get_item("Black Cleaver").get_carve_stack_stats(target)
+            target.update_champion_stats()
+        pass
+
     def restore_champion_stats(self):
         """
         Restores the stat depending on the stat type.
@@ -284,6 +290,7 @@ class BaseChampion:
 
         damage = self.auto_attack_damage(target, is_crit)
         target.take_damage(damage)
+        self.apply_blackcleaver(target)
 
     def reset_health(self):
         self.health = self.orig_base_stats.health + self.orig_bonus_stats.health

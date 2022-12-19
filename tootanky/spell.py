@@ -116,6 +116,8 @@ class BaseSpell:
         self.champion.orig_bonus_stats += Stats(stats_dict)
         self.champion.update_champion_stats()
         target.orig_bonus_stats += Stats(target_stats_dict)
+        if self.damage_type == "physical":
+            self.champion.apply_blackcleaver(target)
         target.update_champion_stats()
 
     def deapply_buffs(self, target, **kwargs):

@@ -169,22 +169,21 @@ def test_mythic_passives():
 
 def test_black_cleaver():
     ahri = Ahri(level=7, inventory=[BlackCleaver()])
-    blackcleaver = BlackCleaver()
     dummy = Dummy(bonus_resistance=100)
-    blackcleaver.apply_buffs(dummy)
+    ahri.do_auto_attack(dummy)
     assert round(dummy.armor) == 95
-    blackcleaver.apply_buffs(dummy)
+    ahri.do_auto_attack(dummy)
     assert round(dummy.armor) == 90
-    blackcleaver.apply_buffs(dummy)
+    ahri.do_auto_attack(dummy)
     assert round(dummy.armor) == 85
-    blackcleaver.apply_buffs(dummy)
+    ahri.do_auto_attack(dummy)
     assert round(dummy.armor) == 80
-    blackcleaver.apply_buffs(dummy)
+    ahri.do_auto_attack(dummy)
     assert round(dummy.armor) == 75
-    blackcleaver.apply_buffs(dummy)
+    ahri.do_auto_attack(dummy)
     assert round(dummy.armor) == 70
-    blackcleaver.apply_buffs(dummy)
+    ahri.do_auto_attack(dummy)
     assert round(dummy.armor) == 70
-    blackcleaver.deapply_buffs(dummy)
+    ahri.inventory.get_item("Black Cleaver").deapply_buffs(dummy)
     assert round(dummy.armor) == 100
-    assert blackcleaver.carve_stack_count == 0
+    assert ahri.inventory.get_item("Black Cleaver").carve_stack_count == 0
