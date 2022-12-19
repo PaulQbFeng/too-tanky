@@ -385,7 +385,7 @@ class BlackCleaver(BaseItem):
             )
             target.orig_bonus_stats += buff_stats
             target.update_champion_stats()
-            self.carve_stack_count += 1
+            self.carve_stack_count = 0
 
 
 class CosmicDrive(BaseItem):  # missing ability haste, passive
