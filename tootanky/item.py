@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Optional
 
 from tootanky.damage import damage_after_resistance, ratio_stat, pre_mitigation_spell_damage, get_resistance_type
 from tootanky.data_parser import ALL_ITEM_STATS
@@ -358,6 +357,37 @@ class WatchfulWardstone(BaseItem):  # missing ability haste
 #  Shadowflame, Shard of True Ice, Silvermere Dawn, Spear of Shojin, Spirit Visage, Staff of Flowing Water,
 #  Sterak's Gage, Stormrazor, Sunfire Aegis, The Collector, Thornmail, Titanic Hydra, Turbo Chemtank, Umbral Glaive,
 #  Vigilant Wardstone, Void Staff, Warmog's Armor, Winter's Approach, Wit's End, Zeke's Convergence, Zhonya's Hourglass
+class BlackCleaver(BaseItem):
+    name = "Black Cleaver"
+    type = "Legendary"
+
+    def __init__(self):
+        super().__init__()
+        self.carve_stack_count = 0
+
+    def apply_buffs(self, target, **kwargs):
+        if self.carve_stack_count < 6:
+            armor_reduction_percent = getattr(target.orig_bonus_stats, "armor_reduction_percent")
+            buff_stats = Stats(
+                {"armor_reduction_percent": 1 - (1 - armor_reduction_percent - 0.05)/(1 - armor_reduction_percent)}
+            )
+            target.orig_bonus_stats += buff_stats
+            target.update_champion_stats()
+            self.carve_stack_count += 1
+
+    def deapply_buffs(self, target, **kwargs):
+        if self.carve_stack_count > 0:
+            armor_reduction_percent = getattr(target.orig_bonus_stats, "armor_reduction_percent")
+            buff_stats = Stats(
+                {"armor_reduction_percent": 1 - (
+                        1 - armor_reduction_percent + self.carve_stack_count * 0.05
+                ) / (1 - armor_reduction_percent)}
+            )
+            target.orig_bonus_stats += buff_stats
+            target.update_champion_stats()
+            self.carve_stack_count += 1
+
+
 class CosmicDrive(BaseItem):  # missing ability haste, passive
     name = "Cosmic Drive"
     type = "Legendary"

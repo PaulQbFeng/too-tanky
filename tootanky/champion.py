@@ -240,7 +240,6 @@ class BaseChampion:
     attack_speed = property(fget=getter_wrapper("attack_speed"))
     move_speed = property(fget=getter_wrapper("move_speed"))
 
-
     def get_bonus_stats(self):  # TODO: add runes
         """
         Get bonus stats from all sources of bonus stats (items, runes).
