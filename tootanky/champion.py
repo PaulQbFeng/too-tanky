@@ -188,10 +188,10 @@ class BaseChampion:
         armor_reduction_flat = self.orig_bonus_stats.armor_reduction_flat
         armor_reduction_percent = self.orig_bonus_stats.armor_reduction_percent
         if orig_total_armor == 0:
-            self.bonus_armor -= armor_reduction_flat
+            self.bonus_armor = orig_bonus_armor - armor_reduction_flat
         else:
-            self.base_armor -= armor_reduction_flat * orig_base_armor / orig_total_armor
-            self.bonus_armor -= armor_reduction_flat * orig_bonus_armor / orig_total_armor
+            self.base_armor = orig_base_armor - armor_reduction_flat * orig_base_armor / orig_total_armor
+            self.bonus_armor = orig_bonus_armor - armor_reduction_flat * orig_bonus_armor / orig_total_armor
         if self.base_armor + self.bonus_armor > 0:
             self.base_armor *= (1 - armor_reduction_percent)
             self.bonus_armor *= (1 - armor_reduction_percent)

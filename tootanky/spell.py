@@ -122,7 +122,7 @@ class BaseSpell:
         stats_dict = dict()
         target_stats_dict = dict()
         for stat, value_per_level in self.buffs:
-            value = value_per_level[self.level]
+            value = value_per_level[self.level - 1]
             if stat.startswith("target_"):
                 stat = stat.replace("target_", "")
                 target_stats_dict[stat] = value
