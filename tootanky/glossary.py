@@ -52,8 +52,6 @@ STAT_STANDALONE = [
     "armor_pen_flat",
     "armor_pen_percent",
     "bonus_armor_pen_percent",
-    "armor_reduction_flat",
-    "armor_reduction_percent",
     "magic_resist_pen_flat",
     "magic_resist_pen_percent",
     "crit_chance",
@@ -73,6 +71,11 @@ STAT_TOTAL_PROPERTY = [
 ]
 
 STAT_UNDERLYING_PROPERTY = []
+
+STAT_TEMPORARY_BUFF = [
+    "armor_reduction_flat",
+    "armor_reduction_percent"
+]
 
 
 def normalize_champion_name(name):
