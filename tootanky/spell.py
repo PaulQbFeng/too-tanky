@@ -66,7 +66,7 @@ class BaseSpell:
     def damage(self, target, damage_modifier_flat=0, damage_modifier_coeff=1) -> float:
         """Calculates the damage dealt to a champion with a spell"""
 
-        ratio_dmg = ratio_stat(champion=self.champion, target=target, ratios=self.ratios, spell_leve1=self.level)
+        ratio_dmg = ratio_stat(champion=self.champion, target=target, ratios=self.ratios, spell_level=self.level)
 
         pre_mtg_dmg = pre_mitigation_spell_damage(
             self.get_base_damage(),
@@ -107,7 +107,7 @@ class BaseSpell:
         stats_dict = dict()
         target_stats_dict = dict()
         for stat, value_per_level in self.buffs:
-            value = value_per_level[self.level]
+            value = value_per_level[self.level - 1]
             if stat.startswith("target_"):
                 stat = stat.replace("target_", "")
                 target_stats_dict[stat] = value
@@ -133,8 +133,6 @@ class BaseSpell:
         target.orig_bonus_stats -= Stats(target_stats_dict)
         target.update_champion_stats()
 
-
-
     def hit_damage(self, target, spellblade=False, **kwargs):
         on_hit_damage = 0
         self.on_attack_state_change()
@@ -150,7 +148,7 @@ class BaseSpell:
             for on_hit_source in self.champion.on_hits:
                 on_hit_damage = on_hit_source.on_hit_effect(target)
 
-        self.apply_debuff(target, **kwargs)  # Applied after the on-hits based on test with sheen + blackcleaver
+        self.apply_buffs(target, **kwargs)  # Applied after the on-hits based on test with sheen + blackcleaver
 
         return damage + on_hit_damage
 
