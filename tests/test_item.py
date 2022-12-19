@@ -170,9 +170,9 @@ def test_mythic_passives():
 def test_black_cleaver():
     ahri = Ahri(level=7, inventory=[BlackCleaver()])
     dummy = Dummy(bonus_resistance=100)
-    damage_values = [56, 58, 59, 61, 63, 64, 66]
-    armor_values = [95, 90, 85, 80, 75, 70, 70]
-    for i in range(7):
+    damage_values = [56, 58, 59, 61, 63, 64, 66, 66]
+    armor_values = [95, 90, 85, 80, 75, 70, 70, 70]
+    for i in range(8):
         assert round(ahri.auto_attack_damage(dummy)) == damage_values[i]
         ahri.do_auto_attack(dummy)
         assert round(dummy.armor) == armor_values[i]
