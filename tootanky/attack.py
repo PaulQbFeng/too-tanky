@@ -30,7 +30,7 @@ class BaseDamageInstance:
             self.target_res_type = get_resistance_type(self.damage_type)
 
     def get_base_damage(self):
-        """Get the base damage of the damage instance"""
+        """Gets the base damage of the damage instance"""
         return 0
 
     def _compute_damage(self, target, damage_modifier_flat=0, damage_modifier_coeff=1) -> float:
