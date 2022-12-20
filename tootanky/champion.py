@@ -156,7 +156,7 @@ class BaseChampion:
 
     def __update_champion_stats(self):
         """
-        Restores the stat depending on the stat type.
+        Updates/restores the stat depending on the stat type.
             - STAT_SUM_BASE_BONUS: set the stat as the sum of orig_base and orig_bonus stat.
             - STAT_STANDALONE: set the stat as orig_bonus stat.
             - STAT_TOTAL_PROPERTY: set base_stat, bonus_stat. the attribute stat is a property.
