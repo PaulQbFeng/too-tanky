@@ -8,7 +8,7 @@ class Caitlyn(BaseChampion):
     champion_name = "Caitlyn"
 
     def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)
+        super().__init__(champion_name=__class__.champion_name, spell_max_order=["q", "w", "e"], **kwargs)
         self.auto_attack_count = 0
         self.w_hit = False
         self.e_hit = False

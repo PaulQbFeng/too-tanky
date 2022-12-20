@@ -53,6 +53,8 @@ class BaseChampion:
         self.orig_bonus_stats += self.get_bonus_stats()
         self.orig_bonus_stats += self.get_mythic_passive_stats()
         self.apply_stat_modifiers()
+        self.apply_caps()  # TODO: test if caps have to be applied before or after modifiers (cannot be tested for
+        # ability haste because the cap is unattainable
         self.__update_champion_stats()
 
         self.on_hits = []
@@ -130,6 +132,12 @@ class BaseChampion:
         """
         self.apply_crit_damage_modifier()
         self.apply_ap_multipliers()
+
+    def apply_caps(self):
+        """
+        Some stats are capped at a certain amount (attack_speed, ability_haste, ...)
+        """
+        self.orig_bonus_stats.ability_haste = min(self.orig_bonus_stats.ability_haste, 500)
 
     def apply_crit_damage_modifier(self):
         bonus_crit_damage = 0

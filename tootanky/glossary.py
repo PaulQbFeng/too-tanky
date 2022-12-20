@@ -58,7 +58,8 @@ STAT_STANDALONE = [
     "crit_damage",
     "life_steal",
     "omni_vamp",
-    "spell_vamp"
+    "spell_vamp",
+    "ability_haste"
 ]
 
 STAT_TOTAL_PROPERTY = [
