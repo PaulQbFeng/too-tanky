@@ -9,7 +9,6 @@ def test_q():
     armor_values = [63, 60, 57, 55, 52]
     dummy = Dummy(bonus_resistance=70)
     for spell_level in range(5):
-        print(spell_level)
         jarvan = JarvanIV(level=champion_levels[spell_level], inventory=[LongSword()])
         assert round(jarvan.spell_q.hit_damage(dummy)) == damage_values[spell_level]
         assert round(dummy.armor) == armor_values[spell_level]
