@@ -53,7 +53,7 @@ class BaseChampion:
         self.orig_bonus_stats += self.get_bonus_stats()
         self.orig_bonus_stats += self.get_mythic_passive_stats()
         self.apply_stat_modifiers()
-        self.restore_champion_stats()
+        self.__update_champion_stats()
 
         self.on_hits = []
         self.spellblade_item = None
@@ -69,7 +69,7 @@ class BaseChampion:
         for stat_name in STAT_SUM_BASE_BONUS:
             setattr(self, stat_name, 0)
 
-        for stat_name in STAT_STANDALONE:
+        for stat_name in STAT_STANDALONE + STAT_TEMPORARY_BUFF:
             setattr(self, stat_name, 0)
 
         for stat_name in STAT_TOTAL_PROPERTY:
@@ -148,13 +148,13 @@ class BaseChampion:
         self.orig_base_stats.ability_power *= ap_multiplier
         self.orig_bonus_stats.ability_power *= ap_multiplier
 
-    def apply_blackcleaver(self, target):
+    def apply_black_cleaver(self, target):
         if self.inventory.contains("Black Cleaver"):
-            target.orig_bonus_stats += self.inventory.get_item("Black Cleaver").get_carve_stack_stats(target)
-            target.update_champion_stats()
+            carve_stack_value = self.inventory.get_item("Black Cleaver").get_carve_stack_stats(target)
+            target.update_armor_stats(percent_debuff=carve_stack_value)
         pass
 
-    def restore_champion_stats(self):
+    def __update_champion_stats(self):
         """
         Restores the stat depending on the stat type.
             - STAT_SUM_BASE_BONUS: set the stat as the sum of orig_base and orig_bonus stat.
@@ -162,7 +162,7 @@ class BaseChampion:
             - STAT_TOTAL_PROPERTY: set base_stat, bonus_stat. the attribute stat is a property.
             - STAT_UNDERLYING_PROPERTY: set the _stat. the attribute stat is a property with conditions (like
             crit_damage)
-            - STAT_TEMPORARY_BUFF: set the stat (which only exists in orig_bonus_stats) back to 0.
+            - STAT_TEMPORARY_BUFF: set the stat back to 0.
         """
         for name in STAT_SUM_BASE_BONUS:
             setattr(self, name, self.orig_base_stats.__getattr__(name) + self.orig_bonus_stats.__getattr__(name))
@@ -182,25 +182,28 @@ class BaseChampion:
             setattr(self, "_" + name, self.orig_bonus_stats.__getattr__(name))
 
         for name in STAT_TEMPORARY_BUFF:
-            setattr(self.orig_bonus_stats, name, 0)
+            setattr(self, name, 0)
 
-    def update_champion_stats(self):
+    def restore_champion_stats(self):
+        self.__update_champion_stats()
+
+    def update_armor_stats(self, flat_debuff: float = 0, percent_debuff: float = 0):
         """
-        Updates the champion stats mid fight to handle buffs/debuffs.
+        Updates armor with additional armor reduction debuffs. (no debuffs by default)
         """
+        self.armor_reduction_flat += flat_debuff
+        self.armor_reduction_percent = 1 - (1 - self.armor_reduction_percent) * (1 - percent_debuff)
         orig_base_armor = self.orig_base_stats.armor
         orig_bonus_armor = self.orig_bonus_stats.armor
         orig_total_armor = orig_base_armor + orig_bonus_armor
-        armor_reduction_flat = self.orig_bonus_stats.armor_reduction_flat
-        armor_reduction_percent = self.orig_bonus_stats.armor_reduction_percent
         if orig_total_armor == 0:
-            self.bonus_armor = orig_bonus_armor - armor_reduction_flat
+            self.bonus_armor = orig_bonus_armor - self.armor_reduction_flat
         else:
-            self.base_armor = orig_base_armor - armor_reduction_flat * orig_base_armor / orig_total_armor
-            self.bonus_armor = orig_bonus_armor - armor_reduction_flat * orig_bonus_armor / orig_total_armor
+            self.base_armor = orig_base_armor - self.armor_reduction_flat * orig_base_armor / orig_total_armor
+            self.bonus_armor = orig_bonus_armor - self.armor_reduction_flat * orig_bonus_armor / orig_total_armor
         if self.base_armor + self.bonus_armor > 0:
-            self.base_armor *= (1 - armor_reduction_percent)
-            self.bonus_armor *= (1 - armor_reduction_percent)
+            self.base_armor *= (1 - self.armor_reduction_percent)
+            self.bonus_armor *= (1 - self.armor_reduction_percent)
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
@@ -290,7 +293,7 @@ class BaseChampion:
 
         damage = self.auto_attack_damage(target, is_crit)
         target.take_damage(damage)
-        self.apply_blackcleaver(target)
+        self.apply_black_cleaver(target)
 
     def reset_health(self):
         self.health = self.orig_base_stats.health + self.orig_bonus_stats.health

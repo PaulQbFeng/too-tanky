@@ -367,25 +367,18 @@ class BlackCleaver(BaseItem):
 
     def get_carve_stack_stats(self, target, **kwargs):
         if self.carve_stack_count < 6:
-            armor_reduction_percent = getattr(target.orig_bonus_stats, "armor_reduction_percent")
-            buff_stats = Stats(
-                {"armor_reduction_percent": 1 - (1 - armor_reduction_percent - 0.05)/(1 - armor_reduction_percent)}
-            )
+            armor_reduction_percent = target.armor_reduction_percent
             self.carve_stack_count += 1
-            return buff_stats
+            return 1 - (1 - armor_reduction_percent - 0.05)/(1 - armor_reduction_percent)
         else:
-            return Stats()
+            return 0
 
     def deapply_buffs(self, target, **kwargs):
         if self.carve_stack_count > 0:
-            armor_reduction_percent = getattr(target.orig_bonus_stats, "armor_reduction_percent")
-            buff_stats = Stats(
-                {"armor_reduction_percent": 1 - (
-                        1 - armor_reduction_percent + self.carve_stack_count * 0.05
-                ) / (1 - armor_reduction_percent)}
-            )
-            target.orig_bonus_stats += buff_stats
-            target.update_champion_stats()
+            percent_debuff = 1 - (
+                    1 - target.armor_reduction_percent + self.carve_stack_count * 0.05
+            ) / (1 - target.armor_reduction_percent)
+            target.update_armor_stats(percent_debuff=percent_debuff)
             self.carve_stack_count = 0
 
 

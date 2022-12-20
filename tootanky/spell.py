@@ -103,37 +103,47 @@ class BaseSpell:
         pass
 
     def apply_buffs(self, target, **kwargs):
-        """Debuff, maybe buff later if it can handle buffs also"""
-        stats_dict = dict()
-        target_stats_dict = dict()
+        """
+        Can handle debuff/buff.
+        Tested for armor reduction debuff (Jarvan/Black Cleaver PR - 20/12/2022)"""
         for stat, value_per_level in self.buffs:
             value = value_per_level[self.level - 1]
-            if stat.startswith("target_"):
-                stat = stat.replace("target_", "")
-                target_stats_dict[stat] = value
+            if "armor_reduction" in stat:
+                assert stat.startswith("target_"), "Armor reduction is always applied to the target in league."
+                if stat.endswith("_flat"):
+                    target.update_armor_stats(flat_debuff=value)
+                elif stat.endswith("_percent"):
+                    target.update_armor_stats(percent_debuff=value)
+                else:
+                    raise NameError("{} should end with _flat or _percent".format(stat))
             else:
-                stats_dict[stat] = value
-        self.champion.orig_bonus_stats += Stats(stats_dict)
-        self.champion.update_champion_stats()
-        target.orig_bonus_stats += Stats(target_stats_dict)
+                if stat.startswith("target_"):
+                    stat = stat.replace("target_", "")
+                    target.orig_bonus_stats += Stats({stat: value})
+                else:
+                    self.champion.orig_bonus_stats += Stats({stat: value})
         if self.damage_type == "physical":
-            self.champion.apply_blackcleaver(target)
-        target.update_champion_stats()
+            self.champion.apply_black_cleaver(target)
 
     def deapply_buffs(self, target, **kwargs):
-        stats_dict = dict()
-        target_stats_dict = dict()
         for stat, value_per_level in self.buffs:
             value = value_per_level[self.level - 1]
-            if stat.startswith("target_"):
-                stat = stat.replace("target_", "")
-                target_stats_dict[stat] = value
+            if "armor_reduction" in stat:
+                assert stat.startswith("target_"), "Armor reduction is always applied to the target in league."
+                if stat.endswith("_flat"):
+                    target.update_armor_stats(flat_debuff=-value)
+                elif stat.endswith("_percent"):
+                    target.update_armor_stats(
+                        percent_debuff=1-(1-target.armor_reduction_percent+value)/(1-target.armor_reduction_percent)
+                    )
+                else:
+                    raise NameError("{} should end with _flat or _percent".format(stat))
             else:
-                stats_dict[stat] = value
-        self.champion.orig_bonus_stats -= Stats(stats_dict)
-        self.champion.update_champion_stats()
-        target.orig_bonus_stats -= Stats(target_stats_dict)
-        target.update_champion_stats()
+                if stat.startswith("target_"):
+                    stat = stat.replace("target_", "")
+                    target.orig_bonus_stats -= Stats({stat: value})
+                else:
+                    self.champion.orig_bonus_stats -= Stats({stat: value})
 
     def hit_damage(self, target, spellblade=False, **kwargs):
         on_hit_damage = 0
