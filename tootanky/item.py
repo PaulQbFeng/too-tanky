@@ -472,9 +472,13 @@ class SeryldasGrudge(BaseItem):  # missing passive, ability haste
         self.stats.ability_haste = 20
 
 
-class VigilantWardstone(BaseItem):  # missing 12% ability haste increase in multiplier
+class VigilantWardstone(BaseItem):
     name = "Vigilant Wardstone"
     type = "Legendary"
+
+    def __init__(self):
+        super().__init__()
+        self.stats.ability_haste = 15
 
 
 class YoumuusGhostblade(BaseItem):  # missing passive, active
@@ -485,11 +489,6 @@ class YoumuusGhostblade(BaseItem):  # missing passive, active
         super().__init__()
         self.stats.lethality = 18
         self.stats.ability_haste = 15
-
-
-class InfinityEdge(BaseItem):
-    name = "Infinity Edge"
-    type = "Legendary"
 
 
 # Mythic items

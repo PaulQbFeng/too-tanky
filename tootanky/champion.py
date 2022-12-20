@@ -131,7 +131,7 @@ class BaseChampion:
         Stat modifiers can affect both base and bonus stats (e.g rabadon)
         """
         self.apply_crit_damage_modifier()
-        self.apply_ap_multipliers()
+        self.apply_item_multipliers()
 
     def apply_caps(self):
         """
@@ -145,12 +145,13 @@ class BaseChampion:
             bonus_crit_damage += 0.35
         self.orig_bonus_stats.crit_damage += bonus_crit_damage
 
-    def apply_ap_multipliers(self):
+    def apply_item_multipliers(self):
         ap_multiplier = 1
         if self.inventory.contains("Vigilant Wardstone"):  # missing ability haste
             ap_multiplier += 0.12
             self.orig_bonus_stats.attack_damage *= 1.12
             self.orig_bonus_stats.health *= 1.12
+            self.orig_bonus_stats.ability_haste *= 1.12
         if self.inventory.contains("Rabadon's Deathcap"):
             ap_multiplier += 0.35
         self.orig_base_stats.ability_power *= ap_multiplier
