@@ -152,7 +152,6 @@ class BaseChampion:
         if self.inventory.contains("Black Cleaver"):
             carve_stack_value = self.inventory.get_item("Black Cleaver").get_carve_stack_stats(target)
             target.update_armor_stats(percent_debuff=carve_stack_value)
-        pass
 
     def __update_champion_stats(self):
         """
