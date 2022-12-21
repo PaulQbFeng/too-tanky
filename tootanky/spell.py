@@ -1,6 +1,6 @@
 from tootanky.damage import damage_after_resistance, pre_mitigation_spell_damage, ratio_stat, get_resistance_type
 from tootanky.data_parser import ALL_CHAMPION_SPELLS
-from tootanky.stats import Stats
+from tootanky.stats import add_stat, sub_stat
 
 
 class BaseSpell:
@@ -125,9 +125,9 @@ class BaseSpell:
             else:
                 if stat.startswith("target_"):
                     stat = stat.replace("target_", "")
-                    target.orig_bonus_stats += Stats({stat: value})
+                    setattr(target, stat, add_stat(stat, getattr(target, stat), value))
                 else:
-                    self.champion.orig_bonus_stats += Stats({stat: value})
+                    setattr(self.champion, stat, add_stat(stat, getattr(self.champion, stat), value))
         if self.damage_type == "physical":
             self.champion.apply_black_cleaver(target)
 
@@ -147,9 +147,9 @@ class BaseSpell:
             else:
                 if stat.startswith("target_"):
                     stat = stat.replace("target_", "")
-                    target.orig_bonus_stats -= Stats({stat: value})
+                    setattr(target, stat, sub_stat(stat, getattr(target, stat), value))
                 else:
-                    self.champion.orig_bonus_stats -= Stats({stat: value})
+                    setattr(self.champion, stat, sub_stat(stat, getattr(self.champion, stat), value))
 
     def hit_damage(self, target, spellblade=False, **kwargs):
         on_hit_damage = 0
