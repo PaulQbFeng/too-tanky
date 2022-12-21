@@ -49,9 +49,10 @@ class BaseSpell:
 
     @property
     def cooldown(self):
-        return ALL_CHAMPION_SPELLS[self.champion.champion_name][self.spell_key]["base_cooldown_per_level"][
+        base_cooldown = ALL_CHAMPION_SPELLS[self.champion.champion_name][self.spell_key]["base_cooldown_per_level"][
                    self.level - 1
-               ] * 100 / (100 + self.champion.ability_haste)
+               ]
+        return base_cooldown * 100 / (100 + self.champion.ability_haste)
 
     def print_specs(self):
         """pretty print the stats"""

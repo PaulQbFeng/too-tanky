@@ -26,12 +26,12 @@ class BaseChampion:
     """
 
     def __init__(
-            self,
-            champion_name: str,
-            level: int = 1,
-            inventory: Optional[List[BaseItem]] = None,
-            spell_levels: Optional[List[int]] = None,
-            spell_max_order: Optional[List[str]] = None,
+        self,
+        champion_name: str,
+        level: int = 1,
+        inventory: Optional[List[BaseItem]] = None,
+        spell_levels: Optional[List[int]] = None,
+        spell_max_order: Optional[List[str]] = None,
     ):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
