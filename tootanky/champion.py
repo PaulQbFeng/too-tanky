@@ -13,7 +13,7 @@ from tootanky.glossary import (
     normalize_champion_name,
 )
 from tootanky.inventory import Inventory
-from tootanky.item import BaseItem, SPELL_BLADE_ITEMS
+from tootanky.item import BaseItem, SPELL_BLADE_ITEMS, ON_HIT_ITEMS
 from tootanky.spell_factory import SpellFactory
 from tootanky.stats import Stats
 
@@ -65,6 +65,9 @@ class BaseChampion:
                 self.spellblade_item = self.inventory.get_item(name)
                 self.on_hits.append(self.spellblade_item)
                 break
+        for name in ON_HIT_ITEMS:
+            if self.inventory.contains(name):
+                self.on_hits.append(self.inventory.get_item(name))
 
     def initialize_champion_stats_by_default(self):
         """Set all stats to 0"""
