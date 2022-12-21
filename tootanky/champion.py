@@ -28,8 +28,8 @@ class BaseChampion:
     def __init__(
         self,
         champion_name: str,
-        inventory: Optional[List[BaseItem]] = None,
         level: int = 1,
+        inventory: Optional[List[BaseItem]] = None,
         spell_levels: Optional[List[int]] = None,
         spell_max_order: Optional[List[str]] = None,
     ):
@@ -53,6 +53,8 @@ class BaseChampion:
         self.orig_bonus_stats += self.get_bonus_stats()
         self.orig_bonus_stats += self.get_mythic_passive_stats()
         self.apply_stat_modifiers()
+        self.apply_caps()  # TODO: test if caps have to be applied before or after modifiers (cannot be tested for
+        # ability haste because the cap is unattainable
         self.__update_champion_stats()
 
         self.on_hits = []
@@ -129,7 +131,13 @@ class BaseChampion:
         Stat modifiers can affect both base and bonus stats (e.g rabadon)
         """
         self.apply_crit_damage_modifier()
-        self.apply_ap_multipliers()
+        self.apply_item_multipliers()
+
+    def apply_caps(self):
+        """
+        Some stats are capped at a certain amount (attack_speed, ability_haste, ...)
+        """
+        self.orig_bonus_stats.ability_haste = min(self.orig_bonus_stats.ability_haste, 500)
 
     def apply_crit_damage_modifier(self):
         bonus_crit_damage = 0
@@ -137,12 +145,13 @@ class BaseChampion:
             bonus_crit_damage += 0.35
         self.orig_bonus_stats.crit_damage += bonus_crit_damage
 
-    def apply_ap_multipliers(self):
+    def apply_item_multipliers(self):
         ap_multiplier = 1
         if self.inventory.contains("Vigilant Wardstone"):  # missing ability haste
             ap_multiplier += 0.12
             self.orig_bonus_stats.attack_damage *= 1.12
             self.orig_bonus_stats.health *= 1.12
+            self.orig_bonus_stats.ability_haste *= 1.12
         if self.inventory.contains("Rabadon's Deathcap"):
             ap_multiplier += 0.35
         self.orig_base_stats.ability_power *= ap_multiplier
