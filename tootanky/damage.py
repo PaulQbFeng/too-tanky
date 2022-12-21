@@ -1,4 +1,7 @@
-# TODO: it seems that hp are ceiled while damage floored. (however it seems that the ad is rounded in the stat section ingame)
+# COMMENTS
+# HP are ceiled, damage are floored.
+# However damage displayed in white on dummys is rounded
+# Champions stats are rounded
 
 
 def pre_mitigation_auto_attack_damage(
