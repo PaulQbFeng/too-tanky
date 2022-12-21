@@ -62,7 +62,10 @@ class Caitlyn(BaseChampion):
             crit=is_crit,
             crit_damage=crit_damage,
         )
-        return damage
+        on_hit_damage = 0
+        for on_hit_source in self.on_hits:
+            on_hit_damage = on_hit_source.on_hit_effect(target)
+        return damage + on_hit_damage
 
 
 @SpellFactory.register_spell

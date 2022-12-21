@@ -39,6 +39,9 @@ class BaseItem:
         if self.damage_type is not None:
             self.target_res_type = get_resistance_type(self.damage_type)
 
+    def init_champion_type(self):
+        pass
+
     def apply_passive(self):
         pass
 
@@ -343,9 +346,11 @@ class Rageknife(BaseItem):
 class RecurveBow(BaseItem):
     name = "Recurve Bow"
     type = "Epic"
+    damage_type = "physical"
 
     def __init__(self):
         super().__init__()
+        self.ratios = None
 
     def on_hit_effect(self, target):
         return self.damage(target, damage_modifier_flat=15)
@@ -384,17 +389,24 @@ class TargonsBuckler(BaseItem):  # missing base_health_regen
 class Tiamat(BaseItem):
     name = "Tiamat"
     type = "Epic"
+    damage_type = "physical"
 
     def __init__(self):
         super().__init__()
-        self.activate = False
         self.limitations = ["Hydra"]
+        self.activate = False
+
+    def init_champion_type(self):
         if self.champion.champion_type == "Melee":
             self.ratios = [("attack_damage", 0.4)]
         if self.champion.champion_type == "Ranged":
             self.ratios = [("attack_damage", 0.2)]
 
     def on_hit_effect(self, target):
+        """
+        Basic attacks on-hit deal (mel.40% AD/rang.20% AD) physical dmg to other enemies within 350 units of the target.
+        """
+        # TODO: This must depend on other targets' resistances
         damage = 0
         if self.activate:
             damage = self.damage(target)

@@ -20,6 +20,7 @@ class Inventory:
                 self.items.append(item)
                 self.apply_item_passive(item)
                 self.item_stats += item.stats
+                item.init_champion_type()
 
     def contains(self, name):
         """Check if an item is in the inventory"""
@@ -103,6 +104,7 @@ class Inventory:
                     mythic_item.mythic_passive_stats[i][1] *= nb_legendary
                 return mythic_item.mythic_passive_stats
         return None
+
 
     def get_price(self):
         price = 0

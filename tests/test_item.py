@@ -13,6 +13,9 @@ from tootanky.item import (
     RabadonsDeathcap,
     BlastingWand,
     BlackCleaver,
+    RecurveBow,
+    BFSword,
+    Tiamat
 )
 
 
@@ -179,3 +182,17 @@ def test_black_cleaver():
     ahri.inventory.get_item("Black Cleaver").deapply_buffs(dummy)
     assert round(dummy.armor) == 100
     assert ahri.inventory.get_item("Black Cleaver").carve_stack_count == 0
+
+
+def test_recurve_bow():
+    caitlyn = Caitlyn(level=3, inventory=[RecurveBow()])
+    dummy = Dummy(bonus_resistance=80)
+    assert round(caitlyn.auto_attack_damage(dummy)) == 46
+    caitlyn.w_hit = True
+    assert round(caitlyn.auto_attack_damage(dummy)) == 91
+
+
+def test_tiamat():
+    caitlyn = Caitlyn(level=3, inventory=[BFSword(), Tiamat()])
+    dummy = Dummy(bonus_resistance=80)
+    assert round(caitlyn.auto_attack_damage(dummy)) == 74

@@ -30,14 +30,15 @@ def pre_mitigation_auto_attack_damage(
 def ratio_stat(champion, target, ratios, spell_level=1) -> float:
     """Get the damage dealt by the ratio part of a spell, taking into account multiple ratios"""
     stat = 0
-    for stat_name, ratio in ratios:
-        if "target_" in stat_name:
-            stat_value = getattr(target, stat_name.replace("target_", ""))
-        else:
-            stat_value = getattr(champion, stat_name)
-        if isinstance(ratio, list):
-            ratio = ratio[spell_level - 1]
-        stat += stat_value * ratio
+    if ratios is not None:
+        for stat_name, ratio in ratios:
+            if "target_" in stat_name:
+                stat_value = getattr(target, stat_name.replace("target_", ""))
+            else:
+                stat_value = getattr(champion, stat_name)
+            if isinstance(ratio, list):
+                ratio = ratio[spell_level - 1]
+            stat += stat_value * ratio
     return stat
 
 
