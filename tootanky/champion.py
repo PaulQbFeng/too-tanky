@@ -9,6 +9,7 @@ from tootanky.glossary import (
     STAT_STANDALONE,
     STAT_TOTAL_PROPERTY,
     STAT_UNDERLYING_PROPERTY,
+    STAT_TEMPORARY_BUFF,
     normalize_champion_name,
 )
 from tootanky.inventory import Inventory
@@ -52,7 +53,7 @@ class BaseChampion:
         self.orig_bonus_stats += self.get_bonus_stats()
         self.orig_bonus_stats += self.get_mythic_passive_stats()
         self.apply_stat_modifiers()
-        self.update_champion_stats()
+        self.__update_champion_stats()
 
         self.on_hits = []
         self.spellblade_item = None
@@ -68,7 +69,7 @@ class BaseChampion:
         for stat_name in STAT_SUM_BASE_BONUS:
             setattr(self, stat_name, 0)
 
-        for stat_name in STAT_STANDALONE:
+        for stat_name in STAT_STANDALONE + STAT_TEMPORARY_BUFF:
             setattr(self, stat_name, 0)
 
         for stat_name in STAT_TOTAL_PROPERTY:
@@ -147,13 +148,20 @@ class BaseChampion:
         self.orig_base_stats.ability_power *= ap_multiplier
         self.orig_bonus_stats.ability_power *= ap_multiplier
 
-    def update_champion_stats(self):
+    def apply_black_cleaver(self, target):
+        if self.inventory.contains("Black Cleaver"):
+            carve_stack_value = self.inventory.get_item("Black Cleaver").get_carve_stack_stats(target)
+            target.update_armor_stats(percent_debuff=carve_stack_value)
+
+    def __update_champion_stats(self):
         """
-        Updates the stat depending on the stat type.
+        Updates/restores the stat depending on the stat type.
             - STAT_SUM_BASE_BONUS: set the stat as the sum of orig_base and orig_bonus stat.
             - STAT_STANDALONE: set the stat as orig_bonus stat.
             - STAT_TOTAL_PROPERTY: set base_stat, bonus_stat. the attribute stat is a property.
-            - STAT_UNDERLYING_PROPERTY: set the _stat. the attribute stat is a property with conditions (like crit_damage)
+            - STAT_UNDERLYING_PROPERTY: set the _stat. the attribute stat is a property with conditions (like
+            crit_damage)
+            - STAT_TEMPORARY_BUFF: set the stat back to 0.
         """
         for name in STAT_SUM_BASE_BONUS:
             setattr(self, name, self.orig_base_stats.__getattr__(name) + self.orig_bonus_stats.__getattr__(name))
@@ -171,6 +179,30 @@ class BaseChampion:
 
         for name in STAT_UNDERLYING_PROPERTY:
             setattr(self, "_" + name, self.orig_bonus_stats.__getattr__(name))
+
+        for name in STAT_TEMPORARY_BUFF:
+            setattr(self, name, 0)
+
+    def restore_champion_stats(self):
+        self.__update_champion_stats()
+
+    def update_armor_stats(self, flat_debuff: float = 0, percent_debuff: float = 0):
+        """
+        Updates armor with additional armor reduction debuffs. (no debuffs by default)
+        """
+        self.armor_reduction_flat += flat_debuff
+        self.armor_reduction_percent = 1 - (1 - self.armor_reduction_percent) * (1 - percent_debuff)
+        orig_base_armor = self.orig_base_stats.armor
+        orig_bonus_armor = self.orig_bonus_stats.armor
+        orig_total_armor = orig_base_armor + orig_bonus_armor
+        if orig_total_armor == 0:
+            self.bonus_armor = orig_bonus_armor - self.armor_reduction_flat
+        else:
+            self.base_armor = orig_base_armor - self.armor_reduction_flat * orig_base_armor / orig_total_armor
+            self.bonus_armor = orig_bonus_armor - self.armor_reduction_flat * orig_bonus_armor / orig_total_armor
+        if self.base_armor + self.bonus_armor > 0:
+            self.base_armor *= (1 - self.armor_reduction_percent)
+            self.bonus_armor *= (1 - self.armor_reduction_percent)
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
@@ -260,6 +292,7 @@ class BaseChampion:
 
         damage = self.auto_attack_damage(target, is_crit)
         target.take_damage(damage)
+        self.apply_black_cleaver(target)
 
     def reset_health(self):
         self.health = self.orig_base_stats.health + self.orig_bonus_stats.health
@@ -269,7 +302,7 @@ class BaseChampion:
 class Dummy(BaseChampion):
     champion_name = "Dummy"
 
-    def __init__(self, health: float, bonus_resistance: int):
+    def __init__(self, health: float = 1000, bonus_resistance: int = 0):
         super().__init__(champion_name=__class__.champion_name, inventory=None, level=1)
         """Dummy champion have the same armor and mr"""
         assert bonus_resistance % 10 == 0
@@ -278,4 +311,4 @@ class Dummy(BaseChampion):
         self.orig_bonus_stats.armor = bonus_resistance
         self.orig_bonus_stats.magic_resist = bonus_resistance
         self.orig_bonus_stats.health = health - 1000
-        self.update_champion_stats()
+        self.restore_champion_stats()

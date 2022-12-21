@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Optional
 
-from tootanky.damage import damage_after_resistance, ratio_damage, pre_mitigation_spell_damage, get_resistance_type
+from tootanky.damage import damage_after_resistance, ratio_stat, pre_mitigation_spell_damage, get_resistance_type
 from tootanky.data_parser import ALL_ITEM_STATS
 from tootanky.stats import Stats
 
@@ -46,7 +45,7 @@ class BaseItem:
     def damage(self, target, damage_modifier_flat=0, damage_modifier_coeff=1) -> float:
         """Calculates the damage dealt to a champion with a spell"""
 
-        ratio_dmg = ratio_damage(champion=self.champion, target=target, ratios=self.ratios)
+        ratio_dmg = ratio_stat(champion=self.champion, target=target, ratios=self.ratios)
 
         pre_mtg_dmg = pre_mitigation_spell_damage(
             self.base_damage,
@@ -358,6 +357,31 @@ class WatchfulWardstone(BaseItem):  # missing ability haste
 #  Shadowflame, Shard of True Ice, Silvermere Dawn, Spear of Shojin, Spirit Visage, Staff of Flowing Water,
 #  Sterak's Gage, Stormrazor, Sunfire Aegis, The Collector, Thornmail, Titanic Hydra, Turbo Chemtank, Umbral Glaive,
 #  Vigilant Wardstone, Void Staff, Warmog's Armor, Winter's Approach, Wit's End, Zeke's Convergence, Zhonya's Hourglass
+class BlackCleaver(BaseItem):
+    name = "Black Cleaver"
+    type = "Legendary"
+
+    def __init__(self):
+        super().__init__()
+        self.carve_stack_count = 0
+
+    def get_carve_stack_stats(self, target, **kwargs):
+        if self.carve_stack_count < 6:
+            armor_reduction_percent = target.armor_reduction_percent
+            self.carve_stack_count += 1
+            return 1 - (1 - armor_reduction_percent - 0.05)/(1 - armor_reduction_percent)
+        else:
+            return 0
+
+    def deapply_buffs(self, target, **kwargs):
+        if self.carve_stack_count > 0:
+            percent_debuff = 1 - (
+                    1 - target.armor_reduction_percent + self.carve_stack_count * 0.05
+            ) / (1 - target.armor_reduction_percent)
+            target.update_armor_stats(percent_debuff=percent_debuff)
+            self.carve_stack_count = 0
+
+
 class CosmicDrive(BaseItem):  # missing ability haste, passive
     name = "Cosmic Drive"
     type = "Legendary"

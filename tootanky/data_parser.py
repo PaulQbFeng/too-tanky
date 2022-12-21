@@ -1,7 +1,7 @@
 import json
 import os
 
-from tootanky.glossary import MAPPING_CHAMPION_STANDARD, MAPPING_ITEM_STANDARD
+from tootanky.glossary import MAPPING_CHAMPION_STANDARD, MAPPING_ITEM_STANDARD, normalize_champion_name
 
 
 # gets a list of json files from a directory
@@ -90,16 +90,30 @@ def get_champion_spell_stats(folder: str):
     return out_dict
 
 
-dataset = get_dataset_from_json("data/ddragon/champion.json")
-ALL_CHAMPION_BASE_STATS = fill_champion_stats(dataset)
+ALL_CHAMPION_BASE_STATS_ORIGINAL = fill_champion_stats(get_dataset_from_json("data/ddragon/champion.json"))
+ALL_CHAMPION_SPELLS_ORIGINAL = get_champion_spell_stats("data/raw-community-dragon/champions")
+
+ALL_CHAMPION_BASE_STATS = dict()
+ALL_CHAMPION_SPELLS = dict()
+
+for i in range(len(ALL_CHAMPION_BASE_STATS_ORIGINAL.keys())):
+    key = list(ALL_CHAMPION_BASE_STATS_ORIGINAL.keys())[i]
+    new_key = normalize_champion_name(key)
+    ALL_CHAMPION_BASE_STATS[new_key] = ALL_CHAMPION_BASE_STATS_ORIGINAL[key]
+
+for i in range(len(ALL_CHAMPION_SPELLS_ORIGINAL.keys())):
+    key = list(ALL_CHAMPION_SPELLS_ORIGINAL.keys())[i]
+    new_key = normalize_champion_name(key)
+    ALL_CHAMPION_SPELLS[new_key] = ALL_CHAMPION_SPELLS_ORIGINAL[key]
+
+assert sorted(list(ALL_CHAMPION_BASE_STATS.keys()), key=str.casefold) == sorted(ALL_CHAMPION_SPELLS.keys(), key=str.casefold)
+
 ALL_CHAMPION_BASE_STATS.update({'Dummy': {'health': 1000, 'health_perlevel': 0, 'mana': 0, 'mana_perlevel': 0,
                                           'move_speed': 0, 'armor': 0, 'armor_perlevel': 0, 'magic_resist': 0,
                                           'magic_resist_perlevel': 0, 'attack_range': 0, 'health_regen': 0,
                                           'health_regen_perlevel': 0, 'mana_regen': 0, 'mana_regen_perlevel': 0,
                                           'crit_chance': 0, 'crit_chance_perlevel': 0, 'attack_damage': 0,
                                           'attack_damage_perlevel': 0, 'attack_speed_perlevel': 0, 'attack_speed': 0}})
-
-ALL_CHAMPION_SPELLS = get_champion_spell_stats("data/raw-community-dragon/champions")
 
 item_set = get_dataset_from_json("data/ddragon/item.json")
 ALL_ITEM_STATS = fill_item_stats(item_set)

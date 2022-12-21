@@ -2,6 +2,20 @@ import copy
 from typing import Any, Optional
 
 
+def add_stat(name, old_value, new_value):
+    if name.endswith("_pen_percent"):
+        return 1 - (1 - old_value) * (1 - new_value)
+    else:
+        return old_value + new_value
+
+
+def sub_stat(name, old_value, new_value):
+    if name.endswith("_pen_percent"):
+        return 1 - (1 - old_value) / (1 - new_value)
+    else:
+        return old_value - new_value
+
+
 class Stats:
     """
     Champions, items, and rune shards can all be considered to have stats.
@@ -37,10 +51,8 @@ class Stats:
         for name, value in stats._dict.items():
             if name not in self._dict:
                 addition[name] = value
-            elif name.endswith("_pen_percent"):
-                addition[name] = 1 - (1 - self._dict.get(name)) * (1 - value)
             else:
-                addition[name] = self._dict.get(name) + value
+                addition[name] = add_stat(name, self._dict.get(name), value)
 
         return Stats(addition)
 
@@ -56,10 +68,8 @@ class Stats:
         for name, value in stats._dict.items():
             if name not in self._dict:
                 subtraction[name] = -value
-            elif name.endswith("_pen_percent"):
-                subtraction[name] = 1 - (1 - self._dict.get(name)) / (1 - value)
             else:
-                subtraction[name] = self._dict.get(name) - value
+                subtraction[name] = sub_stat(name, self._dict.get(name), value)
 
         return Stats(subtraction)
 
