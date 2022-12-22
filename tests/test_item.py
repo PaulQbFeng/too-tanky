@@ -185,7 +185,11 @@ def test_black_cleaver():
 
 
 def test_recurve_bow():
+    caitlyn = Caitlyn()
+    print(caitlyn.base_attack_speed)
     caitlyn = Caitlyn(level=3, inventory=[RecurveBow()])
+    assert round(caitlyn.bonus_attack_speed, 3) == 0.309
+    assert round(caitlyn.attack_speed, 3) == 0.857
     dummy = Dummy(bonus_resistance=80)
     assert round(caitlyn.auto_attack_damage(dummy)) == 46
     caitlyn.w_hit = True
@@ -193,6 +197,7 @@ def test_recurve_bow():
 
 
 def test_tiamat():
+    # TODO: tests with on hit and multiple targets
     caitlyn = Caitlyn(level=3, inventory=[BFSword(), Tiamat()])
     dummy = Dummy(bonus_resistance=80)
     assert round(caitlyn.auto_attack_damage(dummy)) == 74

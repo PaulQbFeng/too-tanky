@@ -33,11 +33,16 @@ def calculate_bonus_stat_from_level(base_stats: dict, stat_name: str, level: int
     return 0
 
 
-def get_champion_base_stats(champion_stats, level):
+def get_champion_base_stats(champion_stats, level, champion_name):
     """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
-    return Stats(
-        {stat_name: calculate_base_stat_from_level(champion_stats, stat_name, level) for stat_name in (SCALING_STAT_NAMES + ["move_speed"])}
-    )
+    stats_dict = {stat_name: calculate_base_stat_from_level(champion_stats, stat_name, level) for stat_name in (
+                SCALING_STAT_NAMES + ["move_speed"]
+        )}
+    if champion_name in ALL_CHAMPION_OUTLIERS_ATTACK_SPEED_RATIO:
+        stats_dict["attack_speed_ratio"] = ALL_CHAMPION_OUTLIERS_ATTACK_SPEED_RATIO[champion_name]
+    else:
+        stats_dict["attack_speed_ratio"] = stats_dict["attack_speed"]
+    return Stats(stats_dict)
 
 
 def get_champion_bonus_stats(champion_stats, level):
@@ -53,3 +58,40 @@ def get_items_total_stats(items: BaseItem):
     for item in items:
         total_item_stats = total_item_stats + item.stats  # TODO: implem __iadd__
     return total_item_stats
+
+
+ALL_CHAMPION_OUTLIERS_ATTACK_SPEED_RATIO = {
+    "Akshan": 0.4,
+    "Amumu": 0.638,
+    "Blitzcrank": 0.7,
+    "Caitlyn": 0.568,
+    "DrMundo": 0.625,
+    "Ekko": 0.625,
+    "Gangplank": 0.69,
+    "Gragas": 0.625,
+    "Graves": 0.49,
+    "Kayle": 0.667,
+    "Kennen": 0.69,
+    "Lissandra": 0.625,
+    "Lux": 0.625,
+    "Malphite": 0.638,
+    "Maokai": 0.695,
+    "Nautilus": 0.612,
+    "Neeko": 0.67,
+    "Nilah": 0.67,
+    "Qiyana": 0.625,
+    "Rammus": 0.625,
+    "Sejuani": 0.625,
+    "Senna": 0.3,
+    "Seraphine": 0.625,
+    "Shen": 0.651,
+    "Tristana": 0.679,
+    "Trundle": 0.67,
+    "Udyr": 0.65,
+    "Vex": 0.625,
+    "Volibear": 0.7,
+    "Wukong": 0.658,
+    "Yasuo": 0.67,
+    "Zac": 0.638,
+    "Zeri": 0.625
+}

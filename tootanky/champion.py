@@ -36,7 +36,9 @@ class BaseChampion:
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
         champion_name = normalize_champion_name(champion_name)
-        self.orig_base_stats = sc.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level)
+        self.orig_base_stats = sc.get_champion_base_stats(
+            ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level, champion_name=champion_name
+        )
         self.orig_bonus_stats = sc.get_champion_bonus_stats(ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level)
         self.initialize_champion_stats_by_default()
 
@@ -241,8 +243,9 @@ class BaseChampion:
                 # missing attack speed cap, any bonus AS above the cap still affects scalings
                 # missing attack speed decrease (stacks multiplicatively and take percentages off the final attack speed
                 # value after all bonus attack speed has been factored in)
+                ratio = getattr(self.orig_base_stats, "attack_speed_ratio")
                 bonus_value = getattr(self, "bonus_" + stat_name)
-                return base_value * (1 + bonus_value)
+                return base_value + ratio * bonus_value
             elif stat_name == "move_speed":  # missing slow ratio and multiplicative movespeed bonus
                 bonus_flat = self.move_speed_flat
                 bonus_percent = self.move_speed_percent
@@ -277,6 +280,7 @@ class BaseChampion:
 
     def auto_attack_damage(self, target, is_crit: bool = False):
         """Calculates the damage dealt to an enemy champion with an autoattack"""
+
         damage = damage_physical_auto_attack(
             base_attack_damage=self.base_attack_damage,
             base_armor=target.base_armor,
