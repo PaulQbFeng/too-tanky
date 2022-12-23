@@ -1,5 +1,6 @@
 from tootanky.data_parser import ALL_CHAMPION_SPELLS
 from tootanky.attack import BaseDamageMixin
+from tootanky.stats import add_stat, sub_stat
 
 
 class BaseSpell(BaseDamageMixin):
@@ -37,12 +38,20 @@ class BaseSpell(BaseDamageMixin):
             setattr(self, name, value)
 
         self.ratios = []
+        self.buffs = []
 
     @staticmethod
     def get_spell_nature(spell_key: str) -> str:
         if spell_key in ["q", "w", "e"]:
             return "basic"
         return "ulti"
+
+    @property
+    def cooldown(self):
+        base_cooldown = ALL_CHAMPION_SPELLS[self.champion.champion_name][self.spell_key]["base_cooldown_per_level"][
+            self.level - 1
+        ]
+        return base_cooldown * 100 / (100 + self.champion.ability_haste)
 
     def print_specs(self):
         """pretty print the stats"""
@@ -60,10 +69,62 @@ class BaseSpell(BaseDamageMixin):
         """Get the base damage of a spell"""
         return self.base_damage_per_level[self.level - 1]
 
-    # TODO: write on spell effect
+    def get_damage_modifier_flat(self, **kwargs):
+        return 0
+
+    def get_damage_modifier_coeff(self, **kwargs):
+        return 1
+
+    def on_attack_state_change(self):
+        """Change internal attribute e.g cait w and e"""
+        pass
+
+    def apply_buffs(self, target, **kwargs):
+        """
+        Can handle debuff/buff.
+        Tested for armor reduction debuff (Jarvan/Black Cleaver PR - 20/12/2022)"""
+        for stat, value_per_level in self.buffs:
+            value = value_per_level[self.level - 1]
+            if "armor_reduction" in stat:
+                assert stat.startswith("target_"), "Armor reduction is always applied to the target in league."
+                if stat.endswith("_flat"):
+                    target.update_armor_stats(flat_debuff=value)
+                elif stat.endswith("_percent"):
+                    target.update_armor_stats(percent_debuff=value)
+                else:
+                    raise NameError("{} should end with _flat or _percent".format(stat))
+            else:
+                if stat.startswith("target_"):
+                    stat = stat.replace("target_", "")
+                    setattr(target, stat, add_stat(stat, getattr(target, stat), value))
+                else:
+                    setattr(self.champion, stat, add_stat(stat, getattr(self.champion, stat), value))
+        if self.damage_type == "physical":
+            self.champion.apply_black_cleaver(target)
+
+    def deapply_buffs(self, target, **kwargs):
+        for stat, value_per_level in self.buffs:
+            value = value_per_level[self.level - 1]
+            if "armor_reduction" in stat:
+                assert stat.startswith("target_"), "Armor reduction is always applied to the target in league."
+                if stat.endswith("_flat"):
+                    target.update_armor_stats(flat_debuff=-value)
+                elif stat.endswith("_percent"):
+                    target.update_armor_stats(
+                        percent_debuff=1
+                        - (1 - target.armor_reduction_percent + value) / (1 - target.armor_reduction_percent)
+                    )
+                else:
+                    raise NameError("{} should end with _flat or _percent".format(stat))
+            else:
+                if stat.startswith("target_"):
+                    stat = stat.replace("target_", "")
+                    setattr(target, stat, sub_stat(stat, getattr(target, stat), value))
+                else:
+                    setattr(self.champion, stat, sub_stat(stat, getattr(self.champion, stat), value))
 
     def damage(self, target, spellblade=False, **kwargs):
-        on_damage = 0
+        on_hit_damage = 0
         self.on_attack_state_change()
         if spellblade and self.can_trigger_spellblade:
             if self.champion.spellblade_item is not None:
@@ -75,6 +136,8 @@ class BaseSpell(BaseDamageMixin):
 
         if self.apply_on_hit:
             for on_hit_source in self.champion.on_hits:
-                on_damage = on_hit_source.on_hit_effect(target)
+                on_hit_damage = on_hit_source.on_hit_effect(target)
 
-        return damage + on_damage
+        self.apply_buffs(target, **kwargs)  # Applied after the on-hits based on test with sheen + blackcleaver
+
+        return damage + on_hit_damage

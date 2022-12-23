@@ -1,4 +1,7 @@
-# TODO: it seems that hp are ceiled while damage floored. (however it seems that the ad is rounded in the stat section ingame)
+# COMMENTS
+# HP are ceiled, damage are floored.
+# However damage displayed in white on dummys is rounded
+# Champions stats are rounded
 
 
 def pre_mitigation_auto_attack_damage(
@@ -24,14 +27,14 @@ def pre_mitigation_auto_attack_damage(
     return (tot_off_stats * crit_multiplier + damage_modifier_flat) * damage_modifier_coeff
 
 
-def ratio_damage(champion, target, ratios, level=1) -> float:
+def ratio_stat(champion, target, ratios, level=1) -> float:
     """
     Gets the damage dealt by the ratio part of a damage instance (spell, runes, item),
     taking into account multiple ratios
 
     :param level: level of the attack (spell level, 1 by default)
     """
-    damage = 0
+    stat = 0
     for stat_name, ratio in ratios:
         if "target_" in stat_name:
             stat_value = getattr(target, stat_name.replace("target_", ""))
@@ -39,13 +42,13 @@ def ratio_damage(champion, target, ratios, level=1) -> float:
             stat_value = getattr(champion, stat_name)
         if isinstance(ratio, list):
             ratio = ratio[level - 1]
-        damage += stat_value * ratio
-    return damage
+        stat += stat_value * ratio
+    return stat
 
 
 def pre_mitigation_damage(
     base_damage: float,
-    ratio_damage: float,
+    ratio_stat: float,
     damage_modifier_flat: float = 0,
     damage_modifier_coeff: float = 1,
 ):
@@ -53,9 +56,9 @@ def pre_mitigation_damage(
     Calculates the pre-mitigation damage of a spell, item, rune active, autoattack etc..
     All values regarding damage modifiers should include the buffs/debuffs coming from spells, summoner spells, or items
     from both the attacker AND the defender.
-    :param: ratio_damage is damage that scales with the champion's or target's stat
+    :param: ratio_stat is damage that scales with the champion's or target's stat
     """
-    return (base_damage + ratio_damage + damage_modifier_flat) * damage_modifier_coeff
+    return (base_damage + ratio_stat + damage_modifier_flat) * damage_modifier_coeff
 
 
 def avg_pre_mitigation_auto_attack_damage(

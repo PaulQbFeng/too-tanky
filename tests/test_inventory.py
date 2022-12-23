@@ -1,6 +1,14 @@
 import pytest
 from tootanky.inventory import Inventory
-from tootanky.item_factory import CloakofAgility, Galeforce, LongSword, SerratedDirk, SeryldasGrudge, InfinityEdge
+from tootanky.item_factory import (
+    CloakofAgility,
+    Galeforce,
+    LongSword,
+    SerratedDirk,
+    SeryldasGrudge,
+    InfinityEdge,
+    NavoriQuickblades,
+)
 
 
 def test_inventory():
@@ -32,3 +40,10 @@ def test_legendary_unicity():
     assert ie.stats.crit_chance == 0.2
     with pytest.raises(AssertionError):
         inv = Inventory([ie, ie])
+
+
+def test_crit_modifier_unicity():
+    ie = InfinityEdge()
+    navory = NavoriQuickblades()
+    with pytest.raises(AssertionError):
+        inv = Inventory([ie, navory])

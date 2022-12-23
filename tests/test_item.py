@@ -13,6 +13,7 @@ from tootanky.item_factory import (
     CloakofAgility,
     RabadonsDeathcap,
     BlastingWand,
+    BlackCleaver,
 )
 
 
@@ -163,3 +164,17 @@ def test_mythic_passives():
             else:
                 assert round(getattr(ahri, stat)) == value
         item_names.remove(mythic_item_name)
+
+
+def test_black_cleaver():
+    ahri = Ahri(level=7, inventory=[BlackCleaver()])
+    dummy = Dummy(bonus_resistance=100)
+    damage_values = [56, 58, 59, 61, 63, 64, 66, 66]
+    armor_values = [95, 90, 85, 80, 75, 70, 70, 70]
+    for i in range(8):
+        assert round(ahri.auto_attack_damage(dummy)) == damage_values[i]
+        ahri.do_auto_attack(dummy)
+        assert round(dummy.armor) == armor_values[i]
+    ahri.inventory.get_item("Black Cleaver").deapply_buffs(dummy)
+    assert round(dummy.armor) == 100
+    assert ahri.inventory.get_item("Black Cleaver").carve_stack_count == 0

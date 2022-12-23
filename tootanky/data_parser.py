@@ -1,7 +1,7 @@
 import json
 import os
 
-from tootanky.glossary import MAPPING_CHAMPION_STANDARD, MAPPING_ITEM_STANDARD
+from tootanky.glossary import MAPPING_CHAMPION_STANDARD, MAPPING_ITEM_STANDARD, normalize_champion_name
 
 
 # gets a list of json files from a directory
@@ -82,15 +82,34 @@ def get_champion_spell_stats(folder: str):
                 "name": spell["name"],
                 "range": spell["range"],
                 "cost": spell["costCoefficients"],
-                "cooldown": spell["cooldownCoefficients"],
+                "base_cooldown_per_level": spell["cooldownCoefficients"],
+                "ratios": [spell["coefficients"]["coefficient1"], spell["coefficients"]["coefficient2"]],
                 "max_level": spell["maxLevel"],
             }
 
     return out_dict
 
 
-dataset = get_dataset_from_json("data/ddragon/champion.json")
-ALL_CHAMPION_BASE_STATS = fill_champion_stats(dataset)
+ALL_CHAMPION_BASE_STATS_ORIGINAL = fill_champion_stats(get_dataset_from_json("data/ddragon/champion.json"))
+ALL_CHAMPION_SPELLS_ORIGINAL = get_champion_spell_stats("data/raw-community-dragon/champions")
+
+ALL_CHAMPION_BASE_STATS = dict()
+ALL_CHAMPION_SPELLS = dict()
+
+for i in range(len(ALL_CHAMPION_BASE_STATS_ORIGINAL.keys())):
+    key = list(ALL_CHAMPION_BASE_STATS_ORIGINAL.keys())[i]
+    new_key = normalize_champion_name(key)
+    ALL_CHAMPION_BASE_STATS[new_key] = ALL_CHAMPION_BASE_STATS_ORIGINAL[key]
+
+for i in range(len(ALL_CHAMPION_SPELLS_ORIGINAL.keys())):
+    key = list(ALL_CHAMPION_SPELLS_ORIGINAL.keys())[i]
+    new_key = normalize_champion_name(key)
+    ALL_CHAMPION_SPELLS[new_key] = ALL_CHAMPION_SPELLS_ORIGINAL[key]
+
+assert sorted(list(ALL_CHAMPION_BASE_STATS.keys()), key=str.casefold) == sorted(
+    ALL_CHAMPION_SPELLS.keys(), key=str.casefold
+)
+
 ALL_CHAMPION_BASE_STATS.update(
     {
         "Dummy": {
@@ -117,8 +136,6 @@ ALL_CHAMPION_BASE_STATS.update(
         }
     }
 )
-
-ALL_CHAMPION_SPELLS = get_champion_spell_stats("data/raw-community-dragon/champions")
 
 item_set = get_dataset_from_json("data/ddragon/item.json")
 ALL_ITEM_STATS = fill_item_stats(item_set)

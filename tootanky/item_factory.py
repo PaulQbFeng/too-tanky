@@ -117,9 +117,13 @@ class Sheen(ActiveItem):
 # TODO: Executioner's Calling, Forbidden Idol, Hexdrinker, Hextech Alternator, Ironspike Whip, Kircheis Shard,
 #  Leeching Leer, Oblivion Orb, Phage, Quicksilver Sash, Rageknife, Recurve Bow, Seeker's Armguard, Spectre's Cowl,
 #  Tiamat, Vampiric Scepter, Verdant Barrier, Warden's Mail, Winged Moonplate, Zeal
-class AegisoftheLegion(BaseItem):  # missing ability haste
+class AegisoftheLegion(BaseItem):
     name = "Aegis of the Legion"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.stats.ability_haste = 10
 
 
 class AetherWisp(BaseItem):  # missing unique passive (bonus_move_speed)
@@ -127,9 +131,13 @@ class AetherWisp(BaseItem):  # missing unique passive (bonus_move_speed)
     type = "Epic"
 
 
-class BandleglassMirror(BaseItem):  # missing ability haste and base_mana_regen
+class BandleglassMirror(BaseItem):  # missing base_mana_regen
     name = "Bandleglass Mirror"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.stats.ability_haste = 10
 
 
 class BlightingJewel(BaseItem):
@@ -147,9 +155,13 @@ class BrambleVest(BaseItem):  # missing passive
     type = "Epic"
 
 
-class CaulfieldsWarhammer(BaseItem):  # missing ability haste
+class CaulfieldsWarhammer(BaseItem):
     name = "Caulfield's Warhammer"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.stats.ability_haste = 10
 
 
 class ChainVest(BaseItem):
@@ -162,9 +174,13 @@ class CrystallineBracer(BaseItem):  # missing base_health_regen
     type = "Epic"
 
 
-class FiendishCodex(BaseItem):  # missing ability haste
+class FiendishCodex(BaseItem):
     name = "Fiendish Codex"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.stats.ability_haste = 10
 
 
 class Frostfang(BaseItem):  # missing base_mana_regen
@@ -185,6 +201,10 @@ class GlacialBuckler(BaseItem):  # missing ability haste
     name = "Glacial Buckler"
     type = "Epic"
 
+    def __init__(self):
+        super().__init__()
+        self.stats.ability_haste = 10
+
 
 class HarrowingCrescent(BaseItem):  # missing base_mana_regen
     name = "Harrowing Crescent"
@@ -200,9 +220,13 @@ class HearthboundAxe(BaseItem):  # missing passive (bonus_move_speed when basic 
     type = "Epic"
 
 
-class Kindlegem(BaseItem):  # missing ability haste
+class Kindlegem(BaseItem):
     name = "Kindlegem"
     type = "Epic"
+
+    def __init__(self):
+        super().__init__()
+        self.stats.ability_haste = 10
 
 
 class LastWhisper(BaseItem):
@@ -215,13 +239,14 @@ class LastWhisper(BaseItem):
         self.stats.armor_pen_percent = 0.18
 
 
-class LostChapter(BaseItem):  # missing ability haste
+class LostChapter(BaseItem):
     name = "Lost Chapter"
     type = "Epic"
 
     def __init__(self):
         super().__init__()
         self.limitations = ["Mythic Component"]
+        self.stats.ability_haste = 10
 
 
 class NegatronCloak(BaseItem):
@@ -268,13 +293,14 @@ class TargonsBuckler(BaseItem):  # missing base_health_regen
         self.limitations = ["Support"]
 
 
-class WatchfulWardstone(BaseItem):  # missing ability haste
+class WatchfulWardstone(BaseItem):
     name = "Watchful Wardstone"
     type = "Epic"
 
     def __init__(self):
         super().__init__()
         self.limitations = ["Sightstone"]
+        self.stats.ability_haste = 10
 
 
 # Legendary items
@@ -289,9 +315,39 @@ class WatchfulWardstone(BaseItem):  # missing ability haste
 #  Shadowflame, Shard of True Ice, Silvermere Dawn, Spear of Shojin, Spirit Visage, Staff of Flowing Water,
 #  Sterak's Gage, Stormrazor, Sunfire Aegis, The Collector, Thornmail, Titanic Hydra, Turbo Chemtank, Umbral Glaive,
 #  Vigilant Wardstone, Void Staff, Warmog's Armor, Winter's Approach, Wit's End, Zeke's Convergence, Zhonya's Hourglass
-class CosmicDrive(BaseItem):  # missing ability haste, passive
+class BlackCleaver(BaseItem):
+    name = "Black Cleaver"
+    type = "Legendary"
+
+    def __init__(self):
+        super().__init__()
+        self.stats.ability_haste = 30
+        self.carve_stack_count = 0
+
+    def get_carve_stack_stats(self, target, **kwargs):
+        if self.carve_stack_count < 6:
+            armor_reduction_percent = target.armor_reduction_percent
+            self.carve_stack_count += 1
+            return 1 - (1 - armor_reduction_percent - 0.05) / (1 - armor_reduction_percent)
+        else:
+            return 0
+
+    def deapply_buffs(self, target, **kwargs):
+        if self.carve_stack_count > 0:
+            percent_debuff = 1 - (1 - target.armor_reduction_percent + self.carve_stack_count * 0.05) / (
+                1 - target.armor_reduction_percent
+            )
+            target.update_armor_stats(percent_debuff=percent_debuff)
+            self.carve_stack_count = 0
+
+
+class CosmicDrive(BaseItem):  # missing passive
     name = "Cosmic Drive"
     type = "Legendary"
+
+    def __init__(self):
+        super().__init__()
+        self.stats.ability_haste = 30
 
 
 class EdgeofNight(BaseItem):  # missing passive
@@ -322,13 +378,14 @@ class NashorsTooth(BaseItem):  # missing passive
     type = "Legendary"
 
 
-class NavoriQuickblades(BaseItem):  # missing passive, ability haste
+class NavoriQuickblades(BaseItem):  # missing passive
     name = "Navori Quickblades"
     type = "Legendary"
 
     def __init__(self):
         super().__init__()
         self.limitations = ["Marksman Capstone", "Ability Haste Capstone"]
+        self.stats.ability_haste = 20
 
 
 class RabadonsDeathcap(BaseItem):
@@ -344,25 +401,26 @@ class SeryldasGrudge(BaseItem):  # missing passive, ability haste
         super().__init__()
         self.limitations = ["Last Whisper"]
         self.stats.armor_pen_percent = 0.3
+        self.stats.ability_haste = 20
 
 
-class VigilantWardstone(BaseItem):  # missing 12% ability haste increase in multiplier
+class VigilantWardstone(BaseItem):
     name = "Vigilant Wardstone"
     type = "Legendary"
 
+    def __init__(self):
+        super().__init__()
+        self.stats.ability_haste = 15
 
-class YoumuusGhostblade(BaseItem):  # missing passive, active, ability haste
+
+class YoumuusGhostblade(BaseItem):  # missing passive, active
     name = "Youmuu's Ghostblade"
     type = "Legendary"
 
     def __init__(self):
         super().__init__()
         self.stats.lethality = 18
-
-
-class InfinityEdge(BaseItem):
-    name = "Infinity Edge"
-    type = "Legendary"
+        self.stats.ability_haste = 15
 
 
 # Mythic items
@@ -371,13 +429,14 @@ class InfinityEdge(BaseItem):
 #  Jak'Sho, The Protean, Kraken Slayer, Liandry's Anguish, Locket of the Iron Solari, Luden's Tempest,
 #  Moonstone Renewer, Night Harvester, Prowler's Claw, Radiant Virtue, Riftmaker, Rod of Ages, Shurelya's Battlesong,
 #  Stridebreaker, Trinity Force
-class Everfrost(BaseItem):  # missing ability haste
+class Everfrost(BaseItem):  # missing active
     name = "Everfrost"
     type = "Mythic"
 
     def __init__(self):
         super().__init__()
         self.mythic_passive_stats = [("ability_power", 10, "flat")]
+        self.stats.ability_haste = 20
 
 
 class Galeforce(BaseItem):

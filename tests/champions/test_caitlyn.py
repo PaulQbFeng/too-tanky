@@ -46,7 +46,7 @@ def test_q():
 def test_w_level_1():
     # W has no damage, but we call damage to trigger passive headshot effect
     dummy = Dummy(1000, 30)
-    caitlyn = Caitlyn(level=1)
+    caitlyn = Caitlyn(level=1, spell_levels=[0, 1, 0, 0])
     assert round(caitlyn.auto_attack_damage(dummy, False)) == 48
     caitlyn.spell_w.damage(dummy)
     assert round(caitlyn.auto_attack_damage(dummy, False)) == 107

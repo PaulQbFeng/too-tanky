@@ -21,6 +21,7 @@ from .caitlyn import Caitlyn
 from .darius import Darius
 from .ezreal import Ezreal
 from .irelia import Irelia
+from .jarvan import JarvanIV
 from .jax import Jax
 from .malphite import Malphite
 from .missfortune import MissFortune

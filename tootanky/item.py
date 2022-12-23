@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 from tootanky.data_parser import ALL_ITEM_STATS
@@ -36,11 +35,3 @@ class ItemPassive:
     name: str = ""
     unique: bool = False
     stats: Stats = None
-
-
-class AbstractItem(ABC):
-    """Abstract BaseItem class"""
-
-    @abstractmethod
-    def apply_passive(self):
-        pass

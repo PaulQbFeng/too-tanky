@@ -1,4 +1,4 @@
-from tootanky.damage import damage_after_resistance, pre_mitigation_damage, ratio_damage, get_resistance_type
+from tootanky.damage import damage_after_resistance, pre_mitigation_damage, ratio_stat, get_resistance_type
 
 
 class BaseDamageMixin:
@@ -36,11 +36,11 @@ class BaseDamageMixin:
         """Calculates the damage dealt to the target. (private)"""
 
         level = self.get_damage_instance_level()
-        ratio_dmg = ratio_damage(champion=self.champion, target=target, ratios=self.ratios, level=level)
+        ratio_dmg = ratio_stat(champion=self.champion, target=target, ratios=self.ratios, level=level)
 
         pre_mtg_dmg = pre_mitigation_damage(
             base_damage=self.get_base_damage(),
-            ratio_damage=ratio_dmg,
+            ratio_stat=ratio_dmg,
             damage_modifier_flat=damage_modifier_flat,
             damage_modifier_coeff=damage_modifier_coeff,
         )
