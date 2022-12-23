@@ -4,8 +4,9 @@ import pytest
 from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie, Caitlyn
 from tootanky.damage import damage_after_positive_resistance
-from tootanky.item import (
-    ALL_ITEM_CLASSES,
+from tootanky.item_factory import (
+    ALL_ITEMS,
+    ALL_MYTHIC_ITEMS,
     DoransBlade,
     Sheen,
     InfinityEdge,
@@ -60,14 +61,14 @@ def test_sheen():
     dummy = Dummy(health=1000, bonus_resistance=100)
     assert len(annie.on_hits) == 1
     assert round(annie.auto_attack_damage(dummy)) == 26
-    assert annie.spell_q.hit_damage(dummy, spellblade=True) == 40
+    assert annie.spell_q.damage(dummy, spellblade=True) == 40
     assert round(annie.auto_attack_damage(dummy)) == 52
     assert round(annie.auto_attack_damage(dummy)) == 26
 
 
 def test_serrated_unique_passive():
     item_names = ["Serrated Dirk", "Last Whisper"]
-    inventory = [ALL_ITEM_CLASSES[item_name]() for item_name in item_names]
+    inventory = [ALL_ITEMS[item_name]() for item_name in item_names]
     ahri = Ahri(level=7, inventory=inventory)
 
     assert ahri.orig_bonus_stats.attack_damage == 50
@@ -75,7 +76,7 @@ def test_serrated_unique_passive():
     assert ahri.orig_bonus_stats.armor_pen_percent == 0.18
 
     item_names = ["Serrated Dirk", "Last Whisper", "Serrated Dirk"]
-    inventory = [ALL_ITEM_CLASSES[item_name]() for item_name in item_names]
+    inventory = [ALL_ITEMS[item_name]() for item_name in item_names]
     ahri = Ahri(level=7, inventory=inventory)
 
     assert ahri.orig_bonus_stats.attack_damage == 80
@@ -86,7 +87,7 @@ def test_serrated_unique_passive():
 def galeforce_default_run(
     item_names, target, test_bonus_attack_damage: float, test_crit_chance: float, test_active: list
 ):
-    inventory = [ALL_ITEM_CLASSES[item_name]() for item_name in item_names]
+    inventory = [ALL_ITEMS[item_name]() for item_name in item_names]
     ahri = Ahri(level=1, inventory=inventory)
     assert ahri.bonus_attack_damage == test_bonus_attack_damage
     assert ahri.crit_chance == test_crit_chance
@@ -119,7 +120,6 @@ def test_galeforce():
 
 def test_rabadon():
     ahri = Ahri(level=11, inventory=[RabadonsDeathcap()])
-    print(ahri.orig_base_stats.ability_power, ahri.orig_bonus_stats.ability_power)
     assert ahri.ability_power == 162
     ahri = Ahri(level=11, inventory=[RabadonsDeathcap(), BlastingWand()])
     assert ahri.ability_power == 216
@@ -127,7 +127,6 @@ def test_rabadon():
 
 def test_mythic_passives():
     # tests on ahri level 9 + 16 MR in runes
-    ALL_MYTHIC_ITEMS = {cls_name: cls for cls_name, cls in ALL_ITEM_CLASSES.items() if cls.type == "Mythic"}
     item_names = ["Cosmic Drive", "Nashor's Tooth", "Serylda's Grudge", "Guardian Angel", "Edge of Night"]
     test_dict = {
         "Everfrost": {
@@ -157,7 +156,7 @@ def test_mythic_passives():
     }
     for mythic_item_name, mythic_item in ALL_MYTHIC_ITEMS.items():
         item_names.append(mythic_item_name)
-        ahri = Ahri(level=9, inventory=[ALL_ITEM_CLASSES[item_name]() for item_name in item_names])
+        ahri = Ahri(level=9, inventory=[ALL_ITEMS[item_name]() for item_name in item_names])
         for stat, value in test_dict[mythic_item_name].items():
             if stat == "health":
                 assert math.ceil(getattr(ahri, stat)) == value
@@ -185,8 +184,6 @@ def test_black_cleaver():
 
 
 def test_recurve_bow():
-    caitlyn = Caitlyn()
-    print(caitlyn.base_attack_speed)
     caitlyn = Caitlyn(level=3, inventory=[RecurveBow()])
     assert round(caitlyn.bonus_attack_speed, 3) == 0.309
     assert round(caitlyn.attack_speed, 3) == 0.857

@@ -1,6 +1,7 @@
 from tootanky.champion import BaseChampion
 from tootanky.spell import BaseSpell
-from tootanky.spell_factory import SpellFactory
+from tootanky.spell_registry import SpellFactory
+
 
 class Darius(BaseChampion):
     champion_name = "Darius"

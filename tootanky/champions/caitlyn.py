@@ -1,7 +1,7 @@
 from tootanky.champion import BaseChampion
 from tootanky.damage import damage_physical_auto_attack
 from tootanky.spell import BaseSpell
-from tootanky.spell_factory import SpellFactory
+from tootanky.spell_registry import SpellFactory
 
 
 class Caitlyn(BaseChampion):
@@ -62,10 +62,11 @@ class Caitlyn(BaseChampion):
             crit=is_crit,
             crit_damage=crit_damage,
         )
-        on_hit_damage = 0
+        on_damage = 0
         for on_hit_source in self.on_hits:
-            on_hit_damage = on_hit_source.on_hit_effect(target)
-        return damage + on_hit_damage
+            print(on_hit_source, on_hit_source.on_hit_effect(target))
+            on_damage += on_hit_source.on_hit_effect(target)
+        return damage + on_damage
 
 
 @SpellFactory.register_spell

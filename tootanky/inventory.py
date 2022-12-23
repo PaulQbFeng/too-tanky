@@ -1,6 +1,7 @@
 from typing import List, Optional
 
-from tootanky.item import BaseItem, SPELL_BLADE_ITEMS
+from tootanky.item import BaseItem, ActiveItem
+from tootanky.item_factory import SPELL_BLADE_ITEMS
 from tootanky.stats import Stats
 
 
@@ -20,7 +21,8 @@ class Inventory:
                 self.items.append(item)
                 self.apply_item_passive(item)
                 self.item_stats += item.stats
-                item.init_champion_type()
+                if isinstance(item, ActiveItem):
+                    item.init_champion_type()
 
     def contains(self, name):
         """Check if an item is in the inventory"""
