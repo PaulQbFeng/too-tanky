@@ -1,7 +1,7 @@
 from tootanky.damage import damage_after_resistance, pre_mitigation_damage, ratio_damage, get_resistance_type
 
 
-class BaseDamageInstance:
+class BaseDamageMixin:
     """
     Base damage class that represents the basic mechanisms during a damage instance:
          - attacks's base damage(s)
@@ -13,21 +13,14 @@ class BaseDamageInstance:
          - etc...
 
     Several league objects need this attack system:
-        - Champion spells ---> BaseSpell(BaseDamageInstance)
-        - Item actives / on-hits ---> ActiveItem(BaseItem, BaseDamageInstance)
+        - Champion spells ---> BaseSpell(BaseDamageMixin)
+        - Item actives / on-hits ---> ActiveItem(BaseDamageMixin, BaseItem)
         - Runes ---> TODO
         - Champion auto-attack ---> TODO
 
-    BaseDamageInstance instances require to be initialized with at least the champion instance that launches the attack.
+    BaseDamageMixin does not have a __init__ method, always put it as the left argument when creating
+    a class with multiple inheritance. Eg. class ActiveItem(BaseDamageMixin, BaseItem).
     """
-
-    damage_type = None
-
-    def __init__(self, champion):
-        self.champion = champion
-        self.ratios = []
-        if self.damage_type is not None:
-            self.target_res_type = get_resistance_type(self.damage_type)
 
     def get_base_damage(self):
         """Gets the base damage of the damage instance"""
