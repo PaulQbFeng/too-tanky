@@ -1,4 +1,3 @@
-from tootanky.damage import damage_after_resistance, pre_mitigation_damage, ratio_damage, get_resistance_type
 from tootanky.data_parser import ALL_CHAMPION_SPELLS
 from tootanky.attack import BaseDamageMixin
 
@@ -38,8 +37,6 @@ class BaseSpell(BaseDamageMixin):
             setattr(self, name, value)
 
         self.ratios = []
-        if self.damage_type is not None:
-            self.target_res_type = get_resistance_type(self.damage_type)
 
     @staticmethod
     def get_spell_nature(spell_key: str) -> str:

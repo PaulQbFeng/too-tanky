@@ -26,10 +26,17 @@ class BaseDamageMixin:
         """Gets the base damage of the damage instance"""
         return 0
 
+    def get_damage_instance_level(self):
+        """Gets the level of the damage instance (spell level)"""
+        if hasattr(self, "level"):
+            return self.level
+        return 1
+
     def _compute_damage(self, target, damage_modifier_flat=0, damage_modifier_coeff=1) -> float:
         """Calculates the damage dealt to the target. (private)"""
 
-        ratio_dmg = ratio_damage(champion=self.champion, target=target, ratios=self.ratios, spell_leve1=self.level)
+        level = self.get_damage_instance_level()
+        ratio_dmg = ratio_damage(champion=self.champion, target=target, ratios=self.ratios, level=level)
 
         pre_mtg_dmg = pre_mitigation_damage(
             base_damage=self.get_base_damage(),
@@ -38,7 +45,7 @@ class BaseDamageMixin:
             damage_modifier_coeff=damage_modifier_coeff,
         )
 
-        res_type = self.target_res_type
+        res_type = get_resistance_type(self.damage_type)
         if res_type == "armor":
             bonus_resistance_pen = self.champion.bonus_armor_pen_percent
         else:

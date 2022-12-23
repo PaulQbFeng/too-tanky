@@ -1,6 +1,6 @@
 from tootanky.damage import damage_after_resistance
 from tootanky.stats import Stats
-from tootanky.item import BaseItem, ItemPassive
+from tootanky.item import BaseItem, ItemPassive, ActiveItem
 
 
 # Starter items
@@ -92,11 +92,11 @@ class SapphireCrystal(BaseItem):
     type = "Basic"
 
 
-class Sheen(BaseItem):
+class Sheen(ActiveItem):
+    # TODO: for the moment, considered as an ActiveItem. Need OnHitItem ?
     name = "Sheen"
     type = "Basic"
     ratios = [("base_attack_damage", 1)]
-    base_damage = 0
     damage_type = "physical"
 
     def __init__(self):
@@ -105,9 +105,10 @@ class Sheen(BaseItem):
 
     def on_hit_effect(self, target, damage_modifier_coeff=1):
         """Calculates the bonus damage dealt with an autoattack : 100% of base AD"""
+        # TODO: Might be renamed damage
         damage = 0
         if self.activate:
-            damage = self.damage(target, damage_modifier_coeff)
+            damage = self.damage(target, damage_modifier_coeff=damage_modifier_coeff)
             self.activate = False
         return damage
 
