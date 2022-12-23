@@ -13,7 +13,7 @@ from tootanky.glossary import (
     normalize_champion_name,
 )
 from tootanky.inventory import Inventory
-from tootanky.item import BaseItem, SPELL_BLADE_ITEMS, ON_HIT_ITEMS
+from tootanky.item import BaseItem, SPELL_BLADE_ITEMS, CLASSIC_ON_HIT_ITEMS, WRATH_ITEMS
 from tootanky.spell_factory import SpellFactory
 from tootanky.stats import Stats
 
@@ -55,8 +55,7 @@ class BaseChampion:
         self.orig_bonus_stats += self.get_bonus_stats()
         self.orig_bonus_stats += self.get_mythic_passive_stats()
         self.apply_stat_modifiers()
-        self.apply_caps()  # TODO: test if caps have to be applied before or after modifiers (cannot be tested for
-        # ability haste because the cap is unattainable
+        self.apply_caps()  # TODO: test if caps have to be applied before or after stat modifiers (cannot be tested for ability haste because the cap is unattainable)
         self.__update_champion_stats()
 
         self.on_hits = []
@@ -67,8 +66,12 @@ class BaseChampion:
                 self.spellblade_item = self.inventory.get_item(name)
                 self.on_hits.append(self.spellblade_item)
                 break
-        for name in ON_HIT_ITEMS:
+        for name in CLASSIC_ON_HIT_ITEMS:
             if self.inventory.contains(name):
+                self.on_hits.append(self.inventory.get_item(name))
+        for name in WRATH_ITEMS:
+            if self.inventory.contains(name):
+                self.crit_chance = 0
                 self.on_hits.append(self.inventory.get_item(name))
 
     def initialize_champion_stats_by_default(self):

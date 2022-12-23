@@ -341,6 +341,7 @@ class Rageknife(BaseItem):
     def __init__(self):
         super().__init__()
         self.limitations = ["Crit Modifier"]
+        self.ratios = [("crit_chance", 1.75 * 100)]
 
 
 class RecurveBow(BaseItem):
@@ -602,4 +603,5 @@ class Galeforce(BaseItem):
 
 ALL_ITEM_CLASSES = {cls.name: cls for cls in BaseItem.__subclasses__()}
 SPELL_BLADE_ITEMS = ["Divine Sunderer", "Trinity Force", "Lich Bane", "Essence Reaver", "Sheen"]
-ON_HIT_ITEMS = ["Recurve Bow"]
+CLASSIC_ON_HIT_ITEMS = ["Recurve Bow"]
+WRATH_ITEMS = ["Rageknife", "Guinsoo's Rageblade"]
