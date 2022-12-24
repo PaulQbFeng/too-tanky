@@ -48,7 +48,7 @@ def ratio_stat(champion, target, ratios, level=1) -> float:
 
 def pre_mitigation_damage(
     base_damage: float,
-    ratio_stat: float,
+    ratio_damage: float,
     damage_modifier_flat: float = 0,
     damage_modifier_coeff: float = 1,
 ):
@@ -58,7 +58,7 @@ def pre_mitigation_damage(
     from both the attacker AND the defender.
     :param: ratio_stat is damage that scales with the champion's or target's stat
     """
-    return (base_damage + ratio_stat + damage_modifier_flat) * damage_modifier_coeff
+    return (base_damage + ratio_damage + damage_modifier_flat) * damage_modifier_coeff
 
 
 def avg_pre_mitigation_auto_attack_damage(
