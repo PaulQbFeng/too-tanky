@@ -25,7 +25,9 @@ class Inventory:
                     item.init_champion_type()
 
     def contains(self, name):
-        """Check if an item is in the inventory"""
+        """Check if an item is in the inventory or if atleast one item of a list of items is in the inventory"""
+        if isinstance(name, list):
+            return any(n in (item.name for item in self.items) for n in name)
         return name in (item.name for item in self.items)
 
     def get_item(self, name):
@@ -106,7 +108,6 @@ class Inventory:
                     mythic_item.mythic_passive_stats[i][1] *= nb_legendary
                 return mythic_item.mythic_passive_stats
         return None
-
 
     def get_price(self):
         price = 0
