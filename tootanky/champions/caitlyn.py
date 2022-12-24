@@ -64,7 +64,6 @@ class Caitlyn(BaseChampion):
         )
         on_damage = 0
         for on_hit_source in self.on_hits:
-            print(on_hit_source, on_hit_source.on_hit_effect(target))
             on_damage += on_hit_source.on_hit_effect(target)
         return damage + on_damage
 
