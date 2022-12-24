@@ -49,7 +49,6 @@ STAT_SUM_BASE_BONUS = [
 
 STAT_STANDALONE = [
     "lethality",
-    "armor_pen_flat",
     "armor_pen_percent",
     "bonus_armor_pen_percent",
     "magic_resist_pen_flat",

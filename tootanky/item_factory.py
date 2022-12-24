@@ -1,4 +1,4 @@
-from tootanky.damage import damage_after_resistance
+from tootanky.damage import damage_after_resistance, pre_mitigation_damage, ratio_stat, get_resistance_type
 from tootanky.stats import Stats
 from tootanky.item import BaseItem, ItemPassive, ActiveItem
 
@@ -266,11 +266,15 @@ class Noonquiver(BaseItem):
 class Rageknife(ActiveItem):
     name = "Rageknife"
     type = "Epic"
+    damage_type = "physical"
 
     def __init__(self):
         super().__init__()
         self.limitations = ["Crit Modifier"]
-        self.ratios = [("crit_chance", 1.75 * 100)]
+        self.ratios = [("crit_chance_converted", 1.75 * 100)]
+
+    def on_hit_effect(self, target):
+        return self.damage(target)
 
 
 class RecurveBow(ActiveItem):

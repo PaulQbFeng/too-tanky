@@ -16,7 +16,10 @@ from tootanky.item_factory import (
     BlackCleaver,
     RecurveBow,
     BFSword,
-    Tiamat
+    Tiamat,
+    Rageknife,
+    SerratedDirk,
+    LastWhisper
 )
 
 
@@ -198,3 +201,32 @@ def test_tiamat():
     caitlyn = Caitlyn(level=3, inventory=[BFSword(), Tiamat()])
     dummy = Dummy(bonus_resistance=80)
     assert round(caitlyn.auto_attack_damage(dummy)) == 74
+
+
+def test_rageknife():
+    # TODO: test with crit modifiers: https://github.com/PaulQbFeng/too-tanky/issues/69
+    dummy = Dummy(bonus_resistance=50)
+    caitlyn = Caitlyn(level=7, inventory=[Rageknife()])
+    assert round(caitlyn.auto_attack_damage(dummy)) == 54
+    caitlyn.w_hit = True
+    assert round(caitlyn.auto_attack_damage(dummy)) == 129
+    caitlyn = Caitlyn(level=7, inventory=[Rageknife(), CloakofAgility()])
+    assert round(caitlyn.auto_attack_damage(dummy)) == 71
+    caitlyn.w_hit = True
+    assert round(caitlyn.auto_attack_damage(dummy)) == 146
+    caitlyn = Caitlyn(level=7, inventory=[
+        Rageknife(),
+        SerratedDirk(),
+        LastWhisper(),
+        CloakofAgility(),
+        CloakofAgility()
+    ])
+    assert round(caitlyn.attack_damage) == 130
+    assert caitlyn.lethality == 10
+    assert caitlyn.armor_pen_percent == 0.18
+    assert caitlyn.crit_chance == 0
+    assert caitlyn.crit_chance_converted == 0.3
+    assert round(caitlyn.auto_attack_damage(dummy)) == 137
+    caitlyn.w_hit = True
+    assert round(caitlyn.auto_attack_damage(dummy)) == 270
+
