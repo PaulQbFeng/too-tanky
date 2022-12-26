@@ -208,12 +208,10 @@ def test_rageknife():
     # crit_chance/crit_chance_converted test
     default_inventory = [Rageknife(), SerratedDirk(), LastWhisper(), CloakofAgility(), CloakofAgility()]
     crit_values = [(0.3, 0, 0.3), (0.3, 0, 0.3)]
-    i = 0
-    for champion in [Caitlyn(inventory=default_inventory), Yasuo(inventory=default_inventory)]:
+    for i, champion in enumerate([Caitlyn(inventory=default_inventory), Yasuo(inventory=default_inventory)]):
         assert champion.orig_bonus_stats.crit_chance == crit_values[i][0]
         assert champion.crit_chance == crit_values[i][1]
         assert champion._crit_chance == crit_values[i][2]
-        i += 1
 
     dummy = Dummy(bonus_resistance=50)
     caitlyn = Caitlyn(level=7, inventory=[Rageknife()])
