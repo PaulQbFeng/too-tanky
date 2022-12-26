@@ -26,8 +26,12 @@ class BaseDamageMixin:
         """Gets the base damage of the damage instance"""
         return 0
 
-    def get_damage_instance_level(self):
-        """Gets the level of the damage instance (spell level)"""
+    def get_spell_level(self):
+        """
+        Gets the level of the damage event:
+            - spell_level
+            - maybe others ?
+        """
         if hasattr(self, "level"):
             return self.level
         return 1
@@ -35,7 +39,7 @@ class BaseDamageMixin:
     def _compute_damage(self, target, damage_modifier_flat=0, damage_modifier_coeff=1) -> float:
         """Calculates the damage dealt to the target. (private)"""
 
-        level = self.get_damage_instance_level()
+        level = self.get_spell_level()
         ratio_dmg = ratio_stat(champion=self.champion, target=target, ratios=self.ratios, level=level)
 
         pre_mtg_dmg = pre_mitigation_damage(
