@@ -123,8 +123,6 @@ class BaseChampion:
 
     def initialize_champion_stats_by_default(self):
         """Set all stats to 0"""
-        if self.inventory.contains(WRATH_ITEMS):
-            self._crit_chance_converted = 0
 
         for stat_name in STAT_SUM_BASE_BONUS:
             setattr(self, stat_name, 0)
