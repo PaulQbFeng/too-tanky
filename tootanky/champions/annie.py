@@ -4,7 +4,7 @@ from tootanky.spell_registry import SpellFactory
 
 
 class Annie(BaseChampion):
-    champion_name = "Annie"
+    name = "Annie"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

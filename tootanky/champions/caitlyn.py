@@ -5,7 +5,7 @@ from tootanky.spell_registry import SpellFactory
 
 
 class Caitlyn(BaseChampion):
-    champion_name = "Caitlyn"
+    name = "Caitlyn"
 
     def __init__(self, **kwargs):
         super().__init__(spell_max_order=["q", "w", "e"], **kwargs)

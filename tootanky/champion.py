@@ -25,7 +25,7 @@ class BaseChampion:
         - auto attack
     """
 
-    champion_name: str = None
+    name: str = None
 
     def __init__(
         self,
@@ -36,15 +36,11 @@ class BaseChampion:
     ):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
-        if self.champion_name is None:
-            raise ValueError("Child class of BaseChampion is expected to have champion_name = {champion name}")
-        self.champion_name = normalize_champion_name(self.champion_name)
-        self.orig_base_stats = sc.get_champion_base_stats(
-            ALL_CHAMPION_BASE_STATS[self.champion_name].copy(), level=level
-        )
-        self.orig_bonus_stats = sc.get_champion_bonus_stats(
-            ALL_CHAMPION_BASE_STATS[self.champion_name].copy(), level=level
-        )
+        if self.name is None:
+            raise ValueError("Child class of BaseChampion is expected to have name = {champion name}")
+        self.name = normalize_champion_name(self.name)
+        self.orig_base_stats = sc.get_champion_base_stats(ALL_CHAMPION_BASE_STATS[self.name].copy(), level=level)
+        self.orig_bonus_stats = sc.get_champion_bonus_stats(ALL_CHAMPION_BASE_STATS[self.name].copy(), level=level)
         self.initialize_champion_stats_by_default()
 
         if spell_levels is None:
@@ -236,10 +232,10 @@ class BaseChampion:
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
-        if self.champion_name not in SpellFactory()._SPELLS:
+        if self.name not in SpellFactory()._SPELLS:
             return None
 
-        spells = SpellFactory().get_spells_for_champion(self.champion_name)
+        spells = SpellFactory().get_spells_for_champion(self.name)
         level_q, level_w, level_e, level_r = spell_levels
         self.spell_q = spells["q"](champion=self, level=level_q)
         self.spell_w = spells["w"](champion=self, level=level_w)
@@ -330,7 +326,7 @@ class BaseChampion:
 
 # Dummy class for tests in practice tool.
 class Dummy(BaseChampion):
-    champion_name = "Dummy"
+    name = "Dummy"
 
     def __init__(self, health: float = 1000, bonus_resistance: int = 0):
         super().__init__(inventory=None, level=1)

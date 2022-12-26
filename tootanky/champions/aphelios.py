@@ -2,7 +2,7 @@ from tootanky.champion import BaseChampion
 
 
 class Aphelios(BaseChampion):
-    champion_name = "Aphelios"
+    name = "Aphelios"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
