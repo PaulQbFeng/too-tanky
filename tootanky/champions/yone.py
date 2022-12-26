@@ -1,6 +1,5 @@
 from tootanky.spell_registry import SpellFactory
 from tootanky.champion import BaseChampion
-from tootanky.item_factory import WRATH_ITEMS
 
 
 class Yone(BaseChampion):
