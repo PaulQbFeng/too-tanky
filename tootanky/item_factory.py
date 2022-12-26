@@ -274,7 +274,10 @@ class Rageknife(ActiveItem):
         self.ratios = [("crit_chance_converted", 1.75 * 100)]
 
     def on_hit_effect(self, target):
-        return self.damage(target)
+        crit_damage_multiplier = 1
+        if self.champion.champion_name != "Yasuo":
+            crit_damage_multiplier += self.champion.crit_damage
+        return self.damage(target) * crit_damage_multiplier
 
 
 class RecurveBow(ActiveItem):
@@ -308,6 +311,8 @@ class SerratedDirk(BaseItem):
 
     def apply_passive(self):
         self.stats = self.stats + self.passive.stats
+        if self.stats.lethality != 10:
+            self.stats.lethality = 10
 
 
 class TargonsBuckler(BaseItem):  # missing base_health_regen

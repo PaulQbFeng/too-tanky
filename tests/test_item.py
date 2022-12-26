@@ -2,7 +2,7 @@ import math
 import pytest
 
 from tootanky.champion import Dummy
-from tootanky.champions import Ahri, Annie, Caitlyn
+from tootanky.champions import Ahri, Annie, Caitlyn, Yasuo
 from tootanky.damage import damage_after_positive_resistance
 from tootanky.item_factory import (
     ALL_ITEMS,
@@ -205,28 +205,28 @@ def test_tiamat():
 
 def test_rageknife():
     # TODO: test with crit modifiers: https://github.com/PaulQbFeng/too-tanky/issues/69
+    # crit_chance/crit_chance_converted test
+    default_inventory = [Rageknife(), SerratedDirk(), LastWhisper(), CloakofAgility(), CloakofAgility()]
+    crit_values = [(0.3, 0, 0.3), (0.3, 0, 0.3)]
+    i = 0
+    for champion in [Caitlyn(inventory=default_inventory), Yasuo(inventory=default_inventory)]:
+        assert champion.orig_bonus_stats.crit_chance == crit_values[i][0]
+        assert champion.crit_chance == crit_values[i][1]
+        assert champion.crit_chance_converted == crit_values[i][2]
+        i += 1
+
     dummy = Dummy(bonus_resistance=50)
     caitlyn = Caitlyn(level=7, inventory=[Rageknife()])
     assert round(caitlyn.auto_attack_damage(dummy)) == 54
     caitlyn.w_hit = True
     assert round(caitlyn.auto_attack_damage(dummy)) == 129
-    caitlyn = Caitlyn(level=7, inventory=[Rageknife(), CloakofAgility()])
-    assert round(caitlyn.auto_attack_damage(dummy)) == 71
-    caitlyn.w_hit = True
-    assert round(caitlyn.auto_attack_damage(dummy)) == 146
-    caitlyn = Caitlyn(level=7, inventory=[
-        Rageknife(),
-        SerratedDirk(),
-        LastWhisper(),
-        CloakofAgility(),
-        CloakofAgility()
-    ])
-    assert round(caitlyn.attack_damage) == 130
-    assert caitlyn.lethality == 10
-    assert caitlyn.armor_pen_percent == 0.18
-    assert caitlyn.crit_chance == 0
-    assert caitlyn.crit_chance_converted == 0.3
+    caitlyn = Caitlyn(level=7, inventory=default_inventory)
     assert round(caitlyn.auto_attack_damage(dummy)) == 137
     caitlyn.w_hit = True
     assert round(caitlyn.auto_attack_damage(dummy)) == 270
+
+    yasuo = Yasuo(level=3, inventory=[Rageknife()])
+    assert round(yasuo.auto_attack_damage(dummy)) == 43
+    yasuo = Yasuo(level=3, inventory=default_inventory)
+    assert round(yasuo.auto_attack_damage(dummy)) == 124
 
