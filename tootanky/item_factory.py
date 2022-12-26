@@ -271,7 +271,7 @@ class Rageknife(ActiveItem):
     def __init__(self):
         super().__init__()
         self.limitations = ["Crit Modifier"]
-        self.ratios = [("crit_chance_converted", 1.75 * 100)]
+        self.ratios = [("_crit_chance", 1.75 * 100)]
 
     def on_hit_effect(self, target):
         crit_damage_multiplier = 1

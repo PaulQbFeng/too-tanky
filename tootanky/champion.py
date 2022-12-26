@@ -70,7 +70,6 @@ class BaseChampion:
                 self.on_hits.append(self.inventory.get_item(name))
         for name in WRATH_ITEMS:
             if self.inventory.contains(name):
-                self.crit_chance = 0
                 self.on_hits.append(self.inventory.get_item(name))
                 break
 
@@ -113,27 +112,14 @@ class BaseChampion:
 
     @property
     def crit_chance(self):
-        return self._crit_chance
+        if self.inventory.contains(WRATH_ITEMS):
+            return 0
+        else:
+            return self._crit_chance
 
     @crit_chance.setter
     def crit_chance(self, value):
-        if self.inventory.contains(WRATH_ITEMS):
-            self._crit_chance = 0
-            self._crit_chance_converted += value
-        else:
-            self._crit_chance = value
-
-    @property
-    def crit_chance_converted(self):
-        return self._crit_chance_converted
-
-    @property
-    def _crit_chance_converted(self):
-        return self.__crit_chance_converted
-
-    @_crit_chance_converted.setter
-    def _crit_chance_converted(self, value):
-        self.__crit_chance_converted = value
+        self._crit_chance = value
 
     def initialize_champion_stats_by_default(self):
         """Set all stats to 0"""

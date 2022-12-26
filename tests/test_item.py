@@ -212,7 +212,7 @@ def test_rageknife():
     for champion in [Caitlyn(inventory=default_inventory), Yasuo(inventory=default_inventory)]:
         assert champion.orig_bonus_stats.crit_chance == crit_values[i][0]
         assert champion.crit_chance == crit_values[i][1]
-        assert champion.crit_chance_converted == crit_values[i][2]
+        assert champion._crit_chance == crit_values[i][2]
         i += 1
 
     dummy = Dummy(bonus_resistance=50)
