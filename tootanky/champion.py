@@ -54,8 +54,8 @@ class BaseChampion:
         self.orig_bonus_stats += self.get_bonus_stats()
         self.orig_bonus_stats += self.get_mythic_passive_stats()
         self.apply_stat_modifiers()
-        self.apply_caps()  # TODO: test if caps have to be applied before or after stat modifiers (cannot be tested for ability haste because the cap is unattainable)
         self.__update_champion_stats()
+        self.apply_caps()  # TODO: test if caps have to be applied before or after stat modifiers
 
         self.on_hits = []
         self.spellblade_item = None
@@ -286,19 +286,27 @@ class BaseChampion:
         Stat modifier from some items that are applied at the end of the inventory initialisation. (E.g rabadon, infinity_edge)
         Stat modifiers can affect both base and bonus stats (e.g rabadon)
         """
-        self.apply_crit_damage_modifier()
+        self.apply_crit_damage_modifiers()
         self.apply_item_multipliers()
 
     def apply_caps(self):
         """
         Some stats are capped at a certain amount (attack_speed, ability_haste, ...)
         """
-        self.orig_bonus_stats.ability_haste = min(self.orig_bonus_stats.ability_haste, 500)
+        self.ability_haste = min(self.orig_bonus_stats.ability_haste, 500)
 
-    def apply_crit_damage_modifier(self):
-        bonus_crit_damage = 0
+    def get_crit_chance_multiplier(self):
+        return 1
+
+    def get_crit_damage_multiplier(self):
+        return 1
+
+    def apply_crit_damage_modifiers(self):
+        if not self.inventory.contains(WRATH_ITEMS):
+            self.orig_bonus_stats.crit_chance *= self.get_crit_chance_multiplier()
+        bonus_crit_damage = 1.75 * self.get_crit_damage_multiplier() - 1.75
         if self.inventory.contains("Infinity Edge") and self.orig_bonus_stats.crit_chance >= 0.6:
-            bonus_crit_damage += 0.35
+            bonus_crit_damage += 0.35 * self.get_crit_damage_multiplier()
         self.orig_bonus_stats.crit_damage += bonus_crit_damage
 
     def apply_item_multipliers(self):

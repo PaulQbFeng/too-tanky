@@ -3,12 +3,12 @@ from tootanky.champion import BaseChampion
 from tootanky.item_factory import WRATH_ITEMS
 
 
-class Yasuo(BaseChampion):
-    champion_name = "Yasuo"
+class Yone(BaseChampion):
+    champion_name = "Yone"
     champion_type = "Melee"
 
     def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, spell_max_order=["q", "e", "w"], **kwargs)
+        super().__init__(champion_name=__class__.champion_name, **kwargs)
         if self.orig_bonus_stats.crit_chance >= 1:
             self.orig_bonus_stats.attack_damage += 0.4 * (self.orig_bonus_stats.crit_chance - 1) * 100
             self.bonus_attack_damage = self.orig_bonus_stats.attack_damage

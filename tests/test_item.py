@@ -2,7 +2,7 @@ import math
 import pytest
 
 from tootanky.champion import Dummy
-from tootanky.champions import Ahri, Annie, Caitlyn, Yasuo
+from tootanky.champions import Ahri, Annie, Caitlyn, Yasuo, Yone
 from tootanky.damage import damage_after_positive_resistance
 from tootanky.item_factory import (
     ALL_ITEMS,
@@ -230,3 +230,8 @@ def test_rageknife():
     yasuo = Yasuo(level=3, inventory=default_inventory)
     assert round(yasuo.auto_attack_damage(dummy)) == 124
 
+    yone = Yone(level=3, inventory=[Rageknife()])
+    assert round(yone.auto_attack_damage(dummy)) == 42
+    yone = Yone(level=3, inventory=default_inventory)
+    assert round(yone.attack_damage) == 113
+    assert round(yone.auto_attack_damage(dummy)) == 119
