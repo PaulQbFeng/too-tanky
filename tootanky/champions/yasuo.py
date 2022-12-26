@@ -4,7 +4,7 @@ from tootanky.champion import BaseChampion
 
 class Yasuo(BaseChampion):
     champion_name = "Yasuo"
-    champion_type = "Melee"
+    range_type = "Melee"
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, spell_max_order=["q", "e", "w"], **kwargs)
