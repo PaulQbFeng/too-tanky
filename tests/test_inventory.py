@@ -1,6 +1,6 @@
 import pytest
 from tootanky.inventory import Inventory
-from tootanky.item import (
+from tootanky.item_factory import (
     CloakofAgility,
     Galeforce,
     LongSword,

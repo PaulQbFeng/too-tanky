@@ -1,6 +1,6 @@
 from tootanky.champion import Dummy
 from tootanky.champions import JarvanIV
-from tootanky.item import LongSword
+from tootanky.item_factory import LongSword
 
 
 def test_q():
@@ -10,7 +10,7 @@ def test_q():
     dummy = Dummy(bonus_resistance=70)
     for spell_level in range(5):
         jarvan = JarvanIV(level=champion_levels[spell_level], inventory=[LongSword()])
-        assert round(jarvan.spell_q.hit_damage(dummy)) == damage_values[spell_level]
+        assert round(jarvan.spell_q.damage(dummy)) == damage_values[spell_level]
         assert round(dummy.armor) == armor_values[spell_level]
         jarvan.spell_q.deapply_buffs(dummy)
         assert round(dummy.armor) == 70

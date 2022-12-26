@@ -1,7 +1,7 @@
 from tootanky.champion import BaseChampion
 from tootanky.damage import damage_physical_auto_attack
 from tootanky.spell import BaseSpell
-from tootanky.spell_factory import SpellFactory
+from tootanky.spell_registry import SpellFactory
 
 
 class Caitlyn(BaseChampion):

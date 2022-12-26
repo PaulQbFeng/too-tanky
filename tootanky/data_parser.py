@@ -106,14 +106,36 @@ for i in range(len(ALL_CHAMPION_SPELLS_ORIGINAL.keys())):
     new_key = normalize_champion_name(key)
     ALL_CHAMPION_SPELLS[new_key] = ALL_CHAMPION_SPELLS_ORIGINAL[key]
 
-assert sorted(list(ALL_CHAMPION_BASE_STATS.keys()), key=str.casefold) == sorted(ALL_CHAMPION_SPELLS.keys(), key=str.casefold)
+assert sorted(list(ALL_CHAMPION_BASE_STATS.keys()), key=str.casefold) == sorted(
+    ALL_CHAMPION_SPELLS.keys(), key=str.casefold
+)
 
-ALL_CHAMPION_BASE_STATS.update({'Dummy': {'health': 1000, 'health_perlevel': 0, 'mana': 0, 'mana_perlevel': 0,
-                                          'move_speed': 0, 'armor': 0, 'armor_perlevel': 0, 'magic_resist': 0,
-                                          'magic_resist_perlevel': 0, 'attack_range': 0, 'health_regen': 0,
-                                          'health_regen_perlevel': 0, 'mana_regen': 0, 'mana_regen_perlevel': 0,
-                                          'crit_chance': 0, 'crit_chance_perlevel': 0, 'attack_damage': 0,
-                                          'attack_damage_perlevel': 0, 'attack_speed_perlevel': 0, 'attack_speed': 0}})
+ALL_CHAMPION_BASE_STATS.update(
+    {
+        "Dummy": {
+            "health": 1000,
+            "health_perlevel": 0,
+            "mana": 0,
+            "mana_perlevel": 0,
+            "move_speed": 0,
+            "armor": 0,
+            "armor_perlevel": 0,
+            "magic_resist": 0,
+            "magic_resist_perlevel": 0,
+            "attack_range": 0,
+            "health_regen": 0,
+            "health_regen_perlevel": 0,
+            "mana_regen": 0,
+            "mana_regen_perlevel": 0,
+            "crit_chance": 0,
+            "crit_chance_perlevel": 0,
+            "attack_damage": 0,
+            "attack_damage_perlevel": 0,
+            "attack_speed_perlevel": 0,
+            "attack_speed": 0,
+        }
+    }
+)
 
 item_set = get_dataset_from_json("data/ddragon/item.json")
 ALL_ITEM_STATS = fill_item_stats(item_set)

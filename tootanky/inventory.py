@@ -1,6 +1,7 @@
 from typing import List, Optional
 
-from tootanky.item import BaseItem, SPELL_BLADE_ITEMS
+from tootanky.item import BaseItem
+from tootanky.item_factory import SPELL_BLADE_ITEMS
 from tootanky.stats import Stats
 
 

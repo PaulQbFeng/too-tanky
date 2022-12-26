@@ -1,9 +1,9 @@
-from tootanky.damage import damage_after_resistance, pre_mitigation_spell_damage, ratio_stat, get_resistance_type
 from tootanky.data_parser import ALL_CHAMPION_SPELLS
+from tootanky.attack import BaseDamageMixin
 from tootanky.stats import add_stat, sub_stat
 
 
-class BaseSpell:
+class BaseSpell(BaseDamageMixin):
     """
     Some class variables that can be overwritten in the subclasses:
         - spell_key: q, w, e, r (default=None)
@@ -17,29 +17,28 @@ class BaseSpell:
             'range': [1200.0, 1200.0, 1200.0, 1200.0, 1200.0],
             'cost': [60.0, 70.0, 80.0, 90.0, 100.0],
             'cooldown': [12.0, 12.0, 12.0, 12.0, 12.0],
-            'ratios': [0.7, 0.0],
             'max_level': 0
         }
     Not all spell specifications are included in the data file which means there is a need to double check
     the current specs + add the missing ones inside the subclass of BaseSpell.
     """
 
-    spell_key = None
     damage_type = None
+    spell_key = None
     apply_on_hit = False
     can_trigger_spellblade = True
 
     def __init__(self, champion, level=1):
-        self.champion = champion
         self.set_level(level)
+        self.champion = champion
         self.spell_specs = ALL_CHAMPION_SPELLS[champion.champion_name][self.spell_key].copy()
+
         self.nature = self.get_spell_nature(self.spell_key)
         for name, value in self.spell_specs.items():
             setattr(self, name, value)
+
         self.ratios = []
         self.buffs = []
-        if self.damage_type is not None:
-            self.target_res_type = get_resistance_type(self.damage_type)
 
     @staticmethod
     def get_spell_nature(spell_key: str) -> str:
@@ -50,8 +49,8 @@ class BaseSpell:
     @property
     def cooldown(self):
         base_cooldown = ALL_CHAMPION_SPELLS[self.champion.champion_name][self.spell_key]["base_cooldown_per_level"][
-                   self.level - 1
-               ]
+            self.level - 1
+        ]
         return base_cooldown * 100 / (100 + self.champion.ability_haste)
 
     def print_specs(self):
@@ -69,35 +68,6 @@ class BaseSpell:
     def get_base_damage(self):
         """Get the base damage of a spell"""
         return self.base_damage_per_level[self.level - 1]
-
-    def damage(self, target, damage_modifier_flat=0, damage_modifier_coeff=1) -> float:
-        """Calculates the damage dealt to a champion with a spell"""
-
-        ratio_dmg = ratio_stat(champion=self.champion, target=target, ratios=self.ratios, spell_level=self.level)
-
-        pre_mtg_dmg = pre_mitigation_spell_damage(
-            self.get_base_damage(),
-            ratio_dmg,
-            damage_modifier_flat=damage_modifier_flat,
-            damage_modifier_coeff=damage_modifier_coeff,
-        )
-
-        res_type = self.target_res_type
-        if res_type == "armor":
-            bonus_resistance_pen = self.champion.bonus_armor_pen_percent
-        else:
-            bonus_resistance_pen = 0
-        # TODO: Can be refactored once we know more about bonus res pen
-        post_mtg_dmg = damage_after_resistance(
-            pre_mitigation_damage=pre_mtg_dmg,
-            base_resistance=getattr(target, f"base_{res_type}"),
-            bonus_resistance=getattr(target, f"bonus_{res_type}"),
-            flat_resistance_pen=getattr(self.champion, f"{res_type}_pen_flat"),
-            resistance_pen=getattr(self.champion, f"{res_type}_pen_percent"),
-            bonus_resistance_pen=bonus_resistance_pen,
-        )
-
-        return post_mtg_dmg
 
     def get_damage_modifier_flat(self, **kwargs):
         return 0
@@ -141,7 +111,8 @@ class BaseSpell:
                     target.update_armor_stats(flat_debuff=-value)
                 elif stat.endswith("_percent"):
                     target.update_armor_stats(
-                        percent_debuff=1-(1-target.armor_reduction_percent+value)/(1-target.armor_reduction_percent)
+                        percent_debuff=1
+                        - (1 - target.armor_reduction_percent + value) / (1 - target.armor_reduction_percent)
                     )
                 else:
                     raise NameError("{} should end with _flat or _percent".format(stat))
@@ -152,7 +123,7 @@ class BaseSpell:
                 else:
                     setattr(self.champion, stat, sub_stat(stat, getattr(self.champion, stat), value))
 
-    def hit_damage(self, target, spellblade=False, **kwargs):
+    def damage(self, target, spellblade=False, **kwargs):
         on_hit_damage = 0
         self.on_attack_state_change()
         if spellblade and self.can_trigger_spellblade:
@@ -161,7 +132,7 @@ class BaseSpell:
 
         damage_modifier_flat = self.get_damage_modifier_flat(**kwargs)
         damage_modifier_coeff = self.get_damage_modifier_coeff(**kwargs)
-        damage = self.damage(target, damage_modifier_flat, damage_modifier_coeff)
+        damage = self._compute_damage(target, damage_modifier_flat, damage_modifier_coeff)
 
         if self.apply_on_hit:
             for on_hit_source in self.champion.on_hits:
@@ -170,4 +141,3 @@ class BaseSpell:
         self.apply_buffs(target, **kwargs)  # Applied after the on-hits based on test with sheen + blackcleaver
 
         return damage + on_hit_damage
-

@@ -27,8 +27,13 @@ def pre_mitigation_auto_attack_damage(
     return (tot_off_stats * crit_multiplier + damage_modifier_flat) * damage_modifier_coeff
 
 
-def ratio_stat(champion, target, ratios, spell_level=1) -> float:
-    """Get the damage dealt by the ratio part of a spell, taking into account multiple ratios"""
+def ratio_stat(champion, target, ratios, level=1) -> float:
+    """
+    Gets the damage dealt by the ratio part of a damage instance (spell, runes, item),
+    taking into account multiple ratios
+
+    :param level: level of the attack (spell level, 1 by default)
+    """
     stat = 0
     for stat_name, ratio in ratios:
         if "target_" in stat_name:
@@ -36,24 +41,24 @@ def ratio_stat(champion, target, ratios, spell_level=1) -> float:
         else:
             stat_value = getattr(champion, stat_name)
         if isinstance(ratio, list):
-            ratio = ratio[spell_level - 1]
+            ratio = ratio[level - 1]
         stat += stat_value * ratio
     return stat
 
 
-def pre_mitigation_spell_damage(
-    base_spell_damage: float,
-    ratio_damage: float,
+def pre_mitigation_damage(
+    base_damage: float,
+    ratio_stat: float,
     damage_modifier_flat: float = 0,
     damage_modifier_coeff: float = 1,
 ):
     """
-    Calculates the pre-mitigation damage of a spell or an autoattack
+    Calculates the pre-mitigation damage of a spell, item, rune active, autoattack etc..
     All values regarding damage modifiers should include the buffs/debuffs coming from spells, summoner spells, or items
     from both the attacker AND the defender.
-    :param: ratio_damage is damage that scales with the champion's or target's stat
+    :param: ratio_stat is damage that scales with the champion's or target's stat
     """
-    return (base_spell_damage + ratio_damage + damage_modifier_flat) * damage_modifier_coeff
+    return (base_damage + ratio_stat + damage_modifier_flat) * damage_modifier_coeff
 
 
 def avg_pre_mitigation_auto_attack_damage(
