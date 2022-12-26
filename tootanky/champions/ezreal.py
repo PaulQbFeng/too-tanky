@@ -7,7 +7,7 @@ class Ezreal(BaseChampion):
     champion_name = "Ezreal"
 
     def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)
+        super().__init__(**kwargs)
 
 
 @SpellFactory.register_spell
