@@ -27,7 +27,7 @@ class ActiveItem(BaseDamageMixin, BaseItem):
     damage_type = None
     ratios = []
 
-    def init_champion_type(self):
+    def init_range_type(self):
         """Some items give different damage bonuses for melee and ranged champions."""
         pass
 
@@ -39,4 +39,3 @@ class ItemPassive:
     name: str = ""
     unique: bool = False
     stats: Stats = None
-

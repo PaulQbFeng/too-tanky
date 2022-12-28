@@ -22,7 +22,7 @@ class Inventory:
                 self.apply_item_passive(item)
                 self.item_stats += item.stats
                 if isinstance(item, ActiveItem):
-                    item.init_champion_type()
+                    item.init_range_type()
 
     def contains(self, name):
         """Check if an item is in the inventory or if atleast one item of a list of items is in the inventory"""
