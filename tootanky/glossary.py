@@ -49,12 +49,10 @@ STAT_SUM_BASE_BONUS = [
 
 STAT_STANDALONE = [
     "lethality",
-    "armor_pen_flat",
     "armor_pen_percent",
     "bonus_armor_pen_percent",
     "magic_resist_pen_flat",
     "magic_resist_pen_percent",
-    "crit_chance",
     "crit_damage",
     "life_steal",
     "omni_vamp",
@@ -71,7 +69,9 @@ STAT_TOTAL_PROPERTY = [
     "ability_power"
 ]
 
-STAT_UNDERLYING_PROPERTY = []
+STAT_UNDERLYING_PROPERTY = [
+    "crit_chance"
+]
 
 STAT_TEMPORARY_BUFF = [
     "armor_reduction_flat",

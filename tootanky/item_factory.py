@@ -1,11 +1,11 @@
-from tootanky.damage import damage_after_resistance
+from tootanky.damage import damage_after_resistance, pre_mitigation_damage, ratio_stat, get_resistance_type
 from tootanky.stats import Stats
 from tootanky.item import BaseItem, ItemPassive, ActiveItem
 
 
 # Starter items
-# TODO: Cull, Dark Seal, Gustwalker Hatchling, Mosstomper Seedling, Relic Shield,
-#  Scorchclaw Pup, Spectral Sickle, Spellthief's Edge, Steel Shoulderguards, Tear of the Goddess
+# TODO: Cull, Dark Seal, Gustwalker Hatchling, Mosstomper Seedling, Relic Shield, Scorchclaw Pup, Spectral Sickle,
+#  Spellthief's Edge, Steel Shoulderguards, Tear of the Goddess
 class DoransBlade(BaseItem):
     name = "Doran's Blade"
     type = "Starter"
@@ -103,20 +103,20 @@ class Sheen(ActiveItem):
         super().__init__()
         self.activate = False
 
-    def on_hit_effect(self, target, damage_modifier_coeff=1):
+    def on_hit_effect(self, target):
         """Calculates the bonus damage dealt with an autoattack : 100% of base AD"""
         # TODO: Might be renamed damage
         damage = 0
         if self.activate:
-            damage = self.damage(target, damage_modifier_coeff=damage_modifier_coeff)
+            damage = self.damage(target)
             self.activate = False
         return damage
 
 
 # Epic items
 # TODO: Executioner's Calling, Forbidden Idol, Hexdrinker, Hextech Alternator, Ironspike Whip, Kircheis Shard,
-#  Leeching Leer, Oblivion Orb, Phage, Quicksilver Sash, Rageknife, Recurve Bow, Seeker's Armguard, Spectre's Cowl,
-#  Tiamat, Vampiric Scepter, Verdant Barrier, Warden's Mail, Winged Moonplate, Zeal
+#  Leeching Leer, Oblivion Orb, Phage, Quicksilver Sash, Seeker's Armguard, Spectre's Cowl, Vampiric Scepter,
+#  Verdant Barrier, Warden's Mail, Winged Moonplate, Zeal
 class AegisoftheLegion(BaseItem):
     name = "Aegis of the Legion"
     type = "Epic"
@@ -263,6 +263,35 @@ class Noonquiver(BaseItem):
         self.limitations = ["Mythic Component"]
 
 
+class Rageknife(ActiveItem):
+    name = "Rageknife"
+    type = "Epic"
+    damage_type = "physical"
+
+    def __init__(self):
+        super().__init__()
+        self.limitations = ["Crit Modifier"]
+        self.ratios = [("_crit_chance", 1.75 * 100)]
+
+    def on_hit_effect(self, target):
+        crit_damage_multiplier = 1
+        if self.champion.champion_name != "Yasuo":
+            crit_damage_multiplier = self.champion.get_crit_damage_multiplier()
+        return self.damage(target) * crit_damage_multiplier
+
+
+class RecurveBow(ActiveItem):
+    name = "Recurve Bow"
+    type = "Epic"
+    damage_type = "physical"
+
+    def get_damage_modifier_flat(self, **kwargs):
+        return 15
+
+    def on_hit_effect(self, target):
+        return self.damage(target)
+
+
 class RunesteelSpaulders(BaseItem):  # missing base_health_regen
     name = "Runesteel Spaulders"
     type = "Epic"
@@ -282,6 +311,8 @@ class SerratedDirk(BaseItem):
 
     def apply_passive(self):
         self.stats = self.stats + self.passive.stats
+        if self.stats.lethality != 10:
+            self.stats.lethality = 10
 
 
 class TargonsBuckler(BaseItem):  # missing base_health_regen
@@ -291,6 +322,33 @@ class TargonsBuckler(BaseItem):  # missing base_health_regen
     def __init__(self):
         super().__init__()
         self.limitations = ["Support"]
+
+
+class Tiamat(ActiveItem):
+    name = "Tiamat"
+    type = "Epic"
+    damage_type = "physical"
+
+    def __init__(self):
+        super().__init__()
+        self.limitations = ["Hydra"]
+        self.activate = False
+
+    def init_range_type(self):
+        if self.champion.range_type == "Melee":
+            self.ratios = [("attack_damage", 0.4)]
+        if self.champion.range_type == "Ranged":
+            self.ratios = [("attack_damage", 0.2)]
+
+    def on_hit_effect(self, target):
+        """
+        Basic attacks on-hit deal (mel.40% AD/rang.20% AD) physical dmg to other enemies within 350 units of the target.
+        """
+        # TODO: This must depend on other targets' resistances
+        damage = 0
+        if self.activate:
+            damage = self.damage(target)
+        return damage
 
 
 class WatchfulWardstone(BaseItem):
@@ -304,17 +362,16 @@ class WatchfulWardstone(BaseItem):
 
 
 # Legendary items
-# TODO: Abyssal Mask, Anathema's Chains, Archangel's Staff, Ardent Censer, Axiom Arc, Banshee's Veil, Black Cleaver,
-#  Black Mist Scythe, Blade of the Ruined King, Bloodthirster, Bulwark of the Mountain, Chempunk Chainsword,
-#  Chemtech Putrifier, Dead Man's Plate, Death's Dance, Demonic Embrace, Essence Reaver,
-#  Fimbulwinter, Force of Nature, Frozen Heart, Gargoyle Stoneplate, Guardian Angel, Guinsoo's Rageblade, Horizon Focus,
-#  Hullbreaker, Infinity Edge, Knight's Vow, Lich Bane, Lord Dominik's Regards, Manamune, Maw of Malmortius,
-#  Mejai's Soulstealer, Mercurial Scimitar, Mikael's Blessing, Morellonomicon, Mortal Reminder, Muramana,
-#  Pauldrons of Whiterock, Phantom Dancer, Rabadon's Deathcap, Randuin's Omen, Rapid Firecannon,
+# TODO: Abyssal Mask, Anathema's Chains, Archangel's Staff, Ardent Censer, Axiom Arc, Banshee's Veil, Black Mist Scythe,
+#  Blade of the Ruined King, Bloodthirster, Bulwark of the Mountain, Chempunk Chainsword, Chemtech Putrifier,
+#  Dead Man's Plate, Death's Dance, Demonic Embrace, Essence Reaver, Fimbulwinter, Force of Nature, Frozen Heart,
+#  Gargoyle Stoneplate, Guinsoo's Rageblade, Horizon Focus, Hullbreaker, Knight's Vow, Lich Bane,
+#  Lord Dominik's Regards, Manamune, Maw of Malmortius, Mejai's Soulstealer, Mercurial Scimitar, Mikael's Blessing,
+#  Morellonomicon, Mortal Reminder, Muramana, Pauldrons of Whiterock, Phantom Dancer, Randuin's Omen, Rapid Firecannon,
 #  Ravenous Hydra, Redemption, Runaan's Hurricane, Rylai's Crystal Scepter, Seraph's Embrace, Serpent's Fang,
 #  Shadowflame, Shard of True Ice, Silvermere Dawn, Spear of Shojin, Spirit Visage, Staff of Flowing Water,
 #  Sterak's Gage, Stormrazor, Sunfire Aegis, The Collector, Thornmail, Titanic Hydra, Turbo Chemtank, Umbral Glaive,
-#  Vigilant Wardstone, Void Staff, Warmog's Armor, Winter's Approach, Wit's End, Zeke's Convergence, Zhonya's Hourglass
+#  Void Staff, Warmog's Armor, Winter's Approach, Wit's End, Zeke's Convergence, Zhonya's Hourglass
 class BlackCleaver(BaseItem):
     name = "Black Cleaver"
     type = "Legendary"
@@ -483,3 +540,5 @@ class Galeforce(BaseItem):
 ALL_ITEMS = {cls.name: cls for cls in BaseItem.__subclasses__() if cls.__name__ != "ActiveItem"}
 ALL_MYTHIC_ITEMS = {cls_name: cls for cls_name, cls in ALL_ITEMS.items() if cls.type == "Mythic"}
 SPELL_BLADE_ITEMS = ["Divine Sunderer", "Trinity Force", "Lich Bane", "Essence Reaver", "Sheen"]
+CLASSIC_ON_HIT_ITEMS = ["Recurve Bow"]
+WRATH_ITEMS = ["Rageknife", "Guinsoo's Rageblade"]

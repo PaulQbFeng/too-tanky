@@ -6,6 +6,7 @@ from tootanky.spell_registry import SpellFactory
 
 class Caitlyn(BaseChampion):
     champion_name = "Caitlyn"
+    range_type = "Ranged"
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, spell_max_order=["q", "w", "e"], **kwargs)
@@ -61,7 +62,10 @@ class Caitlyn(BaseChampion):
             crit=is_crit,
             crit_damage=crit_damage,
         )
-        return damage
+        on_damage = 0
+        for on_hit_source in self.on_hits:
+            on_damage += on_hit_source.on_hit_effect(target)
+        return damage + on_damage
 
 
 @SpellFactory.register_spell

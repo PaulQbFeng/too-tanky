@@ -44,7 +44,7 @@ class BaseDamageMixin:
 
         pre_mtg_dmg = pre_mitigation_damage(
             base_damage=self.get_base_damage(),
-            ratio_stat=ratio_dmg,
+            ratio_damage=ratio_dmg,
             damage_modifier_flat=damage_modifier_flat,
             damage_modifier_coeff=damage_modifier_coeff,
         )

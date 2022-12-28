@@ -5,6 +5,7 @@ from tootanky.spell_registry import SpellFactory
 
 class Xerath(BaseChampion):
     champion_name = "Xerath"
+    range_type = "Ranged"
 
     def __init__(self, **kwargs):
         super().__init__(champion_name=__class__.champion_name, spell_max_order=["q", "w", "e"], **kwargs)
