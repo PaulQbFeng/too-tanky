@@ -3,7 +3,6 @@ import pytest
 
 from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie, Caitlyn, Yasuo, Yone
-from tootanky.damage import damage_after_positive_resistance
 from tootanky.item_factory import (
     ALL_ITEMS,
     ALL_MYTHIC_ITEMS,
@@ -19,7 +18,9 @@ from tootanky.item_factory import (
     Tiamat,
     Rageknife,
     SerratedDirk,
-    LastWhisper
+    LastWhisper,
+    LongSword,
+    Galeforce
 )
 
 
@@ -88,9 +89,8 @@ def test_serrated_unique_passive():
 
 
 def galeforce_default_run(
-    item_names, target, test_bonus_attack_damage: float, test_crit_chance: float, test_active: list
+    inventory, target, test_bonus_attack_damage: float, test_crit_chance: float, test_active: list
 ):
-    inventory = [ALL_ITEMS[item_name]() for item_name in item_names]
     ahri = Ahri(level=1, inventory=inventory)
     assert ahri.bonus_attack_damage == test_bonus_attack_damage
     assert ahri.crit_chance == test_crit_chance
@@ -98,22 +98,21 @@ def galeforce_default_run(
 
     for champion_level in range(1, 19):
         ahri = Ahri(level=champion_level, inventory=inventory)
-        assert round(ahri.apply_item_active(item_name="Galeforce", target=target)) == test_active[champion_level - 1]
-        target.reset_health()
+        assert round(ahri.inventory.get_item("Galeforce").damage(target)) == test_active[champion_level - 1]
 
     ahri = Ahri(level=1, inventory=inventory)
     dummy = Dummy(2000, 60)
     test_active_2 = [134, 275, 422, 577, 739, 909, 1087, 1273, 1468, 1666]
     total_damage = 0
     for i in range(10):
-        total_damage += ahri.apply_item_active(item_name="Galeforce", target=dummy)
+        total_damage += ahri.inventory.get_item("Galeforce").do_damage(dummy)
         assert round(total_damage) == test_active_2[i]
 
 
 def test_galeforce():
-    item_names = ["Galeforce", "Long Sword", "Cloak of Agility"]
+    inventory = [Galeforce(), LongSword(), CloakofAgility()]
     galeforce_default_run(
-        item_names=item_names,
+        inventory=inventory,
         target=Dummy(1000, 60),
         test_bonus_attack_damage=70,
         test_crit_chance=0.35,
