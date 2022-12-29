@@ -1,9 +1,8 @@
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Tuple
 
 import tootanky.stats_calculator as sc
 
 from tootanky.damage import damage_physical_auto_attack
-from tootanky.data_parser import ALL_CHAMPION_BASE_STATS
 from tootanky.glossary import (
     STAT_SUM_BASE_BONUS,
     STAT_STANDALONE,
@@ -31,8 +30,8 @@ class BaseChampion:
         self,
         level: int = 1,
         inventory: Optional[List[BaseItem]] = None,
-        spell_levels: Optional[List[int]] = None,
-        spell_max_order: Optional[List[str]] = None,
+        spell_levels: Optional[Tuple[int]] = None,
+        spell_max_order: Optional[Tuple[str]] = None,
     ):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
@@ -46,7 +45,7 @@ class BaseChampion:
 
         if spell_levels is None:
             if spell_max_order is None:
-                spell_levels = [1, 1, 1, 1]
+                spell_levels = (1, 1, 1, 1)
             else:
                 self.spell_max_order = spell_max_order
                 spell_levels = self.get_default_spell_levels()
@@ -247,12 +246,12 @@ class BaseChampion:
             spell_3,
         ]
         default_order_per_level = default_order[0 : self.level]
-        return [
+        return (
             default_order_per_level.count("q"),
             default_order_per_level.count("w"),
             default_order_per_level.count("e"),
             default_order_per_level.count("r"),
-        ]
+        )
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""

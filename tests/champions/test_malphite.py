@@ -4,7 +4,7 @@ from tootanky.item_factory import AmplifyingTome, BlastingWand, NeedlesslyLargeR
 
 
 def test_malphite_q():
-    malph = Malphite(level=13, inventory=[BlastingWand(), AmplifyingTome()], spell_levels=[5, 1, 1, 1])
+    malph = Malphite(level=13, inventory=[BlastingWand(), AmplifyingTome()], spell_levels=(5, 1, 1, 1))
     dummy = Dummy(health=1000, bonus_resistance=30)
     dmg = malph.spell_q.damage(dummy)
 
@@ -12,7 +12,7 @@ def test_malphite_q():
 
 
 def test_malphite_r():
-    malph = Malphite(level=11, inventory=[NeedlesslyLargeRod()], spell_levels=[1, 1, 1, 2])
+    malph = Malphite(level=11, inventory=[NeedlesslyLargeRod()], spell_levels=(1, 1, 1, 2))
     dummy = Dummy(health=1000, bonus_resistance=30)
     dmg = malph.spell_r.damage(dummy)
     malph.spell_r.print_specs()
