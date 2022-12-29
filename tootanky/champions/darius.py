@@ -5,6 +5,7 @@ from tootanky.spell_registry import SpellFactory
 
 class Darius(BaseChampion):
     name = "Darius"
+    range_type = "Melee"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

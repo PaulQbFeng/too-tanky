@@ -21,6 +21,10 @@ class BaseItem:
     def apply_passive(self):
         pass
 
+    def init_range_type(self):
+        """Some items give different effects for melee and ranged champions."""
+        pass
+
 
 class ActiveItem(BaseDamageMixin, BaseItem):
     champion = None

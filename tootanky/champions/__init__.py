@@ -25,5 +25,7 @@ from .jarvan import JarvanIV
 from .jax import Jax
 from .malphite import Malphite
 from .missfortune import MissFortune
+from .yasuo import Yasuo
+from .yone import Yone
 from .xerath import Xerath
 from .zed import Zed

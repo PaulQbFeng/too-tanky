@@ -5,6 +5,7 @@ from tootanky.spell_registry import SpellFactory
 
 class Malphite(BaseChampion):
     name = "Malphite"
+    range_type = "Melee"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

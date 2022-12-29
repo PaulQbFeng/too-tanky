@@ -5,6 +5,7 @@ from tootanky.spell_registry import SpellFactory
 
 class Orianna(BaseChampion):
     name = "Orianna"
+    range_type = "Ranged"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

@@ -6,6 +6,7 @@ from tootanky.damage import get_resistance_type
 
 class JarvanIV(BaseChampion):
     name = "JarvanIV"
+    range_type = "Melee"
 
     def __init__(self, **kwargs):
         super().__init__(spell_max_order=["q", "e", "w"], **kwargs)

@@ -2,7 +2,7 @@ import math
 import pytest
 
 from tootanky.champion import Dummy
-from tootanky.champions import Ahri, Annie, Caitlyn
+from tootanky.champions import Ahri, Annie, Caitlyn, Yasuo, Yone
 from tootanky.damage import damage_after_positive_resistance
 from tootanky.item_factory import (
     ALL_ITEMS,
@@ -14,6 +14,12 @@ from tootanky.item_factory import (
     RabadonsDeathcap,
     BlastingWand,
     BlackCleaver,
+    RecurveBow,
+    BFSword,
+    Tiamat,
+    Rageknife,
+    SerratedDirk,
+    LastWhisper
 )
 
 
@@ -178,3 +184,52 @@ def test_black_cleaver():
     ahri.inventory.get_item("Black Cleaver").deapply_buffs(dummy)
     assert round(dummy.armor) == 100
     assert ahri.inventory.get_item("Black Cleaver").carve_stack_count == 0
+
+
+def test_recurve_bow():
+    caitlyn = Caitlyn(level=3, inventory=[RecurveBow()])
+    assert round(caitlyn.bonus_attack_speed, 3) == 0.309
+    assert round(caitlyn.attack_speed, 3) == 0.857
+    dummy = Dummy(bonus_resistance=80)
+    assert round(caitlyn.auto_attack_damage(dummy)) == 46
+    caitlyn.w_hit = True
+    assert round(caitlyn.auto_attack_damage(dummy)) == 91
+
+
+def test_tiamat():
+    # TODO: tests with on hit and multiple targets
+    caitlyn = Caitlyn(level=3, inventory=[BFSword(), Tiamat()])
+    dummy = Dummy(bonus_resistance=80)
+    assert round(caitlyn.auto_attack_damage(dummy)) == 74
+
+
+def test_rageknife():
+    # TODO: test with crit modifiers: https://github.com/PaulQbFeng/too-tanky/issues/69
+    # crit_chance/crit_chance_converted test
+    default_inventory = [Rageknife(), SerratedDirk(), LastWhisper(), CloakofAgility(), CloakofAgility()]
+    crit_values = [(0.3, 0, 0.3), (0.3, 0, 0.3)]
+    for i, champion in enumerate([Caitlyn(inventory=default_inventory), Yasuo(inventory=default_inventory)]):
+        assert champion.orig_bonus_stats.crit_chance == crit_values[i][0]
+        assert champion.crit_chance == crit_values[i][1]
+        assert champion._crit_chance == crit_values[i][2]
+
+    dummy = Dummy(bonus_resistance=50)
+    caitlyn = Caitlyn(level=7, inventory=[Rageknife()])
+    assert round(caitlyn.auto_attack_damage(dummy)) == 54
+    caitlyn.w_hit = True
+    assert round(caitlyn.auto_attack_damage(dummy)) == 129
+    caitlyn = Caitlyn(level=7, inventory=default_inventory)
+    assert round(caitlyn.auto_attack_damage(dummy)) == 137
+    caitlyn.w_hit = True
+    assert round(caitlyn.auto_attack_damage(dummy)) == 270
+
+    yasuo = Yasuo(level=3, inventory=[Rageknife()])
+    assert round(yasuo.auto_attack_damage(dummy)) == 43
+    yasuo = Yasuo(level=3, inventory=default_inventory)
+    assert round(yasuo.auto_attack_damage(dummy)) == 124
+
+    yone = Yone(level=3, inventory=[Rageknife()])
+    assert round(yone.auto_attack_damage(dummy)) == 42
+    yone = Yone(level=3, inventory=default_inventory)
+    assert round(yone.attack_damage) == 113
+    assert round(yone.auto_attack_damage(dummy)) == 119
