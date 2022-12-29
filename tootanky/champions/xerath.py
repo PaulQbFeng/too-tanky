@@ -7,8 +7,8 @@ class Xerath(BaseChampion):
     name = "Xerath"
     range_type = "Ranged"
 
-    def __init__(self, **kwargs):
-        super().__init__(spell_max_order=["q", "w", "e"], **kwargs)
+    def __init__(self, spell_max_order=("q", "w", "e"), **kwargs):
+        super().__init__(spell_max_order=spell_max_order, **kwargs)
 
 
 @SpellFactory.register_spell

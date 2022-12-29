@@ -6,8 +6,8 @@ class Yasuo(BaseChampion):
     name = "Yasuo"
     range_type = "Melee"
 
-    def __init__(self, **kwargs):
-        super().__init__(spell_max_order=["q", "e", "w"], **kwargs)
+    def __init__(self, spell_max_order=("q", "e", "w"), **kwargs):
+        super().__init__(spell_max_order=spell_max_order, **kwargs)
         if self.orig_bonus_stats.crit_chance >= 1:
             self.orig_bonus_stats.attack_damage += 0.4 * (self.orig_bonus_stats.crit_chance - 1) * 100
             self.bonus_attack_damage = self.orig_bonus_stats.attack_damage
