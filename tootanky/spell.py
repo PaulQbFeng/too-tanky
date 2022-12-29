@@ -31,7 +31,7 @@ class BaseSpell(BaseDamageMixin):
     def __init__(self, champion, level=1):
         self.set_level(level)
         self.champion = champion
-        self.spell_specs = ALL_CHAMPION_SPELLS[champion.champion_name][self.spell_key].copy()
+        self.spell_specs = ALL_CHAMPION_SPELLS[champion.name][self.spell_key].copy()
 
         self.nature = self.get_spell_nature(self.spell_key)
         for name, value in self.spell_specs.items():
@@ -48,7 +48,7 @@ class BaseSpell(BaseDamageMixin):
 
     @property
     def cooldown(self):
-        base_cooldown = ALL_CHAMPION_SPELLS[self.champion.champion_name][self.spell_key]["base_cooldown_per_level"][
+        base_cooldown = ALL_CHAMPION_SPELLS[self.champion.name][self.spell_key]["base_cooldown_per_level"][
             self.level - 1
         ]
         return base_cooldown * 100 / (100 + self.champion.ability_haste)

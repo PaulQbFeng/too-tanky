@@ -275,7 +275,7 @@ class Rageknife(ActiveItem):
 
     def on_hit_effect(self, target):
         crit_damage_multiplier = 1
-        if self.champion.champion_name != "Yasuo":
+        if self.champion.name != "Yasuo":
             crit_damage_multiplier = self.champion.get_crit_damage_multiplier()
         return self.damage(target) * crit_damage_multiplier
 

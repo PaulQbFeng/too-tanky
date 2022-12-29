@@ -4,11 +4,11 @@ from tootanky.spell_registry import SpellFactory
 
 
 class Ahri(BaseChampion):
-    champion_name = "Ahri"
+    name = "Ahri"
     range_type = "Ranged"
 
     def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)
+        super().__init__(**kwargs)
 
 
 @SpellFactory.register_spell

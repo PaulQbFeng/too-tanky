@@ -25,9 +25,10 @@ class BaseChampion:
         - auto attack
     """
 
+    name: str = None
+
     def __init__(
         self,
-        champion_name: str,
         level: int = 1,
         inventory: Optional[List[BaseItem]] = None,
         spell_levels: Optional[List[int]] = None,
@@ -35,12 +36,12 @@ class BaseChampion:
     ):
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
-        champion_name = normalize_champion_name(champion_name)
         self.inventory = Inventory(inventory, champion=self)
-        self.orig_base_stats = sc.get_champion_base_stats(
-            ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level, champion_name=champion_name
-        )
-        self.orig_bonus_stats = sc.get_champion_bonus_stats(ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level)
+        if self.name is None:
+            raise ValueError("Child class of BaseChampion is expected to have name = {champion name}")
+        self.name = normalize_champion_name(self.name)
+        self.orig_base_stats = sc.get_champion_base_stats(champion_name=self.name, level=level)
+        self.orig_bonus_stats = sc.get_champion_bonus_stats(champion_name=self.name, level=level)
         self.initialize_champion_stats_by_default()
 
         if spell_levels is None:
@@ -189,8 +190,8 @@ class BaseChampion:
             self.base_armor = orig_base_armor - self.armor_reduction_flat * orig_base_armor / orig_total_armor
             self.bonus_armor = orig_bonus_armor - self.armor_reduction_flat * orig_bonus_armor / orig_total_armor
         if self.base_armor + self.bonus_armor > 0:
-            self.base_armor *= (1 - self.armor_reduction_percent)
-            self.bonus_armor *= (1 - self.armor_reduction_percent)
+            self.base_armor *= 1 - self.armor_reduction_percent
+            self.bonus_armor *= 1 - self.armor_reduction_percent
 
     def get_mythic_passive_stats(self):
         if self.inventory.item_type_count["Mythic"] == 1:
@@ -255,10 +256,10 @@ class BaseChampion:
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
-        if self.champion_name not in SpellFactory()._SPELLS:
+        if self.name not in SpellFactory()._SPELLS:
             return None
 
-        spells = SpellFactory().get_spells_for_champion(self.champion_name)
+        spells = SpellFactory().get_spells_for_champion(self.name)
         level_q, level_w, level_e, level_r = spell_levels
         self.spell_q = spells["q"](champion=self, level=level_q)
         self.spell_w = spells["w"](champion=self, level=level_w)
@@ -356,10 +357,10 @@ class BaseChampion:
 
 # Dummy class for tests in practice tool.
 class Dummy(BaseChampion):
-    champion_name = "Dummy"
+    name = "Dummy"
 
     def __init__(self, health: float = 1000, bonus_resistance: int = 0):
-        super().__init__(champion_name=__class__.champion_name, inventory=None, level=1)
+        super().__init__(inventory=None, level=1)
         """Dummy (here defined as a champion) has the same armor and magic resist. His health is capped at 10 000"""
         assert bonus_resistance % 10 == 0
         assert health % 100 == 0
