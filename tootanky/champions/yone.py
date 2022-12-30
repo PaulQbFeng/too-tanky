@@ -3,11 +3,11 @@ from tootanky.champion import BaseChampion
 
 
 class Yone(BaseChampion):
-    champion_name = "Yone"
+    name = "Yone"
     range_type = "Melee"
 
     def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)
+        super().__init__(**kwargs)
         if self.orig_bonus_stats.crit_chance >= 1:
             self.orig_bonus_stats.attack_damage += 0.4 * (self.orig_bonus_stats.crit_chance - 1) * 100
             self.bonus_attack_damage = self.orig_bonus_stats.attack_damage

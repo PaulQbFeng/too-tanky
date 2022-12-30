@@ -2,8 +2,8 @@ from tootanky.champion import BaseChampion
 
 
 class Aatrox(BaseChampion):
-    champion_name = "Aatrox"
+    name = "Aatrox"
     range_type = "Melee"
 
     def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, **kwargs)
+        super().__init__(**kwargs)

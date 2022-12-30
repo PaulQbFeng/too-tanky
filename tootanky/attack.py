@@ -131,5 +131,5 @@ class AutoAttack(BaseDamageMixin):
             damage_modifier_coeff=self.champion.get_damage_modifier_coeff(),
             is_crit=is_crit
             )
-        self.champion.auto_attack_count()
+        self.champion.apply_auto_attack_count()
         return damage

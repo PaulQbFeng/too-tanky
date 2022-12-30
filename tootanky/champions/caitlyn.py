@@ -5,11 +5,11 @@ from tootanky.spell_registry import SpellFactory
 
 
 class Caitlyn(BaseChampion):
-    champion_name = "Caitlyn"
+    name = "Caitlyn"
     range_type = "Ranged"
 
     def __init__(self, **kwargs):
-        super().__init__(champion_name=__class__.champion_name, spell_max_order=["q", "w", "e"], **kwargs)
+        super().__init__(spell_max_order=["q", "w", "e"], **kwargs)
         self.auto_attack_count = 0
         self.w_hit = False
         self.e_hit = False
@@ -39,7 +39,7 @@ class Caitlyn(BaseChampion):
 
         return damage_modifier_flat
 
-    def auto_attack_count(self):
+    def apply_auto_attack_count(self):
         if self.w_hit:
             self.w_hit = False
         else:
