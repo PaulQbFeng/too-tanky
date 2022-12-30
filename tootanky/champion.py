@@ -16,6 +16,7 @@ from tootanky.inventory import Inventory
 from tootanky.item_factory import BaseItem, SPELL_BLADE_ITEMS, CLASSIC_ON_HIT_ITEMS, WRATH_ITEMS
 from tootanky.spell_registry import SpellFactory
 from tootanky.stats import Stats
+from tootanky.attack import AutoAttack
 
 
 class BaseChampion:
@@ -37,6 +38,7 @@ class BaseChampion:
         self.level = level
         champion_name = normalize_champion_name(champion_name)
         self.inventory = Inventory(inventory, champion=self)
+        self.auto_attack = AutoAttack(champion=self)
         self.orig_base_stats = sc.get_champion_base_stats(
             ALL_CHAMPION_BASE_STATS[champion_name].copy(), level=level, champion_name=champion_name
         )
@@ -318,25 +320,14 @@ class BaseChampion:
         assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
         return selected_item.apply_active(target)
 
-    def auto_attack_damage(self, target, is_crit: bool = False):
-        """Calculates the damage dealt to an enemy champion with an autoattack"""
+    def get_damage_modifier_flat(self):
+        return 0
 
-        damage = damage_physical_auto_attack(
-            base_attack_damage=self.base_attack_damage,
-            base_armor=target.base_armor,
-            bonus_attack_damage=self.bonus_attack_damage,
-            bonus_armor=target.bonus_armor,
-            attacker_level=self.level,
-            lethality=self.lethality,
-            armor_pen=self.armor_pen_percent,
-            bonus_armor_pen=self.bonus_armor_pen_percent,
-            crit=is_crit,
-            crit_damage=self.crit_damage,
-        )
-        on_damage = 0
-        for on_hit_source in self.on_hits:
-            on_damage += on_hit_source.on_hit_effect(target)
-        return damage + on_damage
+    def get_damage_modifier_coeff(self):
+        return 1
+
+    def apply_counter(self):
+        pass
 
     def take_damage(self, damage):
         """Takes damage from an enemy champion"""
@@ -346,7 +337,7 @@ class BaseChampion:
     def do_auto_attack(self, target, is_crit: bool = False):
         """Deals damage to an enemy champion with an autoattack"""
 
-        damage = self.auto_attack_damage(target, is_crit)
+        damage = self.auto_attack.damage(target, is_crit)
         target.take_damage(damage)
         self.apply_black_cleaver(target)
 

@@ -1,4 +1,4 @@
-from tootanky.damage import damage_after_resistance, pre_mitigation_damage, ratio_stat, get_resistance_type
+from tootanky.damage import damage_after_resistance, pre_mitigation_damage, ratio_stat, get_resistance_type, damage_physical_auto_attack
 
 
 class BaseDamageMixin:
@@ -16,7 +16,7 @@ class BaseDamageMixin:
         - Champion spells ---> BaseSpell(BaseDamageMixin)
         - Item actives / on-hits ---> ActiveItem(BaseDamageMixin, BaseItem)
         - Runes ---> TODO
-        - Champion auto-attack ---> TODO
+        - Champion auto-attack ---> AutoAttack(BaseDamageMixin)
 
     BaseDamageMixin does not have a __init__ method, always put it as the left argument when creating
     a class with multiple inheritance. Eg. class ActiveItem(BaseDamageMixin, BaseItem).
@@ -36,7 +36,7 @@ class BaseDamageMixin:
             return self.level
         return 1
 
-    def _compute_damage(self, target, damage_modifier_flat=0, damage_modifier_coeff=1) -> float:
+    def _compute_damage(self, target, damage_modifier_flat, damage_modifier_coeff) -> float:
         """Calculates the damage dealt to the target. (private)"""
 
         level = self.get_spell_level()
@@ -91,4 +91,45 @@ class BaseDamageMixin:
 
         damage = self.damage(target, **kwargs)
         target.take_damage(damage)
+        return damage
+
+
+class AutoAttack(BaseDamageMixin):
+
+    def __init__(self, champion):
+        self.champion = champion
+
+    def _compute_damage(self, target, damage_modifier_flat, damage_modifier_coeff, is_crit: bool = False) -> float:
+        """Calculates the damage to the target. (private)"""
+        damage = damage_physical_auto_attack(
+            base_attack_damage=self.champion.base_attack_damage,
+            bonus_attack_damage=self.champion.bonus_attack_damage,
+            base_armor=target.base_armor,
+            bonus_armor=target.bonus_armor,
+            attacker_level=self.champion.level,
+            lethality=self.champion.lethality,
+            armor_pen=self.champion.armor_pen_percent,
+            bonus_armor_pen=self.champion.bonus_armor_pen_percent,
+            crit=is_crit,
+            crit_damage=self.champion.crit_damage,
+            damage_modifier_flat=damage_modifier_flat,
+            damage_modifier_coeff=damage_modifier_coeff
+        )
+        on_damage = 0
+        for on_hit_source in self.champion.on_hits:
+            on_damage += on_hit_source.on_hit_effect(target)
+        return damage + on_damage
+
+    def damage(self, target, is_crit: bool = False):
+        """
+        Calculates the damage dealt to an enemy champion with an autoattack.
+        Empowered autoattacks are by overriding get_damage_modifier_flat and get_damage_modifier_coeff
+        """
+        damage = self._compute_damage(
+            target=target,
+            damage_modifier_flat=self.champion.get_damage_modifier_flat(),
+            damage_modifier_coeff=self.champion.get_damage_modifier_coeff(),
+            is_crit=is_crit
+            )
+        self.champion.apply_counter()
         return damage

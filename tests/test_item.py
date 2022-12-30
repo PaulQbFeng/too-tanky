@@ -51,22 +51,22 @@ def test_infinity_edge(infinity_edge, agility_cloak):
 def test_infinity_edge_cait(infinity_edge, agility_cloak):
     dummy = Dummy(health=1000, bonus_resistance=100)
     caitlyn = Caitlyn(level=11, inventory=[infinity_edge] + 2 * [agility_cloak])
-    assert round(caitlyn.auto_attack_damage(dummy, is_crit=False)) == 83
-    assert round(caitlyn.auto_attack_damage(dummy, is_crit=True)) == 145
+    assert round(caitlyn.auto_attack.damage(dummy, is_crit=False)) == 83
+    assert round(caitlyn.auto_attack.damage(dummy, is_crit=True)) == 145
     caitlyn = Caitlyn(level=11, inventory=[infinity_edge] + 3 * [agility_cloak])
     assert caitlyn.crit_damage == 0.35
-    assert round(caitlyn.auto_attack_damage(dummy, is_crit=False)) == 83
-    assert round(caitlyn.auto_attack_damage(dummy, is_crit=True)) == 174
+    assert round(caitlyn.auto_attack.damage(dummy, is_crit=False)) == 83
+    assert round(caitlyn.auto_attack.damage(dummy, is_crit=True)) == 174
 
 
 def test_sheen():
     annie = Annie(level=2, inventory=[Sheen()])
     dummy = Dummy(health=1000, bonus_resistance=100)
     assert len(annie.on_hits) == 1
-    assert round(annie.auto_attack_damage(dummy)) == 26
+    assert round(annie.auto_attack.damage(dummy)) == 26
     assert annie.spell_q.damage(dummy, spellblade=True) == 40
-    assert round(annie.auto_attack_damage(dummy)) == 52
-    assert round(annie.auto_attack_damage(dummy)) == 26
+    assert round(annie.auto_attack.damage(dummy)) == 52
+    assert round(annie.auto_attack.damage(dummy)) == 26
 
 
 def test_serrated_unique_passive():
@@ -178,7 +178,7 @@ def test_black_cleaver():
     damage_values = [56, 58, 59, 61, 63, 64, 66, 66]
     armor_values = [95, 90, 85, 80, 75, 70, 70, 70]
     for i in range(8):
-        assert round(ahri.auto_attack_damage(dummy)) == damage_values[i]
+        assert round(ahri.auto_attack.damage(dummy)) == damage_values[i]
         ahri.do_auto_attack(dummy)
         assert round(dummy.armor) == armor_values[i]
     ahri.inventory.get_item("Black Cleaver").deapply_buffs(dummy)
@@ -191,16 +191,16 @@ def test_recurve_bow():
     assert round(caitlyn.bonus_attack_speed, 3) == 0.309
     assert round(caitlyn.attack_speed, 3) == 0.857
     dummy = Dummy(bonus_resistance=80)
-    assert round(caitlyn.auto_attack_damage(dummy)) == 46
+    assert round(caitlyn.auto_attack.damage(dummy)) == 46
     caitlyn.w_hit = True
-    assert round(caitlyn.auto_attack_damage(dummy)) == 91
+    assert round(caitlyn.auto_attack.damage(dummy)) == 91
 
 
 def test_tiamat():
     # TODO: tests with on hit and multiple targets
     caitlyn = Caitlyn(level=3, inventory=[BFSword(), Tiamat()])
     dummy = Dummy(bonus_resistance=80)
-    assert round(caitlyn.auto_attack_damage(dummy)) == 74
+    assert round(caitlyn.auto_attack.damage(dummy)) == 74
 
 
 def test_rageknife():
@@ -215,21 +215,21 @@ def test_rageknife():
 
     dummy = Dummy(bonus_resistance=50)
     caitlyn = Caitlyn(level=7, inventory=[Rageknife()])
-    assert round(caitlyn.auto_attack_damage(dummy)) == 54
+    assert round(caitlyn.auto_attack.damage(dummy)) == 54
     caitlyn.w_hit = True
-    assert round(caitlyn.auto_attack_damage(dummy)) == 129
+    assert round(caitlyn.auto_attack.damage(dummy)) == 129
     caitlyn = Caitlyn(level=7, inventory=default_inventory)
-    assert round(caitlyn.auto_attack_damage(dummy)) == 137
+    assert round(caitlyn.auto_attack.damage(dummy)) == 137
     caitlyn.w_hit = True
-    assert round(caitlyn.auto_attack_damage(dummy)) == 270
+    assert round(caitlyn.auto_attack.damage(dummy)) == 270
 
     yasuo = Yasuo(level=3, inventory=[Rageknife()])
-    assert round(yasuo.auto_attack_damage(dummy)) == 43
+    assert round(yasuo.auto_attack.damage(dummy)) == 43
     yasuo = Yasuo(level=3, inventory=default_inventory)
-    assert round(yasuo.auto_attack_damage(dummy)) == 124
+    assert round(yasuo.auto_attack.damage(dummy)) == 124
 
     yone = Yone(level=3, inventory=[Rageknife()])
-    assert round(yone.auto_attack_damage(dummy)) == 42
+    assert round(yone.auto_attack.damage(dummy)) == 42
     yone = Yone(level=3, inventory=default_inventory)
     assert round(yone.attack_damage) == 113
-    assert round(yone.auto_attack_damage(dummy)) == 119
+    assert round(yone.auto_attack.damage(dummy)) == 119

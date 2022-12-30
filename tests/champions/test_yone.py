@@ -9,4 +9,4 @@ def test_yone_passive():
     assert yone.crit_chance == 1
     assert round(yone.crit_damage, 2) == 0.89 - 0.75
     assert round(yone.attack_damage) == 140
-    assert round(yone.auto_attack_damage(target=dummy, is_crit=True), 1) == 220.5
+    assert round(yone.auto_attack.damage(target=dummy, is_crit=True), 1) == 220.5
