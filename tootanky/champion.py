@@ -326,7 +326,7 @@ class BaseChampion:
     def get_damage_modifier_coeff(self):
         return 1
 
-    def apply_counter(self):
+    def auto_attack_count(self):
         pass
 
     def take_damage(self, damage):

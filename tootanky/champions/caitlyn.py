@@ -39,7 +39,7 @@ class Caitlyn(BaseChampion):
 
         return damage_modifier_flat
 
-    def apply_counter(self):
+    def auto_attack_count(self):
         if self.w_hit:
             self.w_hit = False
         else:
