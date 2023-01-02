@@ -1,4 +1,4 @@
-from tootanky.data_parser import SCALING_STAT_NAMES, ALL_CHAMPION_BASE_STATS
+from tootanky.data_parser import SCALING_STAT_NAMES, NON_SCALING_STAT_NAMES, ALL_CHAMPION_BASE_STATS
 from tootanky.item_factory import BaseItem
 from tootanky.stats import Stats
 
@@ -16,9 +16,7 @@ def calculate_base_stat_from_level(base_stats: dict, stat_name: str, level: int)
     if stat_name == "attack_speed":
         # attack speed per level is considered as bonus attack speed
         return stat
-    elif stat_name == "move_speed":
-        return stat
-    else:
+
         mean_growth_perlevel = base_stats[stat_name + "_perlevel"]
         return calculate_flat_stat_from_level(stat, mean_growth_perlevel, level)
 
@@ -36,10 +34,14 @@ def calculate_bonus_stat_from_level(base_stats: dict, stat_name: str, level: int
 def get_champion_base_stats(champion_name: str, level: int) -> Stats:
     """Takes all the base stats from the input dictionary and create the corresponding attributes in the instance"""
     champion_stats = ALL_CHAMPION_BASE_STATS[champion_name].copy()
-    stats_dict = {
-        stat_name: calculate_base_stat_from_level(champion_stats, stat_name, level)
-        for stat_name in (SCALING_STAT_NAMES + ["move_speed"])
-    }
+
+    stats_dict = dict()
+    for stat_name in SCALING_STAT_NAMES:
+        stats_dict[stat_name] = calculate_base_stat_from_level(champion_stats, stat_name, level)
+
+    for stat_name in NON_SCALING_STAT_NAMES:
+        stats_dict[stat_name] = champion_stats[stat_name]
+
     if champion_name in ALL_CHAMPION_OUTLIERS_ATTACK_SPEED_RATIO:
         stats_dict["attack_speed_ratio"] = ALL_CHAMPION_OUTLIERS_ATTACK_SPEED_RATIO[champion_name]
     else:
