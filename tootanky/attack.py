@@ -123,13 +123,12 @@ class AutoAttack(BaseDamageMixin):
     def damage(self, target, is_crit: bool = False):
         """
         Calculates the damage dealt to an enemy champion with an autoattack.
-        Empowered autoattacks are by overriding get_damage_modifier_flat and get_damage_modifier_coeff
+        Empowered autoattacks are obtained by overriding get_damage_modifier_flat and get_damage_modifier_coeff
         """
         damage = self._compute_damage(
             target=target,
-            damage_modifier_flat=self.champion.get_damage_modifier_flat(),
-            damage_modifier_coeff=self.champion.get_damage_modifier_coeff(),
+            damage_modifier_flat=self.get_damage_modifier_flat(),
+            damage_modifier_coeff=self.get_damage_modifier_coeff(),
             is_crit=is_crit
             )
-        self.champion.apply_auto_attack_count()
         return damage

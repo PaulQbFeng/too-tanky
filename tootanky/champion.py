@@ -36,7 +36,7 @@ class BaseChampion:
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
         self.inventory = Inventory(inventory, champion=self)
-        self.auto_attack = AutoAttack(champion=self)
+        self.initialize_auto_attack()
         if self.name is None:
             raise ValueError("Child class of BaseChampion is expected to have name = {champion name}")
         self.name = normalize_champion_name(self.name)
@@ -134,6 +134,9 @@ class BaseChampion:
         for stat_name in STAT_TOTAL_PROPERTY:
             setattr(self, "base_" + stat_name, 0)
             setattr(self, "bonus_" + stat_name, 0)
+
+    def initialize_auto_attack(self):
+        self.auto_attack = AutoAttack(champion=self)
 
     def get_bonus_stats(self):  # TODO: add runes
         """
@@ -318,15 +321,6 @@ class BaseChampion:
         selected_item = self.inventory.get_item(item_name)
         assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
         return selected_item.apply_active(target)
-
-    def get_damage_modifier_flat(self):
-        return 0
-
-    def get_damage_modifier_coeff(self):
-        return 1
-
-    def apply_auto_attack_count(self):
-        pass
 
     def take_damage(self, damage):
         """Takes damage from an enemy champion"""
