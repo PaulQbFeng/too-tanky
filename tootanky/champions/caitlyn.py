@@ -1,5 +1,5 @@
 from tootanky.champion import BaseChampion
-from tootanky.damage import damage_physical_auto_attack
+from tootanky.attack import AutoAttack
 from tootanky.spell import BaseSpell
 from tootanky.spell_registry import SpellFactory
 
@@ -20,52 +20,53 @@ class Caitlyn(BaseChampion):
         if 13 <= self.level <= 18:
             self.passive_multiplier = 1.2
 
-    def auto_attack_damage(self, target, is_crit: bool = False):
-        base_attack_damage = self.base_attack_damage
-        bonus_attack_damage = self.bonus_attack_damage
-        attack_damage = base_attack_damage + bonus_attack_damage
-        crit_chance = self.crit_chance
-        crit_damage = self.crit_damage
-        base_armor = target.base_armor
-        bonus_armor = target.bonus_armor
-        lethality = self.lethality
-        armor_pen = self.armor_pen_percent
-        bonus_armor_pen = self.bonus_armor_pen_percent
+    def initialize_auto_attack(self):
+        self.auto_attack = AutoAttackCaitlyn(champion=self)
+
+
+class AutoAttackCaitlyn(AutoAttack):
+    def get_damage_modifier_flat(self):
+        champion = self.champion
+        base_attack_damage = champion.base_attack_damage
+        bonus_attack_damage = champion.bonus_attack_damage
+        crit_chance = champion.crit_chance
         damage_modifier_flat = 0
-        std_headshot_dmg = attack_damage * (self.passive_multiplier + 1.3125 * crit_chance)
+        std_headshot_dmg = (base_attack_damage + bonus_attack_damage) * (champion.passive_multiplier + 1.3125 * crit_chance)
 
-        if self.w_hit:
-            bonus_flat, bonus_ratio = self.spell_w.get_headshot_bonus_damage()
+        if champion.w_hit:
+            bonus_flat, bonus_ratio = champion.spell_w.get_headshot_bonus_damage()
             damage_modifier_flat = std_headshot_dmg + bonus_flat + bonus_ratio * bonus_attack_damage
-            self.w_hit = False
         else:
-            if self.e_hit:
+            if champion.e_hit:
                 damage_modifier_flat = std_headshot_dmg
-                self.e_hit = False
             else:
-                if self.auto_attack_count < 6:
-                    self.auto_attack_count += 1
-                elif self.auto_attack_count == 6:
+                if champion.auto_attack_count == 6:
                     damage_modifier_flat = std_headshot_dmg
-                    self.auto_attack_count = 0
 
-        damage = damage_physical_auto_attack(
-            base_attack_damage=base_attack_damage,
-            base_armor=base_armor,
-            bonus_attack_damage=bonus_attack_damage,
-            bonus_armor=bonus_armor,
-            attacker_level=self.level,
-            lethality=lethality,
-            armor_pen=armor_pen,
-            bonus_armor_pen=bonus_armor_pen,
-            damage_modifier_flat=damage_modifier_flat,
-            crit=is_crit,
-            crit_damage=crit_damage,
+        return damage_modifier_flat
+
+    def apply_auto_attack_count(self):
+        champion = self.champion
+        if champion.w_hit:
+            champion.w_hit = False
+        else:
+            if champion.e_hit:
+                champion.e_hit = False
+            else:
+                if champion.auto_attack_count < 6:
+                    champion.auto_attack_count += 1
+                elif champion.auto_attack_count == 6:
+                    champion.auto_attack_count = 0
+
+    def damage(self, target, is_crit: bool = False):
+        damage = self._compute_damage(
+            target=target,
+            damage_modifier_flat=self.get_damage_modifier_flat(),
+            damage_modifier_coeff=self.get_damage_modifier_coeff(),
+            is_crit=is_crit
         )
-        on_damage = 0
-        for on_hit_source in self.on_hits:
-            on_damage += on_hit_source.on_hit_effect(target)
-        return damage + on_damage
+        self.apply_auto_attack_count()
+        return damage
 
 
 @SpellFactory.register_spell

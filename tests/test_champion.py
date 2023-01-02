@@ -8,8 +8,8 @@ from tootanky.item_factory import ALL_ITEMS, BlastingWand, RubyCrystal
 def test_auto_attack_lvl1():
     annie = Annie()
     ahri = Ahri()
-    assert round(annie.auto_attack_damage(ahri), 2) == 42.37
-    assert round(ahri.auto_attack_damage(annie), 2) == 44.54
+    assert round(annie.auto_attack.damage(ahri), 2) == 42.37
+    assert round(ahri.auto_attack.damage(annie), 2) == 44.54
 
 
 def test_ahri_stat_perlevel():
@@ -154,7 +154,7 @@ def test_auto_attack_with_item_component():
 
     assert ahri.orig_bonus_stats.armor == 15
     assert ahri.orig_bonus_stats.attack_damage == 75
-    assert round(ahri.auto_attack_damage(dummy)) == 67
+    assert round(ahri.auto_attack.damage(dummy)) == 67
 
 
 def test_auto_attack_with_item_component_2():
@@ -168,8 +168,8 @@ def test_auto_attack_with_item_component_2():
     assert ahri.lethality == 10
     assert ahri.armor_pen_percent == 0.18
 
-    assert round(ahri.auto_attack_damage(dummy)) == 104
-    assert round(ahri.auto_attack_damage(dummy, is_crit=True)) == 182
+    assert round(ahri.auto_attack.damage(dummy)) == 104
+    assert round(ahri.auto_attack.damage(dummy, is_crit=True)) == 182
 
 
 def test_darius_auto_attack():

@@ -9,5 +9,5 @@ def test_yasuo_passive():
     assert yasuo.crit_chance == 1
     assert round(yasuo.crit_damage, 2) == 0.89 - 0.75
     assert round(yasuo.attack_damage) == 140
-    assert round(yasuo.auto_attack_damage(target=dummy, is_crit=True), 1) == 220.5
+    assert round(yasuo.auto_attack.damage(target=dummy, is_crit=True), 1) == 220.5
 

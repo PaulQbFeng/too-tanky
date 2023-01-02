@@ -6,9 +6,9 @@ from tootanky.item_factory import CloakofAgility, LongSword
 def auto_attack_default_run(inventory, target, test_values):
     for i in range(1, 4):
         caitlyn = Caitlyn(level=6 * (i - 1) + 1, inventory=inventory)  # for levels 1, 7, 13
-        assert round(caitlyn.auto_attack_damage(target, False)) == test_values[2 * i - 2]  # No headshot no crit
+        assert round(caitlyn.auto_attack.damage(target, False)) == test_values[2 * i - 2]  # No headshot no crit
         caitlyn.auto_attack_count = 6
-        assert round(caitlyn.auto_attack_damage(target, False)) == test_values[2 * i - 1]  # Headshot and no crit
+        assert round(caitlyn.auto_attack.damage(target, False)) == test_values[2 * i - 1]  # Headshot and no crit
 
 
 def test_auto_attack():
@@ -20,12 +20,12 @@ def test_auto_attack():
     # Test of attack_count
     caitlyn = Caitlyn()
     dummy = Dummy(1000, 0)
-    caitlyn.auto_attack_damage(dummy, False)
-    caitlyn.auto_attack_damage(dummy, False)
-    caitlyn.auto_attack_damage(dummy, False)
-    caitlyn.auto_attack_damage(dummy, False)
-    caitlyn.auto_attack_damage(dummy, False)
-    caitlyn.auto_attack_damage(dummy, False)
+    caitlyn.auto_attack.damage(dummy, False)
+    caitlyn.auto_attack.damage(dummy, False)
+    caitlyn.auto_attack.damage(dummy, False)
+    caitlyn.auto_attack.damage(dummy, False)
+    caitlyn.auto_attack.damage(dummy, False)
+    caitlyn.auto_attack.damage(dummy, False)
     assert caitlyn.auto_attack_count == 6
     # Test of auto attack damage (with consideration of headshot and crit)
     auto_attack_default_run([LongSword()], Dummy(1000, 60), [45, 72, 57, 107, 71, 156])
@@ -47,9 +47,9 @@ def test_w_level_1():
     # W has no damage, but we call damage to trigger passive headshot effect
     dummy = Dummy(1000, 30)
     caitlyn = Caitlyn(level=1, spell_levels=(0, 1, 0, 0))
-    assert round(caitlyn.auto_attack_damage(dummy, False)) == 48
+    assert round(caitlyn.auto_attack.damage(dummy, False)) == 48
     caitlyn.spell_w.damage(dummy)
-    assert round(caitlyn.auto_attack_damage(dummy, False)) == 107
+    assert round(caitlyn.auto_attack.damage(dummy, False)) == 107
 
 
 def w_default_run(inventory, target, test_values):
@@ -58,15 +58,15 @@ def w_default_run(inventory, target, test_values):
             level=2 * spell_level - 1, spell_levels=(1, spell_level, 1, 1), inventory=inventory
         )  # for levels 1, 3, 5, 7, 9
         caitlyn.spell_w.damage(target)
-        assert round(caitlyn.auto_attack_damage(target, False)) == test_values[2 * spell_level - 2]
+        assert round(caitlyn.auto_attack.damage(target, False)) == test_values[2 * spell_level - 2]
         caitlyn.spell_w.damage(target)
-        assert round(caitlyn.auto_attack_damage(target, True)) == test_values[2 * spell_level - 1]
+        assert round(caitlyn.auto_attack.damage(target, True)) == test_values[2 * spell_level - 1]
     # last test with lvl 13 for robustness with headshot dmg lvl scaling
     caitlyn = Caitlyn(level=13, spell_levels=(1, 5, 1, 1), inventory=inventory)
     caitlyn.spell_w.damage(target)
-    assert round(caitlyn.auto_attack_damage(target, False)) == test_values[8]
+    assert round(caitlyn.auto_attack.damage(target, False)) == test_values[8]
     caitlyn.spell_w.damage(target)
-    assert round(caitlyn.auto_attack_damage(target, True)) == test_values[9]
+    assert round(caitlyn.auto_attack.damage(target, True)) == test_values[9]
 
 
 def test_w():
@@ -80,10 +80,10 @@ def e_default_run(inventory, target, test_values_e, test_values_empowered_auto_a
         )  # for levels 1, 3, 5, 7, 9
         assert round(caitlyn.spell_e.damage(target)) == test_values_e[spell_level - 1]
         assert (
-            round(caitlyn.auto_attack_damage(target, False)) == test_values_empowered_auto_attack[2 * spell_level - 2]
+            round(caitlyn.auto_attack.damage(target, False)) == test_values_empowered_auto_attack[2 * spell_level - 2]
         )
         caitlyn.spell_e.damage(target)
-        assert round(caitlyn.auto_attack_damage(target, True)) == test_values_empowered_auto_attack[2 * spell_level - 1]
+        assert round(caitlyn.auto_attack.damage(target, True)) == test_values_empowered_auto_attack[2 * spell_level - 1]
 
 
 def test_e():
@@ -129,18 +129,18 @@ def test_passive_w_e_interaction():
     # If cait uses W and E (regardless of the order), the first autoattack will always apply the W additional damage
     caitlyn.spell_w.damage(dummy)
     caitlyn.spell_e.damage(dummy)
-    assert round(caitlyn.auto_attack_damage(dummy, False)) == 117
+    assert round(caitlyn.auto_attack.damage(dummy, False)) == 117
     assert caitlyn.auto_attack_count == 6
-    assert round(caitlyn.auto_attack_damage(dummy, False)) == 85
+    assert round(caitlyn.auto_attack.damage(dummy, False)) == 85
     assert caitlyn.auto_attack_count == 6
-    assert round(caitlyn.auto_attack_damage(dummy, False)) == 85
+    assert round(caitlyn.auto_attack.damage(dummy, False)) == 85
     assert caitlyn.auto_attack_count == 0
     caitlyn.auto_attack_count = 6
     caitlyn.spell_e.damage(dummy)
     caitlyn.spell_w.damage(dummy)
-    assert round(caitlyn.auto_attack_damage(dummy, False)) == 117
+    assert round(caitlyn.auto_attack.damage(dummy, False)) == 117
     assert caitlyn.auto_attack_count == 6
-    assert round(caitlyn.auto_attack_damage(dummy, False)) == 85
+    assert round(caitlyn.auto_attack.damage(dummy, False)) == 85
     assert caitlyn.auto_attack_count == 6
-    assert round(caitlyn.auto_attack_damage(dummy, False)) == 85
+    assert round(caitlyn.auto_attack.damage(dummy, False)) == 85
     assert caitlyn.auto_attack_count == 0
