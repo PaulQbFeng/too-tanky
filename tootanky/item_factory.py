@@ -511,24 +511,18 @@ class Galeforce(ActiveItem):
             return 60
         return 65 + (self.champion.level - 10) * 5
 
-    def get_damage_modifier_coeff(self, target, **kwargs):
-        coeffs = []
+    def damage(self, target, **kwargs):
         target_max_health = target.orig_base_stats.health + target.orig_bonus_stats.health
         target_current_health = target.health
+        total_damage = 0
         for _ in range(3):
             if (1 - target_current_health/target_max_health) <= 0.7:
-                coeff = 1 + (1 - target_current_health / (target_max_health)) * 5 / 7
+                damage_modifier_coeff = 1 + (1 - target_current_health / (target_max_health)) * 5 / 7
             else:
-                coeff = 1.5
-            coeffs.append(coeff)
-            target_current_health -= self._compute_damage(target=target, damage_modifier_coeff=coeff)
-        return coeffs
-
-    def damage(self, target, **kwargs):
-        total_damage = 0
-        for i in range(3):
-            damage_modifier_coeff = self.get_damage_modifier_coeff(target)[i]
-            total_damage += self._compute_damage(target=target, damage_modifier_coeff=damage_modifier_coeff)
+                damage_modifier_coeff = 1.5
+            damage = self._compute_damage(target=target, damage_modifier_coeff=damage_modifier_coeff)
+            total_damage += damage
+            target_current_health -= damage
 
         return total_damage
 
