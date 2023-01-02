@@ -496,43 +496,33 @@ class Everfrost(BaseItem):  # missing active
         self.stats.ability_haste = 20
 
 
-class Galeforce(BaseItem):
+class Galeforce(ActiveItem):
     name = "Galeforce"
     type = "Mythic"
+    damage_type = "magical"
 
     def __init__(self):
         super().__init__()
         self.mythic_passive_stats = [("bonus_move_speed", 0.02, "percent")]
+        self.ratios = [("bonus_attack_damage", 0.15)]
 
-    def apply_active(self, target):
-        max_health = target.orig_base_stats.health + target.orig_bonus_stats.health
-        base_mr = target.base_magic_resist
-        bonus_mr = target.bonus_magic_resist
-        bonus_ad = self.champion.bonus_attack_damage
-        magic_resist_pen_flat = self.champion.magic_resist_pen_flat
-        magic_resist_pen_percent = self.champion.magic_resist_pen_percent
+    def get_base_damage(self):
         if self.champion.level < 10:
-            base_active_damage = 60
-        elif self.champion.level >= 10:
-            base_active_damage = 65 + (self.champion.level - 10) * 5
-        total_damage = 0
+            return 60
+        return 65 + (self.champion.level - 10) * 5
 
+    def damage(self, target, **kwargs):
+        target_max_health = target.orig_base_stats.health + target.orig_bonus_stats.health
+        target_current_health = target.health
+        total_damage = 0
         for _ in range(3):
-            percent_missing_health = 1 - target.health / max_health
-            if percent_missing_health <= 0.7:
-                pre_mtg_dmg = (base_active_damage + 0.15 * bonus_ad) * (1 + percent_missing_health * 5 / 7)
+            if (1 - target_current_health/target_max_health) <= 0.7:
+                damage_modifier_coeff = 1 + (1 - target_current_health / (target_max_health)) * 5 / 7
             else:
-                pre_mtg_dmg = (base_active_damage + 0.15 * bonus_ad) * 1.5
-            damage = damage_after_resistance(
-                pre_mitigation_damage=pre_mtg_dmg,
-                base_resistance=base_mr,
-                bonus_resistance=bonus_mr,
-                flat_resistance_pen=magic_resist_pen_flat,
-                resistance_pen=magic_resist_pen_percent,
-                bonus_resistance_pen=0,
-            )
-            target.take_damage(damage)
+                damage_modifier_coeff = 1.5
+            damage = self._compute_damage(target=target, damage_modifier_coeff=damage_modifier_coeff)
             total_damage += damage
+            target_current_health -= damage
 
         return total_damage
 
