@@ -34,7 +34,7 @@ def test_auto_attack():
 def q_default_run(inventory, target, test_values):
     for spell_level in range(1, 6):
         caitlyn = Caitlyn(
-            level=2 * spell_level - 1, inventory=inventory, spell_levels=[spell_level, 1, 1, 1]
+            level=2 * spell_level - 1, inventory=inventory, spell_levels=(spell_level, 1, 1, 1)
         )  # for levels 1, 3, 5, 7, 9
         assert round(caitlyn.spell_q.damage(target)) == test_values[spell_level - 1]
 
@@ -46,7 +46,7 @@ def test_q():
 def test_w_level_1():
     # W has no damage, but we call damage to trigger passive headshot effect
     dummy = Dummy(1000, 30)
-    caitlyn = Caitlyn(level=1, spell_levels=[0, 1, 0, 0])
+    caitlyn = Caitlyn(level=1, spell_levels=(0, 1, 0, 0))
     assert round(caitlyn.auto_attack.damage(dummy, False)) == 48
     caitlyn.spell_w.damage(dummy)
     assert round(caitlyn.auto_attack.damage(dummy, False)) == 107
@@ -55,14 +55,14 @@ def test_w_level_1():
 def w_default_run(inventory, target, test_values):
     for spell_level in range(1, 5):
         caitlyn = Caitlyn(
-            level=2 * spell_level - 1, spell_levels=[1, spell_level, 1, 1], inventory=inventory
+            level=2 * spell_level - 1, spell_levels=(1, spell_level, 1, 1), inventory=inventory
         )  # for levels 1, 3, 5, 7, 9
         caitlyn.spell_w.damage(target)
         assert round(caitlyn.auto_attack.damage(target, False)) == test_values[2 * spell_level - 2]
         caitlyn.spell_w.damage(target)
         assert round(caitlyn.auto_attack.damage(target, True)) == test_values[2 * spell_level - 1]
     # last test with lvl 13 for robustness with headshot dmg lvl scaling
-    caitlyn = Caitlyn(level=13, spell_levels=[1, 5, 1, 1], inventory=inventory)
+    caitlyn = Caitlyn(level=13, spell_levels=(1, 5, 1, 1), inventory=inventory)
     caitlyn.spell_w.damage(target)
     assert round(caitlyn.auto_attack.damage(target, False)) == test_values[8]
     caitlyn.spell_w.damage(target)
@@ -76,7 +76,7 @@ def test_w():
 def e_default_run(inventory, target, test_values_e, test_values_empowered_auto_attack):
     for spell_level in range(1, 6):
         caitlyn = Caitlyn(
-            level=2 * spell_level - 1, inventory=inventory, spell_levels=[1, 1, spell_level, 1]
+            level=2 * spell_level - 1, inventory=inventory, spell_levels=(1, 1, spell_level, 1)
         )  # for levels 1, 3, 5, 7, 9
         assert round(caitlyn.spell_e.damage(target)) == test_values_e[spell_level - 1]
         assert (
@@ -98,7 +98,7 @@ def test_e():
 def r_default_run(inventory, target, test_values):
     for spell_level in range(1, 4):
         caitlyn = Caitlyn(
-            level=spell_level * 5 + 1, spell_levels=[1, 1, 1, spell_level], inventory=inventory
+            level=spell_level * 5 + 1, spell_levels=(1, 1, 1, spell_level), inventory=inventory
         )  # for levels 6, 11, 16
         assert round(caitlyn.spell_r.damage(target)) == test_values[spell_level - 1]
 

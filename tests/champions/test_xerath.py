@@ -5,10 +5,10 @@ from tootanky.item_factory import BlastingWand
 
 def test_dummy_0_res():
     dummy = Dummy(1000, 0)
-    xerath = Xerath(level=18, spell_levels=[1, 1, 1, 1])
+    xerath = Xerath(level=18, spell_levels=(1, 1, 1, 1))
     assert round(xerath.spell_q.damage(dummy)) == 70
 
-    xerath = Xerath(level=18, inventory=[BlastingWand()], spell_levels=[1, 1, 1, 1])
+    xerath = Xerath(level=18, inventory=[BlastingWand()], spell_levels=(1, 1, 1, 1))
     damage_per_level = [104, 144, 184, 224, 264]
     for spell_level in range(1, 6):
         xerath.spell_q.set_level(spell_level)

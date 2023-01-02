@@ -139,7 +139,7 @@ def test_get_stats():
 
 
 def test_annie_q():
-    annie = Annie(level=17, inventory=[BlastingWand()], spell_levels=[5, 5, 5, 5])
+    annie = Annie(level=17, inventory=[BlastingWand()], spell_levels=(5, 5, 5, 5))
     dummy = Dummy(health=1000, bonus_resistance=30)
     dmg = annie.spell_q.damage(dummy)
 
@@ -182,9 +182,9 @@ def test_darius_auto_attack():
 
 
 def test_equip_item_health():
-    ahri = Ahri(level=17, spell_levels=[5, 5, 5, 5])
+    ahri = Ahri(level=17, spell_levels=(5, 5, 5, 5))
     assert math.ceil(ahri.health) == 2080
-    ahri = Ahri(level=17, inventory=[RubyCrystal()], spell_levels=[5, 5, 5, 5])
+    ahri = Ahri(level=17, inventory=[RubyCrystal()], spell_levels=(5, 5, 5, 5))
     assert math.ceil(ahri.health) == 2230
 
 
