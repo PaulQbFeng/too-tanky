@@ -2,8 +2,6 @@ from typing import Callable, List, Optional
 
 import tootanky.stats_calculator as sc
 
-from tootanky.damage import damage_physical_auto_attack
-from tootanky.data_parser import ALL_CHAMPION_BASE_STATS
 from tootanky.glossary import (
     STAT_SUM_BASE_BONUS,
     STAT_STANDALONE,
@@ -16,6 +14,7 @@ from tootanky.inventory import Inventory
 from tootanky.item_factory import BaseItem, SPELL_BLADE_ITEMS, CLASSIC_ON_HIT_ITEMS, WRATH_ITEMS
 from tootanky.spell_registry import SpellFactory
 from tootanky.stats import Stats
+from tootanky.attack import AutoAttack
 
 
 class BaseChampion:
@@ -37,6 +36,7 @@ class BaseChampion:
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
         self.inventory = Inventory(inventory, champion=self)
+        self.initialize_auto_attack()
         if self.name is None:
             raise ValueError("Child class of BaseChampion is expected to have name = {champion name}")
         self.name = normalize_champion_name(self.name)
@@ -134,6 +134,9 @@ class BaseChampion:
         for stat_name in STAT_TOTAL_PROPERTY:
             setattr(self, "base_" + stat_name, 0)
             setattr(self, "bonus_" + stat_name, 0)
+
+    def initialize_auto_attack(self):
+        self.auto_attack = AutoAttack(champion=self)
 
     def get_bonus_stats(self):  # TODO: add runes
         """
@@ -319,26 +322,6 @@ class BaseChampion:
         assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
         return selected_item.apply_active(target)
 
-    def auto_attack_damage(self, target, is_crit: bool = False):
-        """Calculates the damage dealt to an enemy champion with an autoattack"""
-
-        damage = damage_physical_auto_attack(
-            base_attack_damage=self.base_attack_damage,
-            base_armor=target.base_armor,
-            bonus_attack_damage=self.bonus_attack_damage,
-            bonus_armor=target.bonus_armor,
-            attacker_level=self.level,
-            lethality=self.lethality,
-            armor_pen=self.armor_pen_percent,
-            bonus_armor_pen=self.bonus_armor_pen_percent,
-            crit=is_crit,
-            crit_damage=self.crit_damage,
-        )
-        on_damage = 0
-        for on_hit_source in self.on_hits:
-            on_damage += on_hit_source.on_hit_effect(target)
-        return damage + on_damage
-
     def take_damage(self, damage):
         """Takes damage from an enemy champion"""
 
@@ -347,7 +330,7 @@ class BaseChampion:
     def do_auto_attack(self, target, is_crit: bool = False):
         """Deals damage to an enemy champion with an autoattack"""
 
-        damage = self.auto_attack_damage(target, is_crit)
+        damage = self.auto_attack.damage(target, is_crit)
         target.take_damage(damage)
         self.apply_black_cleaver(target)
 
