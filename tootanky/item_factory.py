@@ -520,7 +520,7 @@ class Galeforce(ActiveItem):
                 damage_modifier_coeff = 1 + (1 - target_current_health / (target_max_health)) * 5 / 7
             else:
                 damage_modifier_coeff = 1.5
-            damage = self._compute_damage(target=target, damage_modifier_coeff=damage_modifier_coeff)
+            damage = self._compute_damage(target=target, damage_modifier_flat=0, damage_modifier_coeff=damage_modifier_coeff)
             total_damage += damage
             target_current_health -= damage
 
