@@ -57,7 +57,7 @@ STAT_STANDALONE = [
     "life_steal",
     "omni_vamp",
     "spell_vamp",
-    "ability_haste"
+    "ability_haste",
 ]
 
 STAT_TOTAL_PROPERTY = [
@@ -66,16 +66,16 @@ STAT_TOTAL_PROPERTY = [
     "attack_damage",
     "attack_speed",
     "move_speed",
-    "ability_power"
+    "ability_power",
 ]
 
 STAT_UNDERLYING_PROPERTY = [
-    "crit_chance"
+    "crit_chance",
 ]
 
 STAT_TEMPORARY_BUFF = [
     "armor_reduction_flat",
-    "armor_reduction_percent"
+    "armor_reduction_percent",
 ]
 
 
@@ -90,9 +90,9 @@ def normalize_champion_name(name):
         "Leblanc": "LeBlanc",
         "Nunu": "NunuWillump",
         "Renata": "RenataGlasc",
-        "Velkoz": "VelKoz"
+        "Velkoz": "VelKoz",
     }
     if name in exceptions_dict.keys():
         return exceptions_dict[name]
 
-    return re.sub('[^A-Za-z0-9]+', '', name)
+    return re.sub("[^A-Za-z0-9]+", "", name)
