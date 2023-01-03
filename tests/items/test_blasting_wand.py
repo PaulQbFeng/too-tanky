@@ -1,9 +1,6 @@
 import pytest
 
 from tootanky.item_factory import BlastingWand
-from tootanky.champions import Annie
-from tootanky.champion import Dummy
-
 
 @pytest.fixture
 def blasting_wand():

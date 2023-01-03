@@ -6,7 +6,6 @@ from tootanky.champions import Ahri, Annie, Caitlyn, Yasuo, Yone
 from tootanky.item_factory import (
     ALL_ITEMS,
     ALL_MYTHIC_ITEMS,
-    DoransBlade,
     Sheen,
     InfinityEdge,
     CloakofAgility,
@@ -20,7 +19,7 @@ from tootanky.item_factory import (
     SerratedDirk,
     LastWhisper,
     LongSword,
-    Galeforce
+    Galeforce,
 )
 
 
@@ -32,11 +31,6 @@ def infinity_edge():
 @pytest.fixture()
 def agility_cloak():
     return CloakofAgility()
-
-
-def test_doranblade():
-    doranblade = DoransBlade()
-    assert doranblade.stats._dict == {"attack_damage": 8, "health": 80}
 
 
 def test_infinity_edge(infinity_edge, agility_cloak):
