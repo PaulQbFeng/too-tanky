@@ -1,20 +1,15 @@
 import math
 
-import pytest
-
 from tootanky.champions import Annie
+from tootanky.item_factory import BlastingWand
 
 
-@pytest.fixture
-def annie(level):
-    return Annie(level=level)
-
-
-@pytest.mark.parametrize("level", [1])
-def test_stat_level_1(annie):
+def test_stat_level_1():
     """
     Tests champion's main stats at level 1
     """
+    annie = Annie(level=1)
+
     assert math.ceil(annie.health) == 594
     assert annie.mana == 418
     assert round(annie.attack_damage) == 50
@@ -28,11 +23,12 @@ def test_stat_level_1(annie):
     assert annie.attack_range == 625
 
 
-@pytest.mark.parametrize("level", [18])
-def test_stat_level_18(annie):
+def test_stat_level_18():
     """
     Tests champion's main stats at level 18
     """
+    annie = Annie(level=18)
+
     assert math.ceil(annie.health) == 2329 - 1  # TODO: check why ingame health is 2329
     assert annie.mana == 843
     assert round(annie.attack_damage) == 95
@@ -56,23 +52,27 @@ def test_auto_attack(dummy_110):
         assert round(annie.auto_attack.damage(dummy_110)) == auto_expected_damage[i]
 
 
-@pytest.mark.parametrize("level", [18])
-def test_q(annie, dummy_110):
+def test_q(dummy_110):
     """
-    Tests Q damage at level 1-5 when champion is level 18
+    Tests Q damage at level 1-5 when champion is level 18 with items that boost
+    all ratios of the spell.
     """
-    q_expected_damage = [38, 55, 71, 88, 105]
+    annie = Annie(level=18, inventory=[BlastingWand()])
+    q_expected_damage = [53, 70, 87, 103, 120]
+
     for i, level in enumerate(range(1, 6)):
         annie.spell_q.level = level
         assert round(annie.spell_q.damage(dummy_110)) == q_expected_damage[i]
 
 
-@pytest.mark.parametrize("level", [18])
-def test_w(annie, dummy_110):
+def test_w(dummy_110):
     """
-    Tests W damage at level 1-5 when champion is level 18
+    Tests W damage at level 1-5 when champion is level 18 with items that boost
+    all ratios of the spell.
     """
-    w_expected_damage = [33, 55, 76, 98, 119]
+    annie = Annie(level=18, inventory=[BlastingWand()])
+    w_expected_damage = [50, 71, 92, 114, 135]
+
     for i, level in enumerate(range(1, 6)):
         annie.spell_w.level = level
         assert round(annie.spell_w.damage(dummy_110)) == w_expected_damage[i]
