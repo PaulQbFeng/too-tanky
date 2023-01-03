@@ -1,3 +1,5 @@
+import math
+
 from tootanky.data_parser import SCALING_STAT_NAMES, NON_SCALING_STAT_NAMES, ALL_CHAMPION_BASE_STATS
 from tootanky.item_factory import BaseItem
 from tootanky.stats import Stats
@@ -17,8 +19,8 @@ def calculate_base_stat_from_level(base_stats: dict, stat_name: str, level: int)
         # attack speed per level is considered as bonus attack speed
         return stat
 
-        mean_growth_perlevel = base_stats[stat_name + "_perlevel"]
-        return calculate_flat_stat_from_level(stat, mean_growth_perlevel, level)
+    mean_growth_perlevel = base_stats[stat_name + "_perlevel"]
+    return calculate_flat_stat_from_level(stat, mean_growth_perlevel, level)
 
 
 def calculate_bonus_stat_from_level(base_stats: dict, stat_name: str, level: int) -> float:
@@ -103,3 +105,12 @@ ALL_CHAMPION_OUTLIERS_ATTACK_SPEED_RATIO = {
     "Zac": 0.638,
     "Zeri": 0.625,
 }
+
+
+def round_up(number: float) -> int:
+    """
+    In Python, the built-in round function rounds to the nearest even number (bankers rounding).
+    e.g round(2.5) == 2 but round(3.5) == 4
+    Call this function to ensure it's always rounding up
+    """
+    return int(number + 0.5)
