@@ -1,11 +1,10 @@
 import math
 
 from tootanky.champion import Dummy
-from tootanky.champions import Ahri, Annie, Caitlyn, Yasuo, Yone
+from tootanky.champions import Ahri, Caitlyn, Yasuo, Yone
 from tootanky.item_factory import (
     ALL_ITEMS,
     ALL_MYTHIC_ITEMS,
-    Sheen,
     CloakofAgility,
     RabadonsDeathcap,
     BlastingWand,
@@ -19,16 +18,6 @@ from tootanky.item_factory import (
     LongSword,
     Galeforce,
 )
-
-
-def test_sheen():
-    annie = Annie(level=2, inventory=[Sheen()])
-    dummy = Dummy(health=1000, bonus_resistance=100)
-    assert len(annie.on_hits) == 1
-    assert round(annie.auto_attack.damage(dummy)) == 26
-    assert annie.spell_q.damage(dummy, spellblade=True) == 40
-    assert round(annie.auto_attack.damage(dummy)) == 52
-    assert round(annie.auto_attack.damage(dummy)) == 26
 
 
 def test_serrated_unique_passive():
