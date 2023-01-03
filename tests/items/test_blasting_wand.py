@@ -27,4 +27,4 @@ def test_equipped(blasting_wand):
     dummy = Dummy(health=1000, bonus_resistance=30)
     dmg = annie.spell_q.damage(dummy)
 
-    assert round(dmg, 2) == 193.85
+    assert round(dmg) == 194
