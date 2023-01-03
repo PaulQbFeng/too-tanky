@@ -27,6 +27,12 @@ class QAnnie(BaseSpell):
 class WAnnie(BaseSpell):
     champion_name = "Annie"
     spell_key = "w"
+    damage_type = "magical"
+
+    def __init__(self, champion, level):
+        super().__init__(champion, level)
+        self.base_damage_per_level = [70, 115, 160, 205, 250]
+        self.ratios = [("ability_power", 0.85)]
 
 
 @SpellFactory.register_spell
