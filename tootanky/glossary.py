@@ -36,7 +36,7 @@ MAPPING_ITEM_STANDARD = {
     "PercentLifeStealMod": "life_steal",
     "FlatHPRegenMod": "health_regen",
     "PercentMovementSpeedMod": "move_speed_percent",
-    "gold": "gold",
+    "gold": "price",
 }
 
 STAT_SUM_BASE_BONUS = [

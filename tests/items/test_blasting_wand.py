@@ -14,7 +14,7 @@ def test_item_properties(blasting_wand):
     """
     Tests raw stats and limitations. (Test values need to be retrieved in game)
     """
-    assert blasting_wand.gold == 850
+    assert blasting_wand.price == 850
     assert blasting_wand.stats.ability_power == 40
     assert blasting_wand.limitations is None
 
