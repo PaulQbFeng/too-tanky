@@ -73,6 +73,12 @@ class Stats:
 
         return Stats(subtraction)
 
+    def get_stat_names(self) -> list:
+        """
+        Returns all stat names from the underlying dict.
+        """
+        return list(self._dict.keys())
+
     def print_stats(self):
         """pretty print the stats"""
         return print("\n".join([f"{k}: {v}" for k, v in self._dict.items()]))
