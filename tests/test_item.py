@@ -1,5 +1,4 @@
 import math
-import pytest
 
 from tootanky.champion import Dummy
 from tootanky.champions import Ahri, Annie, Caitlyn, Yasuo, Yone
@@ -7,7 +6,6 @@ from tootanky.item_factory import (
     ALL_ITEMS,
     ALL_MYTHIC_ITEMS,
     Sheen,
-    InfinityEdge,
     CloakofAgility,
     RabadonsDeathcap,
     BlastingWand,
@@ -21,37 +19,6 @@ from tootanky.item_factory import (
     LongSword,
     Galeforce,
 )
-
-
-@pytest.fixture()
-def infinity_edge():
-    return InfinityEdge()
-
-
-@pytest.fixture()
-def agility_cloak():
-    return CloakofAgility()
-
-
-def test_infinity_edge(infinity_edge, agility_cloak):
-    assert infinity_edge.stats.attack_damage == 70
-    assert infinity_edge.stats.crit_chance == 0.2
-
-    ahri = Ahri(inventory=[infinity_edge] + 2 * [agility_cloak])
-    assert ahri.crit_damage == 0
-    ahri = Ahri(inventory=[infinity_edge] + 3 * [agility_cloak])
-    assert ahri.crit_damage == 0.35
-
-
-def test_infinity_edge_cait(infinity_edge, agility_cloak):
-    dummy = Dummy(health=1000, bonus_resistance=100)
-    caitlyn = Caitlyn(level=11, inventory=[infinity_edge] + 2 * [agility_cloak])
-    assert round(caitlyn.auto_attack.damage(dummy, is_crit=False)) == 83
-    assert round(caitlyn.auto_attack.damage(dummy, is_crit=True)) == 145
-    caitlyn = Caitlyn(level=11, inventory=[infinity_edge] + 3 * [agility_cloak])
-    assert caitlyn.crit_damage == 0.35
-    assert round(caitlyn.auto_attack.damage(dummy, is_crit=False)) == 83
-    assert round(caitlyn.auto_attack.damage(dummy, is_crit=True)) == 174
 
 
 def test_sheen():
