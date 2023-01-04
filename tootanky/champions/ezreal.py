@@ -46,3 +46,9 @@ class EEzreal(BaseSpell):
 class REzreal(BaseSpell):
     champion_name = "Ezreal"
     spell_key = "r"
+    damage_type = "magical"
+
+    def __init__(self, champion, level):
+        super().__init__(champion, level)
+        self.base_damage_per_level = [350, 500, 650]
+        self.ratios = [("bonus_attack_damage", 1), ("ability_power", 0.9)]

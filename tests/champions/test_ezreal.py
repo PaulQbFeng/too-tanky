@@ -96,14 +96,16 @@ def test_e(dummy_110):
         assert round_norm(champion.spell_e.damage(dummy_110)) == expected_damage[i]
 
 
-# def test_r(dummy_110):
-#     """
-#     Tests W damage at level 1-5 when champion is level 18 with items that boost
-#     all ratios of the spell.
-#     """
-#     champion = Ezreal(level=18)
-#     q_expected_damage = [188, 260, 331]
+def test_r(dummy_110):
+    """
+    Tests R damage at level 1-5 when champion is level 18 with items that boost
+    all ratios of the spell.
+    """
+    champion = Ezreal(level=18)
+    champion.bonus_attack_damage += 10
+    champion.bonus_ability_power += 40
+    expected_damage = [189, 260, 331]
 
-#     for i, level in enumerate(range(1, 3)):
-#         champion.spell_q.level = level
-#         assert round_norm(champion.spell_q.damage(dummy_110)) == q_expected_damage[i]
+    for i, level in enumerate(range(1, 3)):
+        champion.spell_r.level = level
+        assert round_norm(champion.spell_r.damage(dummy_110)) == expected_damage[i]
