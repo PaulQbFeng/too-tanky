@@ -107,10 +107,21 @@ ALL_CHAMPION_OUTLIERS_ATTACK_SPEED_RATIO = {
 }
 
 
-def round_up(number: float) -> int:
+def round_norm(number: float, decimals=0) -> int:
     """
     In Python, the built-in round function rounds to the nearest even number (bankers rounding).
     e.g round(2.5) == 2 but round(3.5) == 4
-    Call this function to ensure it's always rounding up
+    Call this function to ensure it's always rounding up.
+    Adapted from https://stackoverflow.com/a/52617883
     """
-    return int(number + 0.5)
+    expoN = number * 10**decimals
+    if abs(expoN) - abs(math.floor(expoN)) < 0.5:
+        res = math.floor(expoN)
+        if decimals > 0:
+            res /= 10**decimals
+        return res
+
+    res = math.ceil(expoN)
+    if decimals > 0:
+        res /= 10**decimals
+    return res
