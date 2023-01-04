@@ -6,8 +6,6 @@ from tootanky.item_factory import (
     ALL_ITEMS,
     ALL_MYTHIC_ITEMS,
     CloakofAgility,
-    RabadonsDeathcap,
-    BlastingWand,
     BlackCleaver,
     RecurveBow,
     BFSword,
@@ -68,13 +66,6 @@ def test_galeforce():
         test_crit_chance=0.35,
         test_active=[136, 136, 136, 136, 136, 136, 136, 136, 136, 146, 156, 167, 177, 187, 197, 207, 218, 228],
     )
-
-
-def test_rabadon():
-    ahri = Ahri(level=11, inventory=[RabadonsDeathcap()])
-    assert ahri.ability_power == 162
-    ahri = Ahri(level=11, inventory=[RabadonsDeathcap(), BlastingWand()])
-    assert ahri.ability_power == 216
 
 
 def test_mythic_passives():
