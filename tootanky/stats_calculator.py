@@ -114,14 +114,8 @@ def round_norm(number: float, decimals=0) -> int:
     Call this function to ensure it's always rounding up.
     Adapted from https://stackoverflow.com/a/52617883
     """
-    expoN = number * 10**decimals
-    if abs(expoN) - abs(math.floor(expoN)) < 0.5:
-        res = math.floor(expoN)
-        if decimals > 0:
-            res /= 10**decimals
-        return res
-
-    res = math.ceil(expoN)
-    if decimals > 0:
-        res /= 10**decimals
-    return res
+    shift = 10**decimals
+    rounded = int(number * shift + 0.5) / shift
+    if decimals == 0:
+        rounded = int(rounded)
+    return rounded
