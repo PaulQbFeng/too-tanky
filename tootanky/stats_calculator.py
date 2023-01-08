@@ -112,7 +112,6 @@ def round_norm(number: float, decimals=0) -> int:
     In Python, the built-in round function rounds to the nearest even number (bankers rounding).
     e.g round(2.5) == 2 but round(3.5) == 4
     Call this function to ensure it's always rounding up.
-    Adapted from https://stackoverflow.com/a/52617883
     """
     shift = 10**decimals
     rounded = int(number * shift + 0.5) / shift
