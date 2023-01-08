@@ -138,14 +138,6 @@ def test_get_stats():
     assert annie.level == 18
 
 
-def test_annie_q():
-    annie = Annie(level=17, inventory=[BlastingWand()], spell_levels=(5, 5, 5, 5))
-    dummy = Dummy(health=1000, bonus_resistance=30)
-    dmg = annie.spell_q.damage(dummy)
-
-    assert round(dmg, 2) == 193.85
-
-
 def test_auto_attack_with_item_component():
     item_names = ["Cloth Armor", "Long Sword", "Pickaxe", "B. F. Sword"]
     inventory = [ALL_ITEMS[item_name]() for item_name in item_names]

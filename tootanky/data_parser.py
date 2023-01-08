@@ -141,3 +141,4 @@ item_set = get_dataset_from_json("data/ddragon/item.json")
 ALL_ITEM_STATS = fill_item_stats(item_set)
 
 SCALING_STAT_NAMES = get_scaling_stat_names(MAPPING_CHAMPION_STANDARD)
+NON_SCALING_STAT_NAMES = ["move_speed", "attack_range"]

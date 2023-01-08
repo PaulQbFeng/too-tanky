@@ -14,7 +14,7 @@ class BaseItem:
 
     def __init__(self):
         item_stats = ALL_ITEM_STATS[self.name].copy()
-        self.gold = item_stats.pop("gold")
+        self.price = item_stats.pop("price")
         self.stats = Stats(item_stats)
         self.limitations = None
 

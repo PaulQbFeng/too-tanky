@@ -21,4 +21,4 @@ crit_chance
 
 move_speed
 
-gold
+price

@@ -111,7 +111,7 @@ class Inventory:
     def get_price(self):
         price = 0
         for item in self.items:
-            price += item.gold
+            price += item.price
         return price
 
     def mythic_passive_stats(self):

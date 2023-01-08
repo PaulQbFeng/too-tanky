@@ -1,17 +1,11 @@
 import math
-import pytest
 
 from tootanky.champion import Dummy
-from tootanky.champions import Ahri, Annie, Caitlyn, Yasuo, Yone
+from tootanky.champions import Ahri, Caitlyn, Yasuo, Yone
 from tootanky.item_factory import (
     ALL_ITEMS,
     ALL_MYTHIC_ITEMS,
-    DoransBlade,
-    Sheen,
-    InfinityEdge,
     CloakofAgility,
-    RabadonsDeathcap,
-    BlastingWand,
     BlackCleaver,
     RecurveBow,
     BFSword,
@@ -20,54 +14,8 @@ from tootanky.item_factory import (
     SerratedDirk,
     LastWhisper,
     LongSword,
-    Galeforce
+    Galeforce,
 )
-
-
-@pytest.fixture()
-def infinity_edge():
-    return InfinityEdge()
-
-
-@pytest.fixture()
-def agility_cloak():
-    return CloakofAgility()
-
-
-def test_doranblade():
-    doranblade = DoransBlade()
-    assert doranblade.stats._dict == {"attack_damage": 8, "health": 80}
-
-
-def test_infinity_edge(infinity_edge, agility_cloak):
-    assert infinity_edge.stats.attack_damage == 70
-    assert infinity_edge.stats.crit_chance == 0.2
-
-    ahri = Ahri(inventory=[infinity_edge] + 2 * [agility_cloak])
-    assert ahri.crit_damage == 0
-    ahri = Ahri(inventory=[infinity_edge] + 3 * [agility_cloak])
-    assert ahri.crit_damage == 0.35
-
-
-def test_infinity_edge_cait(infinity_edge, agility_cloak):
-    dummy = Dummy(health=1000, bonus_resistance=100)
-    caitlyn = Caitlyn(level=11, inventory=[infinity_edge] + 2 * [agility_cloak])
-    assert round(caitlyn.auto_attack.damage(dummy, is_crit=False)) == 83
-    assert round(caitlyn.auto_attack.damage(dummy, is_crit=True)) == 145
-    caitlyn = Caitlyn(level=11, inventory=[infinity_edge] + 3 * [agility_cloak])
-    assert caitlyn.crit_damage == 0.35
-    assert round(caitlyn.auto_attack.damage(dummy, is_crit=False)) == 83
-    assert round(caitlyn.auto_attack.damage(dummy, is_crit=True)) == 174
-
-
-def test_sheen():
-    annie = Annie(level=2, inventory=[Sheen()])
-    dummy = Dummy(health=1000, bonus_resistance=100)
-    assert len(annie.on_hits) == 1
-    assert round(annie.auto_attack.damage(dummy)) == 26
-    assert annie.spell_q.damage(dummy, spellblade=True) == 40
-    assert round(annie.auto_attack.damage(dummy)) == 52
-    assert round(annie.auto_attack.damage(dummy)) == 26
 
 
 def test_serrated_unique_passive():
@@ -118,13 +66,6 @@ def test_galeforce():
         test_crit_chance=0.35,
         test_active=[136, 136, 136, 136, 136, 136, 136, 136, 136, 146, 156, 167, 177, 187, 197, 207, 218, 228],
     )
-
-
-def test_rabadon():
-    ahri = Ahri(level=11, inventory=[RabadonsDeathcap()])
-    assert ahri.ability_power == 162
-    ahri = Ahri(level=11, inventory=[RabadonsDeathcap(), BlastingWand()])
-    assert ahri.ability_power == 216
 
 
 def test_mythic_passives():

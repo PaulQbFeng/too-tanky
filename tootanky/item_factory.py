@@ -1,4 +1,3 @@
-from tootanky.damage import damage_after_resistance, pre_mitigation_damage, ratio_stat, get_resistance_type
 from tootanky.stats import Stats
 from tootanky.item import BaseItem, ItemPassive, ActiveItem
 
@@ -285,7 +284,7 @@ class RecurveBow(ActiveItem):
     type = "Epic"
     damage_type = "physical"
 
-    def get_damage_modifier_flat(self, **kwargs):
+    def get_damage_modifier_flat(self):
         return 15
 
     def on_hit_effect(self, target):
@@ -381,7 +380,7 @@ class BlackCleaver(BaseItem):
         self.stats.ability_haste = 30
         self.carve_stack_count = 0
 
-    def get_carve_stack_stats(self, target, **kwargs):
+    def get_carve_stack_stats(self, target):
         if self.carve_stack_count < 6:
             armor_reduction_percent = target.armor_reduction_percent
             self.carve_stack_count += 1
@@ -389,7 +388,7 @@ class BlackCleaver(BaseItem):
         else:
             return 0
 
-    def deapply_buffs(self, target, **kwargs):
+    def deapply_buffs(self, target):
         if self.carve_stack_count > 0:
             percent_debuff = 1 - (1 - target.armor_reduction_percent + self.carve_stack_count * 0.05) / (
                 1 - target.armor_reduction_percent
@@ -511,16 +510,18 @@ class Galeforce(ActiveItem):
             return 60
         return 65 + (self.champion.level - 10) * 5
 
-    def damage(self, target, **kwargs):
+    def damage(self, target):
         target_max_health = target.orig_base_stats.health + target.orig_bonus_stats.health
         target_current_health = target.health
         total_damage = 0
         for _ in range(3):
-            if (1 - target_current_health/target_max_health) <= 0.7:
+            if (1 - target_current_health / target_max_health) <= 0.7:
                 damage_modifier_coeff = 1 + (1 - target_current_health / (target_max_health)) * 5 / 7
             else:
                 damage_modifier_coeff = 1.5
-            damage = self._compute_damage(target=target, damage_modifier_flat=0, damage_modifier_coeff=damage_modifier_coeff)
+            damage = self._compute_damage(
+                target=target, damage_modifier_flat=0, damage_modifier_coeff=damage_modifier_coeff
+            )
             total_damage += damage
             target_current_health -= damage
 
