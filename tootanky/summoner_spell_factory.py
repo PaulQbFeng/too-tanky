@@ -22,10 +22,6 @@ class Ignite(BaseSummonerSpell):
     def __init__(self, champion):
         self.champion = champion
 
-    @property
-    def cooldown(self):
-        return self.base_cooldown * 100 / (100 + self.champion.ability_haste)
-
     def get_base_damage(self):
         return 10 + 4 * self.champion.level
 
