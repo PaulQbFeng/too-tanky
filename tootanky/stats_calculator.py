@@ -61,15 +61,6 @@ def get_champion_bonus_stats(champion_name: str, level: int) -> Stats:
     )
 
 
-def get_items_total_stats(items: BaseItem):
-    """Return the sum of the base stats + potential passives of each item"""
-
-    total_item_stats = Stats()
-    for item in items:
-        total_item_stats = total_item_stats + item.stats  # TODO: implem __iadd__
-    return total_item_stats
-
-
 ALL_CHAMPION_OUTLIERS_ATTACK_SPEED_RATIO = {
     "Akshan": 0.4,
     "Amumu": 0.638,
