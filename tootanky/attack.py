@@ -1,4 +1,10 @@
-from tootanky.damage import damage_after_resistance, pre_mitigation_damage, ratio_stat, get_resistance_type, damage_physical_auto_attack
+from tootanky.damage import (
+    damage_after_resistance,
+    pre_mitigation_damage,
+    ratio_stat,
+    get_resistance_type,
+    damage_physical_auto_attack,
+)
 
 
 class BaseDamageMixin:
@@ -48,6 +54,8 @@ class BaseDamageMixin:
             damage_modifier_flat=damage_modifier_flat,
             damage_modifier_coeff=damage_modifier_coeff,
         )
+        if self.damage_type == "true":
+            return pre_mtg_dmg
 
         res_type = get_resistance_type(self.damage_type)
         if res_type == "armor":
@@ -95,7 +103,6 @@ class BaseDamageMixin:
 
 
 class AutoAttack(BaseDamageMixin):
-
     def __init__(self, champion):
         self.champion = champion
 
@@ -113,7 +120,7 @@ class AutoAttack(BaseDamageMixin):
             crit=is_crit,
             crit_damage=self.champion.crit_damage,
             damage_modifier_flat=damage_modifier_flat,
-            damage_modifier_coeff=damage_modifier_coeff
+            damage_modifier_coeff=damage_modifier_coeff,
         )
         on_damage = 0
         for on_hit_source in self.champion.on_hits:
@@ -129,6 +136,6 @@ class AutoAttack(BaseDamageMixin):
             target=target,
             damage_modifier_flat=self.get_damage_modifier_flat(),
             damage_modifier_coeff=self.get_damage_modifier_coeff(),
-            is_crit=is_crit
-            )
+            is_crit=is_crit,
+        )
         return damage
