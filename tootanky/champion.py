@@ -38,7 +38,6 @@ class BaseChampion:
         assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
         self.level = level
         self.inventory = Inventory(inventory, champion=self)
-        self.initialize_auto_attack()
         if self.name is None:
             raise ValueError("Child class of BaseChampion is expected to have name = {champion name}")
         self.name = normalize_champion_name(self.name)
@@ -46,16 +45,18 @@ class BaseChampion:
         self.orig_bonus_stats = sc.get_champion_bonus_stats(champion_name=self.name, level=level)
         self.initialize_champion_stats_by_default()
 
+        self.initialize_auto_attack()
+        if summoner_spells is not None:
+            self.init_summoner_spells(summoner_spells)
+
         if spell_levels is None:
             if spell_max_order is None:
                 spell_levels = (1, 1, 1, 1)
             else:
                 self.spell_max_order = spell_max_order
                 spell_levels = self.get_default_spell_levels()
-
-        if summoner_spells is not None:
-            self.init_summoner_spells(summoner_spells)
         self.init_spells(spell_levels)
+
         self.orig_bonus_stats += self.get_bonus_stats()
         self.orig_bonus_stats += self.get_mythic_passive_stats()
         self.apply_stat_modifiers()
@@ -119,8 +120,7 @@ class BaseChampion:
     def crit_chance(self):
         if self.inventory.contains(WRATH_ITEMS):
             return 0
-        else:
-            return self._crit_chance
+        return self._crit_chance
 
     @crit_chance.setter
     def crit_chance(self, value):
@@ -201,34 +201,34 @@ class BaseChampion:
             self.bonus_armor *= 1 - self.armor_reduction_percent
 
     def get_mythic_passive_stats(self):
-        if self.inventory.item_type_count["Mythic"] == 1:
-            mythic_item = self.inventory.get_mythic_item()
-            mythic_passive_stats = dict()
-            for mythic_passive_stat in mythic_item.mythic_passive_stats:
-                stat_name, value, value_type = mythic_passive_stat
-                value *= self.inventory.item_type_count["Legendary"]
-                assert value_type in ["flat", "percent"], "mythic_passive_stats[2] must be flat or percent."
-                if any(s in stat_name for s in STAT_SUM_BASE_BONUS):
-                    assert not stat_name.startswith("base_"), "Base {} isn't affected by mythic passives.".format(
-                        stat_name.replace("base_", "")
-                    )
-                    stat = stat_name.replace("bonus_", "")
-                    if value_type == "percent":
-                        value = value * (getattr(self.orig_base_stats, stat) + getattr(self.orig_bonus_stats, stat))
-                if any(s in stat_name for s in STAT_STANDALONE + STAT_TOTAL_PROPERTY):
-                    assert not stat_name.startswith("base_"), "Base {} isn't affected by mythic passives.".format(
-                        stat_name.replace("base_", "")
-                    )
-                    stat = stat_name.replace("bonus_", "")
-                    if stat == "move_speed":
-                        stat = stat + "_" + value_type
-                    else:
-                        assert value_type == "flat", "Only flat bonuses for {} in mythic passives.".format(stat)
-                mythic_passive_stats[stat] = value
-
-            return Stats(mythic_passive_stats)
-        else:
+        if self.inventory.item_type_count["Mythic"] == 0:
             return Stats()
+
+        mythic_item = self.inventory.get_mythic_item()
+        mythic_passive_stats = dict()
+        for mythic_passive_stat in mythic_item.mythic_passive_stats:
+            stat_name, value, value_type = mythic_passive_stat
+            value *= self.inventory.item_type_count["Legendary"]
+            assert value_type in ["flat", "percent"], "mythic_passive_stats[2] must be flat or percent."
+            if any(s in stat_name for s in STAT_SUM_BASE_BONUS):
+                assert not stat_name.startswith("base_"), "Base {} isn't affected by mythic passives.".format(
+                    stat_name.replace("base_", "")
+                )
+                stat = stat_name.replace("bonus_", "")
+                if value_type == "percent":
+                    value = value * (getattr(self.orig_base_stats, stat) + getattr(self.orig_bonus_stats, stat))
+            if any(s in stat_name for s in STAT_STANDALONE + STAT_TOTAL_PROPERTY):
+                assert not stat_name.startswith("base_"), "Base {} isn't affected by mythic passives.".format(
+                    stat_name.replace("base_", "")
+                )
+                stat = stat_name.replace("bonus_", "")
+                if stat == "move_speed":
+                    stat = stat + "_" + value_type
+                else:
+                    assert value_type == "flat", "Only flat bonuses for {} in mythic passives.".format(stat)
+            mythic_passive_stats[stat] = value
+
+        return Stats(mythic_passive_stats)
 
     def get_default_spell_levels(self):
         # This method will be overriden for champions like jayce, udyr, etc.
@@ -323,14 +323,6 @@ class BaseChampion:
             carve_stack_value = self.inventory.get_item("Black Cleaver").get_carve_stack_stats(target)
             target.update_armor_stats(percent_debuff=carve_stack_value)
 
-    def apply_item_active(self, item_name, target):
-        assert item_name in [
-            item.name for item in self.inventory.items
-        ], "The item {} is not in the champion's inventory.".format(item_name)
-        selected_item = self.inventory.get_item(item_name)
-        assert hasattr(selected_item, "apply_active"), "The item {} does not have an active.".format(item_name)
-        return selected_item.apply_active(target)
-
     def take_damage(self, damage):
         """Takes damage from an enemy champion"""
 
@@ -352,7 +344,7 @@ class Dummy(BaseChampion):
     name = "Dummy"
 
     def __init__(self, health: float = 1000, bonus_resistance: int = 0):
-        super().__init__(inventory=None, level=1)
+        super().__init__(level=1)
         """Dummy (here defined as a champion) has the same armor and magic resist. His health is capped at 10 000"""
         assert bonus_resistance % 10 == 0
         assert health % 100 == 0

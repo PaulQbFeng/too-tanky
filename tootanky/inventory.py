@@ -56,7 +56,7 @@ class Inventory:
         if item.type == "Legendary":
             assert not self.contains(
                 item.name
-            ), "A champion can't have more than one copy of {}. (Legendart Item)".format(item.name)
+            ), "A champion can't have more than one copy of {}. (Legendary Item)".format(item.name)
         if item.type == "Mythic":
             assert self.item_type_count["Mythic"] <= 1, "A champion can't have more than one mythic item."
         if item.limitations is None:
