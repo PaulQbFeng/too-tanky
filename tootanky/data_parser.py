@@ -83,7 +83,6 @@ def get_champion_spell_stats(folder: str):
                 "range": spell["range"],
                 "cost": spell["costCoefficients"],
                 "base_cooldown_per_level": spell["cooldownCoefficients"],
-                "ratios": [spell["coefficients"]["coefficient1"], spell["coefficients"]["coefficient2"]],
                 "max_level": spell["maxLevel"],
             }
 
