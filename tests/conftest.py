@@ -1,5 +1,5 @@
 import pytest
-from tootanky.champion import Dummy
+from tootanky.dummy import Dummy
 
 
 @pytest.fixture

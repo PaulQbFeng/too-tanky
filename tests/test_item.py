@@ -1,6 +1,6 @@
 import math
 
-from tootanky.champion import Dummy
+from tootanky.dummy import Dummy
 from tootanky.champions import Ahri, Caitlyn, Yasuo, Yone
 from tootanky.item_factory import (
     ALL_ITEMS,
