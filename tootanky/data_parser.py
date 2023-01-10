@@ -20,19 +20,71 @@ def get_dataset_from_json(filename: str):
     return dataset
 
 
-# build dictionnary {champion_name : {stats}}
-def fill_champion_stats(dataset: dict):
-    out_stats = dict()
+# build dictionnary
+def get_champion_stats(json_file: str) -> dict:
+    """
+    From ddragon champion.json file
+    Name standardisation is applied.
+    Dummy stats added to dict.
+
+    Output format:
+        {
+            champion_name : {
+                stat_name_1: stat_value_1,
+                stat_name_2: stat_value_2,
+            }
+        }
+
+    """
+    dataset = get_dataset_from_json(json_file)
+
+    champion_stats = dict()
     for name, data in dataset["data"].items():
-        standard_keys = [MAPPING_CHAMPION_STANDARD[orig_stat_name] for orig_stat_name in data["stats"].keys()]
-        out_stats[name] = dict(zip(standard_keys, data["stats"].values()))
-    return out_stats
+        std_stat_name = [MAPPING_CHAMPION_STANDARD[orig_stat_name] for orig_stat_name in data["stats"].keys()]
+        std_champion_name = normalize_champion_name(name)
+        champion_stats[std_champion_name] = dict(zip(std_stat_name, data["stats"].values()))
+
+    champion_stats.update(
+        {
+            "Dummy": {
+                "health": 1000,
+                "health_perlevel": 0,
+                "mana": 0,
+                "mana_perlevel": 0,
+                "move_speed": 0,
+                "armor": 0,
+                "armor_perlevel": 0,
+                "magic_resist": 0,
+                "magic_resist_perlevel": 0,
+                "attack_range": 0,
+                "health_regen": 0,
+                "health_regen_perlevel": 0,
+                "mana_regen": 0,
+                "mana_regen_perlevel": 0,
+                "crit_chance": 0,
+                "crit_chance_perlevel": 0,
+                "attack_damage": 0,
+                "attack_damage_perlevel": 0,
+                "attack_speed_perlevel": 0,
+                "attack_speed": 0,
+            }
+        }
+    )
+    return champion_stats
 
 
-def fill_item_stats(item_set: dict):
-    """{item_name : {stat_name : stat_value}}"""
+def get_item_stats(json_file: str) -> dict:
+    """
+    From ddragon item.json file.
+    output format
+        {
+            item_name : {stat_name : stat_value}
+        }
+    """
+    dataset = get_dataset_from_json(json_file)
+
     out_stats = dict()
-    for item in item_set["data"].values():
+    for item in dataset["data"].values():
         item["stats"].update({"gold": item["gold"]["total"]})
         standard_keys = [MAPPING_ITEM_STANDARD[orig_stat_name] for orig_stat_name in item["stats"].keys()]
         out_stats[item["name"]] = dict(zip(standard_keys, item["stats"].values()))
@@ -75,10 +127,11 @@ def get_champion_spell_stats(folder: str):
     out_dict = dict()
     for json_file in json_paths:
         data = get_dataset_from_json(folder + "/" + json_file)
-        out_dict[data["name"]] = dict()
+        std_champion_name = normalize_champion_name(data["name"])
+        out_dict[std_champion_name] = dict()
         for spell in data["spells"]:
             spell_key = spell["spellKey"]
-            out_dict[data["name"]][spell_key] = {
+            out_dict[std_champion_name][spell_key] = {
                 "name": spell["name"],
                 "range": spell["range"],
                 "cost": spell["costCoefficients"],
@@ -89,55 +142,9 @@ def get_champion_spell_stats(folder: str):
     return out_dict
 
 
-ALL_CHAMPION_BASE_STATS_ORIGINAL = fill_champion_stats(get_dataset_from_json("data/ddragon/champion.json"))
-ALL_CHAMPION_SPELLS_ORIGINAL = get_champion_spell_stats("data/raw-community-dragon/champions")
-
-ALL_CHAMPION_BASE_STATS = dict()
-ALL_CHAMPION_SPELLS = dict()
-
-for i in range(len(ALL_CHAMPION_BASE_STATS_ORIGINAL.keys())):
-    key = list(ALL_CHAMPION_BASE_STATS_ORIGINAL.keys())[i]
-    new_key = normalize_champion_name(key)
-    ALL_CHAMPION_BASE_STATS[new_key] = ALL_CHAMPION_BASE_STATS_ORIGINAL[key]
-
-for i in range(len(ALL_CHAMPION_SPELLS_ORIGINAL.keys())):
-    key = list(ALL_CHAMPION_SPELLS_ORIGINAL.keys())[i]
-    new_key = normalize_champion_name(key)
-    ALL_CHAMPION_SPELLS[new_key] = ALL_CHAMPION_SPELLS_ORIGINAL[key]
-
-assert sorted(list(ALL_CHAMPION_BASE_STATS.keys()), key=str.casefold) == sorted(
-    ALL_CHAMPION_SPELLS.keys(), key=str.casefold
-)
-
-ALL_CHAMPION_BASE_STATS.update(
-    {
-        "Dummy": {
-            "health": 1000,
-            "health_perlevel": 0,
-            "mana": 0,
-            "mana_perlevel": 0,
-            "move_speed": 0,
-            "armor": 0,
-            "armor_perlevel": 0,
-            "magic_resist": 0,
-            "magic_resist_perlevel": 0,
-            "attack_range": 0,
-            "health_regen": 0,
-            "health_regen_perlevel": 0,
-            "mana_regen": 0,
-            "mana_regen_perlevel": 0,
-            "crit_chance": 0,
-            "crit_chance_perlevel": 0,
-            "attack_damage": 0,
-            "attack_damage_perlevel": 0,
-            "attack_speed_perlevel": 0,
-            "attack_speed": 0,
-        }
-    }
-)
-
-item_set = get_dataset_from_json("data/ddragon/item.json")
-ALL_ITEM_STATS = fill_item_stats(item_set)
+ALL_CHAMPION_BASE_STATS = get_champion_stats("data/ddragon/champion.json")
+ALL_CHAMPION_SPELLS = get_champion_spell_stats("data/raw-community-dragon/champions")
+ALL_ITEM_STATS = get_item_stats("data/ddragon/item.json")
 
 SCALING_STAT_NAMES = get_scaling_stat_names(MAPPING_CHAMPION_STANDARD)
 NON_SCALING_STAT_NAMES = ["move_speed", "attack_range"]
