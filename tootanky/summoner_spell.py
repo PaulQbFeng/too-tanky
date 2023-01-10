@@ -4,10 +4,9 @@ from tootanky.attack import BaseDamageMixin
 class BaseSummonerSpell(BaseDamageMixin):
     """
     Some class variables that can be overwritten in the subclasses:
-        - spell_key: q, w, e, r (default=None)
-        - damage_type: physical, magical (default=None)
-        - apply_on_hit: If the spell can apply on_hit (default=False)
-        - can_trigger_spellblade: If the spell can activate spellblade effect (default=True)
+        - name: name of the summoner spell
+        - base_cooldown
+        - sum spell range
 
     Not all spell specifications are included in the data file which means there is a need to double check
     the current specs + add the missing ones inside the subclass of BaseSpell.
