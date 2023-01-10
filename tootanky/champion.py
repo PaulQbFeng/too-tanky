@@ -15,6 +15,7 @@ from tootanky.item_factory import BaseItem, SPELL_BLADE_ITEMS, CLASSIC_ON_HIT_IT
 from tootanky.spell_registry import SpellFactory
 from tootanky.stats import Stats
 from tootanky.attack import AutoAttack
+from tootanky.summoner_spell_factory import ALL_SUMMONER_SPELLS
 
 
 class BaseChampion:
@@ -30,6 +31,7 @@ class BaseChampion:
         self,
         level: int = 1,
         inventory: Optional[List[BaseItem]] = None,
+        summoner_spells: Optional[List[str]] = None,
         spell_levels: Optional[Tuple[int]] = None,
         spell_max_order: Optional[Tuple[str]] = None,
     ):
@@ -51,6 +53,8 @@ class BaseChampion:
                 self.spell_max_order = spell_max_order
                 spell_levels = self.get_default_spell_levels()
 
+        if summoner_spells is not None:
+            self.init_summoner_spells(summoner_spells)
         self.init_spells(spell_levels)
         self.orig_bonus_stats += self.get_bonus_stats()
         self.orig_bonus_stats += self.get_mythic_passive_stats()
@@ -256,6 +260,11 @@ class BaseChampion:
             default_order_per_level.count("e"),
             default_order_per_level.count("r"),
         )
+
+    def init_summoner_spells(self, summoner_spells):
+        for sum_name in summoner_spells:
+            summoner_spell = ALL_SUMMONER_SPELLS[sum_name]
+            setattr(self, sum_name, summoner_spell(champion=self))
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
