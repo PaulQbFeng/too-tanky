@@ -1,4 +1,4 @@
-from tootanky.champion import Dummy
+from tootanky.dummy import Dummy
 from tootanky.champions import JarvanIV
 from tootanky.item_factory import LongSword
 

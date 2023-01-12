@@ -1,6 +1,6 @@
 import math
 
-from tootanky.champion import Dummy
+from tootanky.dummy import Dummy
 from tootanky.champions import Ahri, Annie, Darius, Xerath
 from tootanky.item_factory import ALL_ITEMS, BlastingWand, RubyCrystal
 

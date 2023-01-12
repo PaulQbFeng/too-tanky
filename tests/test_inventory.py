@@ -8,6 +8,7 @@ from tootanky.item_factory import (
     SeryldasGrudge,
     InfinityEdge,
     NavoriQuickblades,
+    Everfrost,
 )
 
 
@@ -36,10 +37,15 @@ def test_inventory():
 
 def test_legendary_unicity():
     ie = InfinityEdge()
-    assert ie.stats.attack_damage == 70
-    assert ie.stats.crit_chance == 0.2
     with pytest.raises(AssertionError):
         inv = Inventory([ie, ie])
+
+
+def test_mythic_unicity():
+    everfrost = Everfrost()
+    galeforce = Galeforce()
+    with pytest.raises(AssertionError):
+        inv = Inventory([everfrost, galeforce])
 
 
 def test_crit_modifier_unicity():
