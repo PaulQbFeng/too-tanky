@@ -96,3 +96,10 @@ def normalize_champion_name(name):
         return exceptions_dict[name]
 
     return re.sub("[^A-Za-z0-9]+", "", name)
+
+
+def convert_to_snake_case(name):
+    name = name.replace(" ", "_").lower()
+    out = re.sub("[^a-z0-9_]+", "", name)
+
+    return out
