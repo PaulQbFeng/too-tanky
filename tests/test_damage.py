@@ -408,6 +408,6 @@ def test_pre_mtg_damage():
 
 
 def test_true_damage(dummy_0, dummy_100):
-    mf = MissFortune(level=1, summoner_spells=["ignite"])
+    mf = MissFortune(level=1, summoner_spells=["Ignite"])
     assert mf.ignite.damage(dummy_0) == 70
     assert mf.ignite.damage(dummy_100) == 70

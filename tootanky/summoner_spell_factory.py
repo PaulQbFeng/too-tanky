@@ -6,7 +6,7 @@ class Ignite(BaseSummonerSpell):
     Ignite Summoner spell. Total damage is the n * tick damage.
     """
 
-    name = "ignite"
+    name = "Ignite"
     damage_type = "true"
     base_cooldown = 180
     range = 600
