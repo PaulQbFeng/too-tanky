@@ -1,28 +1,7 @@
-from typing import List, Optional
-
-from tootanky.item import BaseItem, ActiveItem
 from tootanky.item_factory import SPELL_BLADE_ITEMS
-from tootanky.stats import Stats
 
 
-class Inventory:
-    def __init__(self, items: Optional[List[BaseItem]] = None, champion=None):
-        self.items = []
-        self.unique_item_passives = []
-        self.item_type_count = {"Starter": 0, "Basic": 0, "Epic": 0, "Legendary": 0, "Mythic": 0}
-        self.item_stats = Stats()
-
-        if items is not None:
-            assert len(items) <= 6, "Inventory can't contain more than 6 items."
-            for item in items:
-                item.champion = champion
-                self.item_type_count[item.type] += 1
-                self.check_item(item)
-                self.items.append(item)
-                self.apply_item_passive(item)
-                self.item_stats += item.stats
-                item.init_range_type()
-
+class InventoryMixin:
     def contains(self, name):
         """Check if an item is in the inventory or if atleast one item of a list of items is in the inventory"""
         if isinstance(name, list):

@@ -11,7 +11,7 @@ from tootanky.glossary import (
     normalize_champion_name,
     convert_to_snake_case,
 )
-from tootanky.inventory import Inventory
+from tootanky.inventory import InventoryMixin
 from tootanky.item_factory import BaseItem, SPELL_BLADE_ITEMS, CLASSIC_ON_HIT_ITEMS, WRATH_ITEMS
 from tootanky.spell_registry import SpellFactory
 from tootanky.stats import Stats
@@ -19,7 +19,7 @@ from tootanky.attack import AutoAttack
 from tootanky.summoner_spell_factory import ALL_SUMMONER_SPELLS
 
 
-class BaseChampion:
+class BaseChampion(InventoryMixin):
     """
     Base class to represent a champion. It is initialized with the stats of a champion at a given level.
     Some mechanisms are shared accross all champions:
@@ -36,11 +36,12 @@ class BaseChampion:
         spell_levels: Optional[Tuple[int]] = None,
         spell_max_order: Optional[Tuple[str]] = None,
     ):
-        assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
-        self.level = level
-        self.inventory = Inventory(inventory, champion=self)
+
         if self.name is None:
             raise ValueError("Child class of BaseChampion is expected to have name = {champion name}")
+        assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
+
+        self.level = level
         self.name = normalize_champion_name(self.name)
         self.orig_base_stats = sc.get_champion_base_stats(champion_name=self.name, level=level)
         self.orig_bonus_stats = sc.get_champion_bonus_stats(champion_name=self.name, level=level)
@@ -58,6 +59,22 @@ class BaseChampion:
                 spell_levels = self.get_default_spell_levels()
         self.init_spells(spell_levels)
 
+        self.items = []
+        self.unique_item_passives = []
+        self.item_type_count = {"Starter": 0, "Basic": 0, "Epic": 0, "Legendary": 0, "Mythic": 0}
+        self.item_stats = Stats()
+
+        if inventory is not None:
+            assert len(inventory) <= 6, "Inventory can't contain more than 6 items."
+            for item in inventory:
+                item.champion = self
+                self.item_type_count[item.type] += 1
+                self.check_item(item)
+                self.items.append(item)
+                self.apply_item_passive(item)
+                self.item_stats += item.stats
+                item.init_range_type()
+
         self.orig_bonus_stats += self.get_bonus_stats()
         self.orig_bonus_stats += self.get_mythic_passive_stats()
         self.apply_stat_modifiers()
@@ -68,16 +85,16 @@ class BaseChampion:
         self.spellblade_item = None
 
         for name in SPELL_BLADE_ITEMS:
-            if self.inventory.contains(name):
-                self.spellblade_item = self.inventory.get_item(name)
+            if self.contains(name):
+                self.spellblade_item = self.get_item(name)
                 self.on_hits.append(self.spellblade_item)
                 break
         for name in CLASSIC_ON_HIT_ITEMS:
-            if self.inventory.contains(name):
-                self.on_hits.append(self.inventory.get_item(name))
+            if self.contains(name):
+                self.on_hits.append(self.get_item(name))
         for name in WRATH_ITEMS:
-            if self.inventory.contains(name):
-                self.on_hits.append(self.inventory.get_item(name))
+            if self.contains(name):
+                self.on_hits.append(self.get_item(name))
                 break
 
     def getter_wrapper(stat_name: str) -> Callable:
@@ -119,7 +136,7 @@ class BaseChampion:
 
     @property
     def crit_chance(self):
-        if self.inventory.contains(WRATH_ITEMS):
+        if self.contains(WRATH_ITEMS):
             return 0
         return self._crit_chance
 
@@ -148,7 +165,7 @@ class BaseChampion:
         Get bonus stats from all sources of bonus stats (items, runes).
         This does not include mythic passives.
         """
-        return self.inventory.item_stats
+        return self.item_stats
 
     def __update_champion_stats(self):
         """
@@ -202,14 +219,14 @@ class BaseChampion:
             self.bonus_armor *= 1 - self.armor_reduction_percent
 
     def get_mythic_passive_stats(self):
-        if self.inventory.item_type_count["Mythic"] == 0:
+        if self.item_type_count["Mythic"] == 0:
             return Stats()
 
-        mythic_item = self.inventory.get_mythic_item()
+        mythic_item = self.get_mythic_item()
         mythic_passive_stats = dict()
         for mythic_passive_stat in mythic_item.mythic_passive_stats:
             stat_name, value, value_type = mythic_passive_stat
-            value *= self.inventory.item_type_count["Legendary"]
+            value *= self.item_type_count["Legendary"]
             assert value_type in ["flat", "percent"], "mythic_passive_stats[2] must be flat or percent."
             if any(s in stat_name for s in STAT_SUM_BASE_BONUS):
                 assert not stat_name.startswith("base_"), "Base {} isn't affected by mythic passives.".format(
@@ -301,28 +318,28 @@ class BaseChampion:
         return 1
 
     def apply_crit_damage_modifiers(self):
-        if not self.inventory.contains(WRATH_ITEMS):
+        if not self.contains(WRATH_ITEMS):
             self.orig_bonus_stats.crit_chance *= self.get_crit_chance_multiplier()
         bonus_crit_damage = 1.75 * self.get_crit_damage_multiplier() - 1.75
-        if self.inventory.contains("Infinity Edge") and self.orig_bonus_stats.crit_chance >= 0.6:
+        if self.contains("Infinity Edge") and self.orig_bonus_stats.crit_chance >= 0.6:
             bonus_crit_damage += 0.35 * self.get_crit_damage_multiplier()
         self.orig_bonus_stats.crit_damage += bonus_crit_damage
 
     def apply_item_multipliers(self):
         ap_multiplier = 1
-        if self.inventory.contains("Vigilant Wardstone"):  # missing ability haste
+        if self.contains("Vigilant Wardstone"):  # missing ability haste
             ap_multiplier += 0.12
             self.orig_bonus_stats.attack_damage *= 1.12
             self.orig_bonus_stats.health *= 1.12
             self.orig_bonus_stats.ability_haste *= 1.12
-        if self.inventory.contains("Rabadon's Deathcap"):
+        if self.contains("Rabadon's Deathcap"):
             ap_multiplier += 0.35
         self.orig_base_stats.ability_power *= ap_multiplier
         self.orig_bonus_stats.ability_power *= ap_multiplier
 
     def apply_black_cleaver(self, target):
-        if self.inventory.contains("Black Cleaver"):
-            carve_stack_value = self.inventory.get_item("Black Cleaver").get_carve_stack_stats(target)
+        if self.contains("Black Cleaver"):
+            carve_stack_value = self.get_item("Black Cleaver").get_carve_stack_stats(target)
             target.update_armor_stats(percent_debuff=carve_stack_value)
 
     def take_damage(self, damage):

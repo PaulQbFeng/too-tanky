@@ -1,5 +1,5 @@
 import pytest
-from tootanky.inventory import Inventory
+from tootanky.champions import Annie
 from tootanky.item_factory import (
     CloakofAgility,
     Galeforce,
@@ -12,44 +12,49 @@ from tootanky.item_factory import (
 )
 
 
-def test_inventory():
-    inventory = Inventory([LongSword(), Galeforce(), LongSword(), CloakofAgility()])
-    assert inventory.item_type_count["Legendary"] == 0
-    assert inventory.item_type_count["Mythic"] == 1
-    assert inventory.item_stats.attack_damage == 80
-    assert inventory.item_stats.crit_chance == 0.35
-    assert inventory.item_stats.attack_speed == 0.2
-    assert inventory.item_stats.armor_pen_percent == 0
-    inventory = Inventory([LongSword(), Galeforce(), LongSword(), CloakofAgility(), SeryldasGrudge()])
-    assert inventory.item_type_count["Legendary"] == 1
-    assert inventory.item_type_count["Mythic"] == 1
-    assert inventory.item_stats.attack_damage == 125
-    assert inventory.item_stats.crit_chance == 0.35
-    assert inventory.item_stats.attack_speed == 0.2
-    assert inventory.item_stats.armor_pen_percent == 0.3
-    # Test of unique passive feature
-    inventory = Inventory(
-        [LongSword(), Galeforce(), SerratedDirk(), CloakofAgility(), SeryldasGrudge(), SerratedDirk()]
+def test_inventory_mythic():
+    annie = Annie(inventory=[LongSword(), Galeforce(), LongSword(), CloakofAgility()])
+    assert annie.item_type_count["Legendary"] == 0
+    assert annie.item_type_count["Mythic"] == 1
+    assert annie.item_stats.attack_damage == 80
+    assert annie.item_stats.crit_chance == 0.35
+    assert annie.item_stats.attack_speed == 0.2
+    assert annie.item_stats.armor_pen_percent == 0
+
+
+def test_inventory_legendary():
+    annie = Annie(inventory=[LongSword(), Galeforce(), LongSword(), CloakofAgility(), SeryldasGrudge()])
+    assert annie.item_type_count["Legendary"] == 1
+    assert annie.item_type_count["Mythic"] == 1
+    assert annie.item_stats.attack_damage == 125
+    assert annie.item_stats.crit_chance == 0.35
+    assert annie.item_stats.attack_speed == 0.2
+    assert annie.item_stats.armor_pen_percent == 0.3
+
+
+def test_inventory_unique_passive():
+    annie = Annie(
+        inventory=[LongSword(), Galeforce(), SerratedDirk(), CloakofAgility(), SeryldasGrudge(), SerratedDirk()]
     )
-    assert inventory.item_stats.attack_damage == 175
-    assert inventory.item_stats.lethality == 10
+    assert annie.item_stats.attack_damage == 175
+    assert annie.item_stats.lethality == 10
 
 
 def test_legendary_unicity():
     ie = InfinityEdge()
     with pytest.raises(AssertionError):
-        inv = Inventory([ie, ie])
+        annie = Annie(inventory=[ie, ie])
 
 
 def test_mythic_unicity():
     everfrost = Everfrost()
     galeforce = Galeforce()
     with pytest.raises(AssertionError):
-        inv = Inventory([everfrost, galeforce])
+        annie = Annie(inventory=[everfrost, galeforce])
 
 
 def test_crit_modifier_unicity():
     ie = InfinityEdge()
     navory = NavoriQuickblades()
     with pytest.raises(AssertionError):
-        inv = Inventory([ie, navory])
+        annie = Annie(inventory=[ie, navory])
