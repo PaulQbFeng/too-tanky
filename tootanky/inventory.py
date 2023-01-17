@@ -103,10 +103,7 @@ class Inventory:
                 item.apply_passive()
 
     def get_price(self):
-        price = 0
-        for item in self.items:
-            price += item.price
-        return price
+        return sum(item.price for item in self.items)
 
     def get_spellblade_item(self):
         for name in SPELL_BLADE_ITEMS:
