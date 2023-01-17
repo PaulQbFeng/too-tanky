@@ -16,3 +16,6 @@ from .yasuo import Yasuo
 from .yone import Yone
 from .xerath import Xerath
 from .zed import Zed
+from tootanky.champion import BaseChampion
+
+ALL_CHAMPIONS = {cls.name: cls for cls in BaseChampion.__subclasses__() if cls.__name__ != "Dummy"}
