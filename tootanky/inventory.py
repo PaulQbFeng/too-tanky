@@ -100,27 +100,11 @@ class Inventory:
             else:
                 item.apply_passive()
 
-    def get_mythic_passive_stats(self):
-        if self.item_type_count["Mythic"] == 1:
-            nb_legendary = self.item_type_count["Legendary"]
-            if nb_legendary > 0:
-                mythic_item = self.get_mythic_item()
-                for i in range(len(mythic_item.mythic_passive_stats)):
-                    mythic_item.mythic_passive_stats[i][1] *= nb_legendary
-                return mythic_item.mythic_passive_stats
-        return None
-
     def get_price(self):
         price = 0
         for item in self.items:
             price += item.price
         return price
-
-    def mythic_passive_stats(self):
-        # TODO
-        mythic_item = self.get_mythic_item()
-        if mythic_item is None:
-            return 0
 
     def get_spellblade_item(self):
         for name in SPELL_BLADE_ITEMS:
