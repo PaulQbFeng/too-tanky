@@ -69,15 +69,15 @@ class BaseChampion:
 
         for name in SPELL_BLADE_ITEMS:
             if self.has_item(name):
-                self.spellblade_item = self.inventory.get_item(name)
+                self.spellblade_item = self.get_item(name)
                 self.on_hits.append(self.spellblade_item)
                 break
         for name in CLASSIC_ON_HIT_ITEMS:
             if self.has_item(name):
-                self.on_hits.append(self.inventory.get_item(name))
+                self.on_hits.append(self.get_item(name))
         for name in WRATH_ITEMS:
             if self.has_item(name):
-                self.on_hits.append(self.inventory.get_item(name))
+                self.on_hits.append(self.get_item(name))
                 break
 
     def getter_wrapper(stat_name: str) -> Callable:
@@ -322,7 +322,7 @@ class BaseChampion:
 
     def apply_black_cleaver(self, target):
         if self.has_item("Black Cleaver"):
-            carve_stack_value = self.inventory.get_item("Black Cleaver").get_carve_stack_stats(target)
+            carve_stack_value = self.get_item("Black Cleaver").get_carve_stack_stats(target)
             target.update_armor_stats(percent_debuff=carve_stack_value)
 
     def take_damage(self, damage):
@@ -342,3 +342,6 @@ class BaseChampion:
 
     def has_item(self, item_name: str) -> bool:
         return self.inventory.contains(item_name)
+
+    def get_item(self, item_name: str) -> bool:
+        return self.inventory.get_item(item_name)
