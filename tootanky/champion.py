@@ -68,15 +68,15 @@ class BaseChampion:
         self.spellblade_item = None
 
         for name in SPELL_BLADE_ITEMS:
-            if self.inventory.contains(name):
+            if self.has_item(name):
                 self.spellblade_item = self.inventory.get_item(name)
                 self.on_hits.append(self.spellblade_item)
                 break
         for name in CLASSIC_ON_HIT_ITEMS:
-            if self.inventory.contains(name):
+            if self.has_item(name):
                 self.on_hits.append(self.inventory.get_item(name))
         for name in WRATH_ITEMS:
-            if self.inventory.contains(name):
+            if self.has_item(name):
                 self.on_hits.append(self.inventory.get_item(name))
                 break
 
@@ -119,7 +119,7 @@ class BaseChampion:
 
     @property
     def crit_chance(self):
-        if self.inventory.contains(WRATH_ITEMS):
+        if self.has_item(WRATH_ITEMS):
             return 0
         return self._crit_chance
 
@@ -301,27 +301,27 @@ class BaseChampion:
         return 1
 
     def apply_crit_damage_modifiers(self):
-        if not self.inventory.contains(WRATH_ITEMS):
+        if not self.has_item(WRATH_ITEMS):
             self.orig_bonus_stats.crit_chance *= self.get_crit_chance_multiplier()
         bonus_crit_damage = 1.75 * self.get_crit_damage_multiplier() - 1.75
-        if self.inventory.contains("Infinity Edge") and self.orig_bonus_stats.crit_chance >= 0.6:
+        if self.has_item("Infinity Edge") and self.orig_bonus_stats.crit_chance >= 0.6:
             bonus_crit_damage += 0.35 * self.get_crit_damage_multiplier()
         self.orig_bonus_stats.crit_damage += bonus_crit_damage
 
     def apply_item_multipliers(self):
         ap_multiplier = 1
-        if self.inventory.contains("Vigilant Wardstone"):  # missing ability haste
+        if self.has_item("Vigilant Wardstone"):  # missing ability haste
             ap_multiplier += 0.12
             self.orig_bonus_stats.attack_damage *= 1.12
             self.orig_bonus_stats.health *= 1.12
             self.orig_bonus_stats.ability_haste *= 1.12
-        if self.inventory.contains("Rabadon's Deathcap"):
+        if self.has_item("Rabadon's Deathcap"):
             ap_multiplier += 0.35
         self.orig_base_stats.ability_power *= ap_multiplier
         self.orig_bonus_stats.ability_power *= ap_multiplier
 
     def apply_black_cleaver(self, target):
-        if self.inventory.contains("Black Cleaver"):
+        if self.has_item("Black Cleaver"):
             carve_stack_value = self.inventory.get_item("Black Cleaver").get_carve_stack_stats(target)
             target.update_armor_stats(percent_debuff=carve_stack_value)
 
@@ -339,3 +339,6 @@ class BaseChampion:
 
     def reset_health(self):
         self.health = self.orig_base_stats.health + self.orig_bonus_stats.health
+
+    def has_item(self, item_name: str) -> bool:
+        return self.inventory.contains(item_name)
