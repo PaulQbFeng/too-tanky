@@ -11,7 +11,7 @@ class Inventory:
         self.items = []
         self.unique_item_passives = []
         self.item_type_count = {"Starter": 0, "Basic": 0, "Epic": 0, "Legendary": 0, "Mythic": 0}
-        self.item_stats = Stats()
+        self.total_item_stats = Stats()
 
         if items is not None:
             assert len(items) <= 6, "Inventory can't contain more than 6 items."
@@ -19,7 +19,7 @@ class Inventory:
                 self.item_type_count[item.type] += 1
                 self.check_inventory_error_with_item(item)
                 self.apply_item_passive(item)
-                self.item_stats += item.stats
+                self.total_item_stats += item.stats
                 if champion is not None:
                     item.champion = champion
                     item.set_effect_from_range_type(champion.range_type)

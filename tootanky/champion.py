@@ -148,7 +148,7 @@ class BaseChampion:
         Get bonus stats from all sources of bonus stats (items, runes).
         This does not include mythic passives.
         """
-        return self.inventory.item_stats
+        return self.inventory.total_item_stats
 
     def __update_champion_stats(self):
         """
