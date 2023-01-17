@@ -9,6 +9,7 @@ from tootanky.glossary import (
     STAT_UNDERLYING_PROPERTY,
     STAT_TEMPORARY_BUFF,
     normalize_champion_name,
+    convert_to_snake_case,
 )
 from tootanky.inventory import Inventory
 from tootanky.item_factory import BaseItem, SPELL_BLADE_ITEMS, CLASSIC_ON_HIT_ITEMS, WRATH_ITEMS
@@ -264,7 +265,8 @@ class BaseChampion:
     def init_summoner_spells(self, summoner_spells):
         for sum_name in summoner_spells:
             summoner_spell = ALL_SUMMONER_SPELLS[sum_name]
-            setattr(self, sum_name, summoner_spell(champion=self))
+            std_sum_name = convert_to_snake_case(sum_name)
+            setattr(self, std_sum_name, summoner_spell(champion=self))
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
