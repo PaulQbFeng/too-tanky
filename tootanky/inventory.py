@@ -1,8 +1,9 @@
 from typing import List, Optional
 
-from tootanky.item import BaseItem, ActiveItem
+from tootanky.item import BaseItem
 from tootanky.item_factory import SPELL_BLADE_ITEMS
 from tootanky.stats import Stats
+from tootanky.glossary import convert_to_snake_case
 
 
 class Inventory:
@@ -16,6 +17,7 @@ class Inventory:
             assert len(items) <= 6, "Inventory can't contain more than 6 items."
             for item in items:
                 item.champion = champion
+                self.set_item_as_champion_attribute(item, champion)
                 self.item_type_count[item.type] += 1
                 self.check_item(item)
                 self.items.append(item)
@@ -126,3 +128,9 @@ class Inventory:
             if item:
                 return item
         return None
+
+    def set_item_as_champion_attribute(self, item, champion):
+        if champion is None:
+            return None
+        std_item_name = convert_to_snake_case(item.name)
+        setattr(champion, std_item_name, item)
