@@ -116,7 +116,5 @@ class Inventory:
         return None
 
     def set_item_as_champion_attribute(self, item, champion):
-        if champion is None:
-            return None
         std_item_name = convert_to_snake_case(item.name)
         setattr(champion, std_item_name, item)
