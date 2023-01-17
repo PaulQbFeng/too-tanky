@@ -388,7 +388,7 @@ class BlackCleaver(BaseItem):
         else:
             return 0
 
-    def deapply_buffs(self, target):
+    def remove_buffs(self, target):
         if self.carve_stack_count > 0:
             percent_debuff = 1 - (1 - target.armor_reduction_percent + self.carve_stack_count * 0.05) / (
                 1 - target.armor_reduction_percent

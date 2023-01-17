@@ -102,7 +102,7 @@ class BaseSpell(BaseDamageMixin):
         if self.damage_type == "physical":
             self.champion.apply_black_cleaver(target)
 
-    def deapply_buffs(self, target, **kwargs):
+    def remove_buffs(self, target, **kwargs):
         for stat, value_per_level in self.buffs:
             value = value_per_level[self.level - 1]
             if "armor_reduction" in stat:

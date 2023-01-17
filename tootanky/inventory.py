@@ -19,7 +19,7 @@ class Inventory:
                 item.champion = champion
                 self.set_item_as_champion_attribute(item, champion)
                 self.item_type_count[item.type] += 1
-                self.check_item(item)
+                self.is_inventory_condition_respected(item)
                 self.items.append(item)
                 self.apply_item_passive(item)
                 self.item_stats += item.stats
@@ -53,7 +53,7 @@ class Inventory:
                 indexes.append(index)
         return indexes
 
-    def check_item(self, item):
+    def is_inventory_condition_respected(self, item):
         # TODO: test, navori quickblades with spear of shojin (must download new patch) should raise AssertionError
         if item.type == "Legendary":
             assert not self.contains(

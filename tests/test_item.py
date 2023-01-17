@@ -121,7 +121,7 @@ def test_black_cleaver():
         assert round(ahri.auto_attack.damage(dummy)) == damage_values[i]
         ahri.do_auto_attack(dummy)
         assert round(dummy.armor) == armor_values[i]
-    ahri.black_cleaver.deapply_buffs(dummy)
+    ahri.black_cleaver.remove_buffs(dummy)
     assert round(dummy.armor) == 100
     assert ahri.black_cleaver.carve_stack_count == 0
 
