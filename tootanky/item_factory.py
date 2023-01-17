@@ -333,10 +333,10 @@ class Tiamat(ActiveItem):
         self.limitations = ["Hydra"]
         self.activate = False
 
-    def init_range_type(self):
-        if self.champion.range_type == "Melee":
+    def set_effect_from_range_type(self, range_type: str):
+        if range_type == "Melee":
             self.ratios = [("attack_damage", 0.4)]
-        if self.champion.range_type == "Ranged":
+        if range_type == "Ranged":
             self.ratios = [("attack_damage", 0.2)]
 
     def on_hit_effect(self, target):

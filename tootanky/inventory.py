@@ -16,14 +16,16 @@ class Inventory:
         if items is not None:
             assert len(items) <= 6, "Inventory can't contain more than 6 items."
             for item in items:
-                item.champion = champion
-                self.set_item_as_champion_attribute(item, champion)
                 self.item_type_count[item.type] += 1
-                self.is_inventory_condition_respected(item)
-                self.items.append(item)
+                self.check_inventory_error_with_item(item)
                 self.apply_item_passive(item)
                 self.item_stats += item.stats
-                item.init_range_type()
+                if champion is not None:
+                    item.champion = champion
+                    item.set_effect_from_range_type(champion.range_type)
+                    self.set_item_as_champion_attribute(item, champion)
+
+                self.items.append(item)
 
     def contains(self, name):
         """Check if an item is in the inventory or if atleast one item of a list of items is in the inventory"""
@@ -53,7 +55,7 @@ class Inventory:
                 indexes.append(index)
         return indexes
 
-    def is_inventory_condition_respected(self, item):
+    def check_inventory_error_with_item(self, item):
         # TODO: test, navori quickblades with spear of shojin (must download new patch) should raise AssertionError
         if item.type == "Legendary":
             assert not self.contains(
