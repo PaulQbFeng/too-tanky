@@ -14,10 +14,10 @@ from tootanky.glossary import (
 from tootanky.inventory import Inventory
 from tootanky.item_factory import BaseItem, SPELL_BLADE_ITEMS, CLASSIC_ON_HIT_ITEMS, WRATH_ITEMS
 from tootanky.spell_registry import SpellFactory
+from tootanky.spell import get_spell_levels
 from tootanky.stats import Stats
 from tootanky.attack import AutoAttack
 from tootanky.summoner_spell import BaseSummonerSpell
-from tootanky.summoner_spell_factory import ALL_SUMMONER_SPELLS
 
 
 class BaseChampion:
@@ -50,7 +50,7 @@ class BaseChampion:
         self.initialize_auto_attack()
         self.initialize_summoner_spells(summoner_spells)
         self.spell_max_order = spell_max_order
-        self.spell_levels = self.get_spell_levels(spell_levels)
+        self.spell_levels = get_spell_levels(spell_levels, spell_max_order, level)
         self.initialize_champion_spells()
 
         self.orig_bonus_stats += self.get_bonus_stats()
@@ -226,37 +226,6 @@ class BaseChampion:
 
         return Stats(mythic_passive_stats)
 
-    def get_default_spell_levels(self):
-        # This method will be overriden for champions like jayce, udyr, etc.
-        spell_1, spell_2, spell_3 = self.spell_max_order
-        default_order = [
-            spell_1,
-            spell_2,
-            spell_3,
-            spell_1,
-            spell_1,
-            "r",
-            spell_1,
-            spell_2,
-            spell_1,
-            spell_2,
-            "r",
-            spell_2,
-            spell_2,
-            spell_3,
-            spell_3,
-            "r",
-            spell_3,
-            spell_3,
-        ]
-        default_order_per_level = default_order[0 : self.level]
-        return (
-            default_order_per_level.count("q"),
-            default_order_per_level.count("w"),
-            default_order_per_level.count("e"),
-            default_order_per_level.count("r"),
-        )
-
     def initialize_summoner_spells(self, summoner_spells):
         if summoner_spells is None:
             self.summoner_spells = []
@@ -266,14 +235,6 @@ class BaseChampion:
                 spell.champion = self
         else:
             raise ValueError(f"A champion can only have 2 summoner spells max, {len(summoner_spells)} given.")
-
-    def get_spell_levels(self, spell_levels):
-        if spell_levels is None:
-            if self.spell_max_order is None:
-                spell_levels = (1, 1, 1, 1)
-            else:
-                spell_levels = self.get_default_spell_levels()
-        return spell_levels
 
     def initialize_champion_spells(self):
         """Initialize spells for the champion"""

@@ -141,3 +141,44 @@ class BaseSpell(BaseDamageMixin):
         self.apply_buffs(target, **kwargs)  # Applied after the on-hits based on test with sheen + blackcleaver
 
         return damage + on_hit_damage
+
+
+def get_spell_levels_from_max_order(spell_max_order, champion_level):
+    # This method will be overriden for champions like jayce, udyr, etc.
+    spell_1, spell_2, spell_3 = spell_max_order
+    default_order = [
+        spell_1,
+        spell_2,
+        spell_3,
+        spell_1,
+        spell_1,
+        "r",
+        spell_1,
+        spell_2,
+        spell_1,
+        spell_2,
+        "r",
+        spell_2,
+        spell_2,
+        spell_3,
+        spell_3,
+        "r",
+        spell_3,
+        spell_3,
+    ]
+    default_order_per_level = default_order[0:champion_level]
+    return (
+        default_order_per_level.count("q"),
+        default_order_per_level.count("w"),
+        default_order_per_level.count("e"),
+        default_order_per_level.count("r"),
+    )
+
+
+def get_spell_levels(spell_levels, spell_max_order, champion_level):
+    if spell_levels is None:
+        if spell_max_order is None:
+            spell_levels = (1, 1, 1, 1)
+        else:
+            spell_levels = get_spell_levels_from_max_order(spell_max_order, champion_level)
+    return spell_levels
