@@ -16,6 +16,7 @@ from tootanky.item_factory import BaseItem, SPELL_BLADE_ITEMS, CLASSIC_ON_HIT_IT
 from tootanky.spell_registry import SpellFactory
 from tootanky.stats import Stats
 from tootanky.attack import AutoAttack
+from tootanky.summoner_spell import BaseSummonerSpell
 from tootanky.summoner_spell_factory import ALL_SUMMONER_SPELLS
 
 
@@ -47,8 +48,7 @@ class BaseChampion:
         self.initialize_champion_stats_by_default()
 
         self.initialize_auto_attack()
-        if summoner_spells is not None:
-            self.init_summoner_spells(summoner_spells)
+        self.initialize_summoner_spells(summoner_spells)
 
         if spell_levels is None:
             if spell_max_order is None:
@@ -262,11 +262,15 @@ class BaseChampion:
             default_order_per_level.count("r"),
         )
 
-    def init_summoner_spells(self, summoner_spells):
-        for sum_name in summoner_spells:
-            summoner_spell = ALL_SUMMONER_SPELLS[sum_name]
-            std_sum_name = convert_to_snake_case(sum_name)
-            setattr(self, std_sum_name, summoner_spell(champion=self))
+    def initialize_summoner_spells(self, summoner_spells):
+        if summoner_spells is None:
+            self.summoner_spells = []
+        elif len(summoner_spells) <= 2:
+            self.summoner_spells = summoner_spells
+            for spell in self.summoner_spells:
+                spell.champion=self
+        else:
+            raise ValueError(f"A champion can only have 2 summoner spells max, {len(summoner_spells)} given.")
 
     def init_spells(self, spell_levels):
         """Initialize spells for the champion"""
@@ -340,8 +344,11 @@ class BaseChampion:
     def reset_health(self):
         self.health = self.orig_base_stats.health + self.orig_bonus_stats.health
 
-    def has_item(self, item_name: str) -> bool:
-        return self.inventory.contains(item_name)
+    def has_item(self, name: str) -> bool:
+        return self.inventory.contains(name)
 
-    def get_item(self, item_name: str) -> bool:
-        return self.inventory.get_item(item_name)
+    def get_item(self, name: str) -> BaseItem:
+        return self.inventory.get_item(name)
+
+    def get_summoner_spell(self, name: str) -> BaseSummonerSpell:
+        return next((spell for spell in self.summoner_spells if spell.name == name))
