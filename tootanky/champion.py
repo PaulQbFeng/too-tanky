@@ -37,11 +37,13 @@ class BaseChampion:
         spell_levels: Optional[Tuple[int]] = None,
         spell_max_order: Optional[Tuple[str]] = None,
     ):
-        assert isinstance(level, int) and 1 <= level <= 18, "Champion level should be in the [1,18] range"
-        self.level = level
-        self.inventory = Inventory(inventory, champion=self)
+        if not (isinstance(level, int) and 1 <= level <= 18):
+            raise ValueError(f"Champion level should be a integer in the [1-18] range, {level} given")
         if self.name is None:
             raise ValueError("Child class of BaseChampion is expected to have name = {champion name}")
+
+        self.level = level
+        self.inventory = Inventory(inventory, champion=self)
         self.name = normalize_champion_name(self.name)
         self.orig_base_stats = sc.get_champion_base_stats(champion_name=self.name, level=level)
         self.orig_bonus_stats = sc.get_champion_bonus_stats(champion_name=self.name, level=level)
