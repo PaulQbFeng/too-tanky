@@ -49,14 +49,9 @@ class BaseChampion:
 
         self.initialize_auto_attack()
         self.initialize_summoner_spells(summoner_spells)
-
-        if spell_levels is None:
-            if spell_max_order is None:
-                spell_levels = (1, 1, 1, 1)
-            else:
-                self.spell_max_order = spell_max_order
-                spell_levels = self.get_default_spell_levels()
-        self.init_spells(spell_levels)
+        self.spell_max_order = spell_max_order
+        self.spell_levels = self.get_spell_levels(spell_levels)
+        self.initialize_champion_spells()
 
         self.orig_bonus_stats += self.get_bonus_stats()
         self.orig_bonus_stats += self.get_mythic_passive_stats()
@@ -268,17 +263,25 @@ class BaseChampion:
         elif len(summoner_spells) <= 2:
             self.summoner_spells = summoner_spells
             for spell in self.summoner_spells:
-                spell.champion=self
+                spell.champion = self
         else:
             raise ValueError(f"A champion can only have 2 summoner spells max, {len(summoner_spells)} given.")
 
-    def init_spells(self, spell_levels):
+    def get_spell_levels(self, spell_levels):
+        if spell_levels is None:
+            if self.spell_max_order is None:
+                spell_levels = (1, 1, 1, 1)
+            else:
+                spell_levels = self.get_default_spell_levels()
+        return spell_levels
+
+    def initialize_champion_spells(self):
         """Initialize spells for the champion"""
         if self.name not in SpellFactory()._SPELLS:
             return None
 
         spells = SpellFactory().get_spells_for_champion(self.name)
-        level_q, level_w, level_e, level_r = spell_levels
+        level_q, level_w, level_e, level_r = self.spell_levels
         self.spell_q = spells["q"](champion=self, level=level_q)
         self.spell_w = spells["w"](champion=self, level=level_w)
         self.spell_e = spells["e"](champion=self, level=level_e)
