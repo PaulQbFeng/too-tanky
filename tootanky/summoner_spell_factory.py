@@ -12,7 +12,7 @@ class Ignite(BaseSummonerSpell):
     range = 600
     ratios = []
 
-    def __init__(self, champion):
+    def __init__(self, champion=None):
         self.champion = champion
 
     def get_base_damage(self):

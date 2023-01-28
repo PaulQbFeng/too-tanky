@@ -14,9 +14,10 @@ from tootanky.glossary import (
 from tootanky.inventory import Inventory
 from tootanky.item_factory import BaseItem, SPELL_BLADE_ITEMS, CLASSIC_ON_HIT_ITEMS, WRATH_ITEMS
 from tootanky.spell_registry import SpellFactory
+from tootanky.spell import get_spell_levels
 from tootanky.stats import Stats
 from tootanky.attack import AutoAttack
-from tootanky.summoner_spell_factory import ALL_SUMMONER_SPELLS
+from tootanky.summoner_spell import BaseSummonerSpell
 
 
 class BaseChampion:
@@ -47,16 +48,10 @@ class BaseChampion:
         self.initialize_champion_stats_by_default()
 
         self.initialize_auto_attack()
-        if summoner_spells is not None:
-            self.init_summoner_spells(summoner_spells)
-
-        if spell_levels is None:
-            if spell_max_order is None:
-                spell_levels = (1, 1, 1, 1)
-            else:
-                self.spell_max_order = spell_max_order
-                spell_levels = self.get_default_spell_levels()
-        self.init_spells(spell_levels)
+        self.initialize_summoner_spells(summoner_spells)
+        self.spell_max_order = spell_max_order
+        self.spell_levels = get_spell_levels(spell_levels, spell_max_order, level)
+        self.initialize_champion_spells()
 
         self.orig_bonus_stats += self.get_bonus_stats()
         self.orig_bonus_stats += self.get_mythic_passive_stats()
@@ -68,16 +63,16 @@ class BaseChampion:
         self.spellblade_item = None
 
         for name in SPELL_BLADE_ITEMS:
-            if self.inventory.contains(name):
-                self.spellblade_item = self.inventory.get_item(name)
+            if self.has_item(name):
+                self.spellblade_item = self.get_item(name)
                 self.on_hits.append(self.spellblade_item)
                 break
         for name in CLASSIC_ON_HIT_ITEMS:
-            if self.inventory.contains(name):
-                self.on_hits.append(self.inventory.get_item(name))
+            if self.has_item(name):
+                self.on_hits.append(self.get_item(name))
         for name in WRATH_ITEMS:
-            if self.inventory.contains(name):
-                self.on_hits.append(self.inventory.get_item(name))
+            if self.has_item(name):
+                self.on_hits.append(self.get_item(name))
                 break
 
     def getter_wrapper(stat_name: str) -> Callable:
@@ -119,7 +114,7 @@ class BaseChampion:
 
     @property
     def crit_chance(self):
-        if self.inventory.contains(WRATH_ITEMS):
+        if self.has_item(WRATH_ITEMS):
             return 0
         return self._crit_chance
 
@@ -148,7 +143,7 @@ class BaseChampion:
         Get bonus stats from all sources of bonus stats (items, runes).
         This does not include mythic passives.
         """
-        return self.inventory.item_stats
+        return self.inventory.total_item_stats
 
     def __update_champion_stats(self):
         """
@@ -231,50 +226,23 @@ class BaseChampion:
 
         return Stats(mythic_passive_stats)
 
-    def get_default_spell_levels(self):
-        # This method will be overriden for champions like jayce, udyr, etc.
-        spell_1, spell_2, spell_3 = self.spell_max_order
-        default_order = [
-            spell_1,
-            spell_2,
-            spell_3,
-            spell_1,
-            spell_1,
-            "r",
-            spell_1,
-            spell_2,
-            spell_1,
-            spell_2,
-            "r",
-            spell_2,
-            spell_2,
-            spell_3,
-            spell_3,
-            "r",
-            spell_3,
-            spell_3,
-        ]
-        default_order_per_level = default_order[0 : self.level]
-        return (
-            default_order_per_level.count("q"),
-            default_order_per_level.count("w"),
-            default_order_per_level.count("e"),
-            default_order_per_level.count("r"),
-        )
+    def initialize_summoner_spells(self, summoner_spells):
+        if summoner_spells is None:
+            self.summoner_spells = []
+        elif len(summoner_spells) <= 2:
+            self.summoner_spells = summoner_spells
+            for spell in self.summoner_spells:
+                spell.champion = self
+        else:
+            raise ValueError(f"A champion can only have 2 summoner spells max, {len(summoner_spells)} given.")
 
-    def init_summoner_spells(self, summoner_spells):
-        for sum_name in summoner_spells:
-            summoner_spell = ALL_SUMMONER_SPELLS[sum_name]
-            std_sum_name = convert_to_snake_case(sum_name)
-            setattr(self, std_sum_name, summoner_spell(champion=self))
-
-    def init_spells(self, spell_levels):
+    def initialize_champion_spells(self):
         """Initialize spells for the champion"""
         if self.name not in SpellFactory()._SPELLS:
             return None
 
         spells = SpellFactory().get_spells_for_champion(self.name)
-        level_q, level_w, level_e, level_r = spell_levels
+        level_q, level_w, level_e, level_r = self.spell_levels
         self.spell_q = spells["q"](champion=self, level=level_q)
         self.spell_w = spells["w"](champion=self, level=level_w)
         self.spell_e = spells["e"](champion=self, level=level_e)
@@ -301,28 +269,28 @@ class BaseChampion:
         return 1
 
     def apply_crit_damage_modifiers(self):
-        if not self.inventory.contains(WRATH_ITEMS):
+        if not self.has_item(WRATH_ITEMS):
             self.orig_bonus_stats.crit_chance *= self.get_crit_chance_multiplier()
         bonus_crit_damage = 1.75 * self.get_crit_damage_multiplier() - 1.75
-        if self.inventory.contains("Infinity Edge") and self.orig_bonus_stats.crit_chance >= 0.6:
+        if self.has_item("Infinity Edge") and self.orig_bonus_stats.crit_chance >= 0.6:
             bonus_crit_damage += 0.35 * self.get_crit_damage_multiplier()
         self.orig_bonus_stats.crit_damage += bonus_crit_damage
 
     def apply_item_multipliers(self):
         ap_multiplier = 1
-        if self.inventory.contains("Vigilant Wardstone"):  # missing ability haste
+        if self.has_item("Vigilant Wardstone"):  # missing ability haste
             ap_multiplier += 0.12
             self.orig_bonus_stats.attack_damage *= 1.12
             self.orig_bonus_stats.health *= 1.12
             self.orig_bonus_stats.ability_haste *= 1.12
-        if self.inventory.contains("Rabadon's Deathcap"):
+        if self.has_item("Rabadon's Deathcap"):
             ap_multiplier += 0.35
         self.orig_base_stats.ability_power *= ap_multiplier
         self.orig_bonus_stats.ability_power *= ap_multiplier
 
     def apply_black_cleaver(self, target):
-        if self.inventory.contains("Black Cleaver"):
-            carve_stack_value = self.inventory.get_item("Black Cleaver").get_carve_stack_stats(target)
+        if self.has_item("Black Cleaver"):
+            carve_stack_value = self.get_item("Black Cleaver").get_carve_stack_stats(target)
             target.update_armor_stats(percent_debuff=carve_stack_value)
 
     def take_damage(self, damage):
@@ -339,3 +307,12 @@ class BaseChampion:
 
     def reset_health(self):
         self.health = self.orig_base_stats.health + self.orig_bonus_stats.health
+
+    def has_item(self, name: str) -> bool:
+        return self.inventory.contains(name)
+
+    def get_item(self, name: str) -> BaseItem:
+        return self.inventory.get_item(name)
+
+    def get_summoner_spell(self, name: str) -> BaseSummonerSpell:
+        return next((spell for spell in self.summoner_spells if spell.name == name))

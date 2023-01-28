@@ -46,14 +46,14 @@ def galeforce_default_run(
 
     for champion_level in range(1, 19):
         ahri = Ahri(level=champion_level, inventory=inventory)
-        assert round(ahri.inventory.get_item("Galeforce").damage(target)) == test_active[champion_level - 1]
+        assert round(ahri.get_item("Galeforce").damage(target)) == test_active[champion_level - 1]
 
     ahri = Ahri(level=1, inventory=inventory)
     dummy = Dummy(2000, 60)
     test_active_2 = [134, 275, 422, 577, 739, 909, 1087, 1273, 1468, 1666]
     total_damage = 0
     for i in range(10):
-        total_damage += ahri.inventory.get_item("Galeforce").do_damage(dummy)
+        total_damage += ahri.get_item("Galeforce").do_damage(dummy)
         assert round(total_damage) == test_active_2[i]
 
 
@@ -121,9 +121,9 @@ def test_black_cleaver():
         assert round(ahri.auto_attack.damage(dummy)) == damage_values[i]
         ahri.do_auto_attack(dummy)
         assert round(dummy.armor) == armor_values[i]
-    ahri.inventory.get_item("Black Cleaver").deapply_buffs(dummy)
+    ahri.black_cleaver.remove_buffs(dummy)
     assert round(dummy.armor) == 100
-    assert ahri.inventory.get_item("Black Cleaver").carve_stack_count == 0
+    assert ahri.black_cleaver.carve_stack_count == 0
 
 
 def test_recurve_bow():

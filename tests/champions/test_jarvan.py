@@ -12,5 +12,5 @@ def test_q():
         jarvan = JarvanIV(level=champion_levels[spell_level], inventory=[LongSword()])
         assert round(jarvan.spell_q.damage(dummy)) == damage_values[spell_level]
         assert round(dummy.armor) == armor_values[spell_level]
-        jarvan.spell_q.deapply_buffs(dummy)
+        jarvan.spell_q.remove_buffs(dummy)
         assert round(dummy.armor) == 70

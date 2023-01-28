@@ -1,6 +1,7 @@
 from tootanky.dummy import Dummy
 from tootanky.champions import MissFortune
 from tootanky.damage import damage_physical_auto_attack, pre_mitigation_auto_attack_damage
+from tootanky.summoner_spell_factory import Ignite
 
 
 def tests_normal_auto_attack_cait_dummy_60():
@@ -408,6 +409,6 @@ def test_pre_mtg_damage():
 
 
 def test_true_damage(dummy_0, dummy_100):
-    mf = MissFortune(level=1, summoner_spells=["Ignite"])
-    assert mf.ignite.damage(dummy_0) == 70
-    assert mf.ignite.damage(dummy_100) == 70
+    mf = MissFortune(level=1, summoner_spells=[Ignite()])
+    assert mf.get_summoner_spell("Ignite").damage(dummy_0) == 70
+    assert mf.get_summoner_spell("Ignite").damage(dummy_100) == 70

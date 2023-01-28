@@ -21,7 +21,7 @@ class BaseItem:
     def apply_passive(self):
         pass
 
-    def init_range_type(self):
+    def set_effect_from_range_type(self, range_type: str):
         """Some items give different effects for melee and ranged champions."""
         pass
 

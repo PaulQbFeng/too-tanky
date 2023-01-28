@@ -1,8 +1,9 @@
 from typing import List, Optional
 
-from tootanky.item import BaseItem, ActiveItem
+from tootanky.item import BaseItem
 from tootanky.item_factory import SPELL_BLADE_ITEMS
 from tootanky.stats import Stats
+from tootanky.glossary import convert_to_snake_case
 
 
 class Inventory:
@@ -10,18 +11,21 @@ class Inventory:
         self.items = []
         self.unique_item_passives = []
         self.item_type_count = {"Starter": 0, "Basic": 0, "Epic": 0, "Legendary": 0, "Mythic": 0}
-        self.item_stats = Stats()
+        self.total_item_stats = Stats()
 
         if items is not None:
             assert len(items) <= 6, "Inventory can't contain more than 6 items."
             for item in items:
-                item.champion = champion
                 self.item_type_count[item.type] += 1
-                self.check_item(item)
-                self.items.append(item)
+                self.check_inventory_error_with_item(item)
                 self.apply_item_passive(item)
-                self.item_stats += item.stats
-                item.init_range_type()
+                self.total_item_stats += item.stats
+                if champion is not None:
+                    item.champion = champion
+                    item.set_effect_from_range_type(champion.range_type)
+                    self.set_item_as_champion_attribute(item, champion)
+
+                self.items.append(item)
 
     def contains(self, name):
         """Check if an item is in the inventory or if atleast one item of a list of items is in the inventory"""
@@ -51,7 +55,7 @@ class Inventory:
                 indexes.append(index)
         return indexes
 
-    def check_item(self, item):
+    def check_inventory_error_with_item(self, item):
         # TODO: test, navori quickblades with spear of shojin (must download new patch) should raise AssertionError
         if item.type == "Legendary":
             assert not self.contains(
@@ -98,27 +102,8 @@ class Inventory:
             else:
                 item.apply_passive()
 
-    def get_mythic_passive_stats(self):
-        if self.item_type_count["Mythic"] == 1:
-            nb_legendary = self.item_type_count["Legendary"]
-            if nb_legendary > 0:
-                mythic_item = self.get_mythic_item()
-                for i in range(len(mythic_item.mythic_passive_stats)):
-                    mythic_item.mythic_passive_stats[i][1] *= nb_legendary
-                return mythic_item.mythic_passive_stats
-        return None
-
     def get_price(self):
-        price = 0
-        for item in self.items:
-            price += item.price
-        return price
-
-    def mythic_passive_stats(self):
-        # TODO
-        mythic_item = self.get_mythic_item()
-        if mythic_item is None:
-            return 0
+        return sum(item.price for item in self.items)
 
     def get_spellblade_item(self):
         for name in SPELL_BLADE_ITEMS:
@@ -126,3 +111,7 @@ class Inventory:
             if item:
                 return item
         return None
+
+    def set_item_as_champion_attribute(self, item, champion):
+        std_item_name = convert_to_snake_case(item.name)
+        setattr(champion, std_item_name, item)
